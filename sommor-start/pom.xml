@@ -25,16 +25,6 @@
 
         <dependency>
             <groupId>com.sommor</groupId>
-            <artifactId>sommor-admin</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sommor</groupId>
-            <artifactId>sommor-press</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sommor</groupId>
             <artifactId>sommor-scaffold</artifactId>
         </dependency>
     </dependencies>

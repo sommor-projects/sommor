@@ -7,9 +7,9 @@ import com.sommor.usercenter.entity.UserEntity;
 import com.sommor.usercenter.extension.Authenticator;
 import com.sommor.usercenter.model.Identity;
 import com.sommor.usercenter.repository.UserRepository;
-import com.sommor.usercenter.request.UserLoginParam;
-import com.sommor.usercenter.utils.Encryption;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.sommor.usercenter.model.UserLoginParam;
+
+import javax.annotation.Resource;
 
 /**
  * @author yanguanwei@qq.com
@@ -18,18 +18,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Implement
 public class DefaultUserAuthenticator implements Authenticator<UserLoginParam> {
 
-    @Autowired
+    @Resource
     private UserRepository userRepository;
 
     @Override
     public Response<Identity> authenticate(UserLoginParam userLoginParam) {
-        UserEntity userEntity = userRepository.findByTelephone(userLoginParam.getUsername());
+        UserEntity userEntity = userRepository.findByUserName(userLoginParam.getUserName());
         if (null == userEntity) {
-            return Response.error(ErrorCode.of("login.userNotExist", userLoginParam.getUsername()));
+            return Response.error(ErrorCode.of("login.userNotExist", userLoginParam.getUserName()));
         }
 
-        if (!Encryption.md5(userLoginParam.getPassword()).equalsIgnoreCase(userEntity.getPassword())) {
-            return Response.error(ErrorCode.of("login.-passwordInvalid", userLoginParam.getUsername()));
+        String encryptedPassword = UserEntity.encryptPassword(userLoginParam.getPassword(), userEntity.getCreateTime());
+        if (!encryptedPassword.equalsIgnoreCase(userEntity.getPassword())) {
+            return Response.error(ErrorCode.of("login.passwordInvalid", userLoginParam.getUserName()));
         }
 
         return Response.success(new Identity(userEntity, null));

@@ -10,15 +10,17 @@ import com.sommor.view.FormView;
  */
 public class AnnotatedFormField extends FormField {
 
-    private FormFieldDefinition annotation;
+    private FormFieldDefinition definition;
 
     private FormView formView;
 
-    public AnnotatedFormField(FormFieldDefinition annotation, FormView formView) {
-        super(annotation.getName(), annotation.getViewClass());
+    public AnnotatedFormField(FormFieldDefinition definition, FormView formView) {
+        super(definition.getName(), definition.getViewClass());
 
-        this.annotation = annotation;
+        this.definition = definition;
         this.formView = formView;
+
+        this.getConstraints().merge(definition.getConstraints());
     }
 
     @Override
@@ -26,7 +28,7 @@ public class AnnotatedFormField extends FormField {
         Object value = super.getValue();
         if (null == value) {
             try {
-                value = this.annotation.getMethod().invoke(this.formView);
+                value = this.definition.getMethod().invoke(this.formView);
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
@@ -39,7 +41,7 @@ public class AnnotatedFormField extends FormField {
     @Override
     public FieldView newFieldView() {
         FieldView fieldView = super.newFieldView();
-        FormFieldDefinition annotation = this.annotation;
+        FormFieldDefinition annotation = this.definition;
         FormField formField = this;
 
         ExtensionExecutor.of(FormFieldResolver.class)

@@ -16,7 +16,7 @@ public class Authentication {
 
     private Jwtoken jwtoken;
 
-    private Long expireTime;
+    private Integer expireTime;
 
     private String sessionKey;
 }

@@ -1,5 +1,7 @@
 package com.sommor.api.error;
 
+import org.springframework.context.i18n.LocaleContextHolder;
+
 import java.util.Locale;
 
 /**
@@ -22,5 +24,9 @@ public class ErrorCode {
 
     public ErrorMessage toErrorMessage(Locale locale) {
         return ErrorMessage.of(code, locale, params);
+    }
+
+    public ErrorMessage toErrorMessage() {
+        return toErrorMessage(LocaleContextHolder.getLocale());
     }
 }

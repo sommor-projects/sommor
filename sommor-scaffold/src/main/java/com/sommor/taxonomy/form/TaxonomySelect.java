@@ -17,8 +17,7 @@ public @interface TaxonomySelect {
 
     boolean multiple() default false;
 
-    boolean parentIsSelf() default false;
+    int rootId() default -1;
 
     int parentId() default -1;
-
 }

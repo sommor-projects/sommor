@@ -40,7 +40,7 @@ public class Swagger2 {
         List<Parameter> parameters = new ArrayList<>();
         builder
             .name("_lang").description("语言").modelRef(new ModelRef("string")).parameterType("header").required(false)
-            .name("authentication").description("token").modelRef(new ModelRef("string")).parameterType("header").required(false)
+            .name("X-Authentication").description("token").modelRef(new ModelRef("string")).parameterType("header").required(false)
             .build();
         parameters.add(builder.build());
 

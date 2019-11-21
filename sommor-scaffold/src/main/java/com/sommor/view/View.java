@@ -25,6 +25,7 @@ public class View {
     private Object value;
 
     @Getter
+    @Setter
     private Map<String, Object> properties = new HashMap<>();
 
     public View(String type) {
@@ -39,6 +40,10 @@ public class View {
         return toHtml(type, null);
     }
 
+    protected HtmlElement toHtml(String tag) {
+        return this.toHtml(tag, null);
+    }
+
     protected HtmlElement toHtml(String tag, String propertyKeyOfValue) {
         HtmlElement htmlElement = new HtmlElement(tag, propertyKeyOfValue)
             .addProperties(this.getProperties())
@@ -50,9 +55,5 @@ public class View {
         }
 
         return htmlElement;
-    }
-
-    public Object toJson() {
-        return this;
     }
 }

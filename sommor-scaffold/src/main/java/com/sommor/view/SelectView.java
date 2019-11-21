@@ -2,6 +2,7 @@ package com.sommor.view;
 
 import com.sommor.view.html.HtmlElement;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 
@@ -13,23 +14,35 @@ public class SelectView extends FieldView {
 
     @Getter
     private class Option {
-        private String key;
+        private Object key;
+        private Object parentKey;
         private Object value;
 
-        Option(String key, Object value) {
+        Option(Object key, Object value) {
             this.key = key;
+            this.value = value;
+        }
+        Option(Object key, Object parentKey, Object value) {
+            this.key = key;
+            this.parentKey = parentKey;
             this.value = value;
         }
     }
 
+    @Setter
+    @Getter
     private List<Option> options = new ArrayList<>();
 
     public SelectView() {
         super("select");
     }
 
-    public void addOption(String key, Object value) {
+    public void addOption(Object key, Object value) {
         this.options.add(new Option(key, value));
+    }
+
+    public void addOption(Object key, Object parentKey, Object value) {
+        this.options.add(new Option(key, parentKey, value));
     }
 
     public void multiple() {

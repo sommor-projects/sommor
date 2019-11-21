@@ -19,9 +19,6 @@ public class TaxonomyEntity {
     private Integer id;
 
     @Column
-    private String slug;
-
-    @Column
     private String name;
 
     @Column
@@ -38,6 +35,9 @@ public class TaxonomyEntity {
      */
     @Column
     private Integer parentId;
+
+    @Column
+    private Integer priority;
 
     /**
      * 关联的分类

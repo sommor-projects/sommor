@@ -1,5 +1,6 @@
 package com.sommor.mybatis.sql;
 
+import com.sommor.mybatis.entity.definition.EntityClassParser;
 import com.sommor.mybatis.entity.definition.EntityDefinition;
 import com.sommor.mybatis.entity.definition.EntityDefinitionFactory;
 import com.sommor.mybatis.entity.definition.FieldDefinition;
@@ -14,7 +15,9 @@ import org.springframework.core.DefaultParameterNameDiscoverer;
 
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -37,14 +40,24 @@ public class SqlProvider {
         );
     }
 
-    public String findBy(ProviderContext ctx, Map<String, Object> map) {
-        EntityDefinition ed = parseEntityDefinition(ctx.getMapperType());
-        Query query = new Query();
-
+    public String findBy(ProviderContext ctx, Object params) {
         String[] parameterNames = NAME_DISCOVERER.getParameterNames(ctx.getMapperMethod());
         if (null == parameterNames) {
             throw new RuntimeException("parameters of method["+ctx.getMapperMethod().getName()+"] is not namePresent");
         }
+
+        Map<String, Object> map;
+        if (params instanceof Map) {
+            map = (Map<String, Object>) params;
+        } else if (parameterNames.length == 1) {
+            map = new HashMap<>();
+            map.put(parameterNames[0], params);
+        } else {
+            throw new RuntimeException("unknown params: " + params);
+        }
+
+        EntityDefinition ed = parseEntityDefinition(ctx.getMapperType());
+        Query query = new Query();
 
         for (String parameterName : parameterNames) {
             Object value = map.get(parameterName);
@@ -185,28 +198,12 @@ public class SqlProvider {
         return sql.toString();
     }
 
-    private static Map<Class, Class> entityClassMapByRepoClass = new ConcurrentHashMap<>(128);
+    private static final Map<Class, Class> ENTITY_CLASS_MAP_BY_REPO_CLASS = new ConcurrentHashMap<>(128);
 
     private static Class getEntityClassByRepoClass(Class repoClass) {
-        Class entityClass = entityClassMapByRepoClass.get(repoClass);
+        Class entityClass = EntityClassParser.parse(repoClass);
         if (null == entityClass) {
-            AnnotatedType[] annotatedTypes = repoClass.getAnnotatedInterfaces();
-            for (AnnotatedType annotatedType : annotatedTypes) {
-                if (null != annotatedType && annotatedType.getType() instanceof ParameterizedType) {
-                    ParameterizedType parameterizedType = (ParameterizedType) annotatedType.getType();
-                    Type[] types = parameterizedType.getActualTypeArguments();
-                    if (null != types && types.length >= 1 && types[0] instanceof Class) {
-                        entityClass =  (Class) types[0];
-                        break;
-                    }
-                }
-            }
-
-            if (null == entityClass) {
-                throw new RuntimeException();
-            }
-
-            entityClassMapByRepoClass.put(repoClass, entityClass);
+            throw new RuntimeException();
         }
 
         return entityClass;

@@ -13,15 +13,15 @@ public class PagingResult<Entity> {
 
     @Getter
     @Setter
-    private List<Entity> entities;
+    private List<Entity> data;
 
     @Getter
     @Setter
-    private Integer totalSize;
+    private Integer totalCount;
 
     @Getter
     @Setter
-    private Integer currentPage;
+    private Integer pageNo;
 
     @Getter
     @Setter
@@ -34,4 +34,16 @@ public class PagingResult<Entity> {
     @Getter
     @Setter
     private Boolean isEnded;
+
+    public static <Entity> PagingResult<Entity> of(List<Entity> data) {
+        PagingResult<Entity> pagingResult = new PagingResult<>();
+        pagingResult.setData(data);
+        pagingResult.setTotalCount(data.size());
+        pagingResult.setTotalPage(1);
+        pagingResult.setPageNo(1);
+        pagingResult.setPageSize(data.size());
+        pagingResult.setIsEnded(true);
+
+        return pagingResult;
+    }
 }

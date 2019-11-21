@@ -1,5 +1,6 @@
 package com.sommor.taxonomy.model;
 
+import com.sommor.taxonomy.entity.TaxonomyEntity;
 import com.sommor.taxonomy.form.TaxonomySelect;
 import com.sommor.view.FormView;
 import com.sommor.view.config.HiddenInput;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -16,7 +18,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class TaxonomyForm extends FormView {
+public class TaxonomyForm extends FormView<TaxonomyEntity> {
 
     @HiddenInput
     private Integer id;
@@ -29,11 +31,14 @@ public class TaxonomyForm extends FormView {
     @NotBlank
     private String title;
 
-    @TaxonomySelect(parentIsSelf = true)
-    @NotBlank
+    @TaxonomySelect
+    @NotNull
     private Integer parentId;
 
-    @TaxonomySelect(multiple = true, parentId = 0)
+    @HiddenInput
+    @NotNull
+    private Integer rootId;
+
     private List<Integer> relatedTaxonomies;
 
     private List<Integer> relatedAttributes;

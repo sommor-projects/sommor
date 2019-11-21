@@ -30,7 +30,7 @@ public class FormField {
         try {
             FieldView fieldView = (FieldView) getViewClass().newInstance();
 
-            fieldView.setValue(value);
+            fieldView.setValue(getValue());
             fieldView.setName(getName());
             fieldView.getConstraints().merge(getConstraints());
 

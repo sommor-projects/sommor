@@ -68,8 +68,10 @@ public class ExtensionExecutor<Ext> {
         Class annotatedType = parseAnnotatedType(annotatedInstance);
 
         List<Implementor> implementors = ExtensionManager.getInstance().getImplementors(extClass, annotatedType);
-        for (Implementor ei : implementors) {
-            callback.apply((Ext) ei.getTarget());
+        if (null != implementors && ! implementors.isEmpty()) {
+            for (Implementor ei : implementors) {
+                callback.apply((Ext) ei.getTarget());
+            }
         }
     }
 

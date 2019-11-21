@@ -1,7 +1,7 @@
 package com.sommor.usercenter.jwt;
 
 import com.alibaba.fastjson.JSON;
-import com.sommor.usercenter.utils.Encryption;
+import com.sommor.usercenter.auth.Encryption;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -51,7 +51,7 @@ public class Jwtoken {
     }
 
     public boolean isExpired(long now) {
-        return this.jwtSession.getExpiredTime() < now;
+        return this.jwtSession.getExpiredTime() < (now / 1000);
     }
 
     public boolean verifySignature() {

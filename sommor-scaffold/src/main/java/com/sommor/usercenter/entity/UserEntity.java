@@ -2,6 +2,7 @@ package com.sommor.usercenter.entity;
 
 import com.sommor.mybatis.entity.config.Column;
 import com.sommor.mybatis.entity.config.Table;
+import com.sommor.usercenter.auth.Encryption;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,11 +23,11 @@ public class UserEntity {
 
     @Getter @Setter
     @Column
-    private String username;
+    private String userName;
 
     @Getter @Setter
     @Column
-    private String telephone;
+    private String mobilePhone;
 
     @Getter @Setter
     @Column
@@ -38,7 +39,7 @@ public class UserEntity {
 
     @Getter @Setter
     @Column
-    private String nickname;
+    private String nickName;
 
     /**
      * @see UserEntity#GENDER_MALE
@@ -54,17 +55,17 @@ public class UserEntity {
 
     @Getter @Setter
     @Column
-    private String birthday;
+    private Integer createTime;
 
     @Getter @Setter
     @Column
-    private Long createTime;
-
-    @Getter @Setter
-    @Column
-    private Long updateTime;
+    private Integer updateTime;
 
     @Getter @Setter
     @Column
     private Integer status;
+
+    public static String encryptPassword(String password, int createTime) {
+        return Encryption.md5(password + createTime);
+    }
 }

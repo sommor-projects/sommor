@@ -35,28 +35,28 @@ public interface CurdRepository<Entity> {
         PagingResult<Entity> result = new PagingResult<>();
 
         int totalSize = this.count(query);
-        result.setTotalSize(totalSize);
+        result.setTotalCount(totalSize);
 
         if (totalSize > 0) {
             List<Entity> entities = this.find(query);
-            result.setEntities(entities);
+            result.setData(entities);
 
             Pagination pagination = query.pagination();
             if (null != pagination) {
-                result.setCurrentPage(pagination.getPage());
+                result.setPageNo(pagination.getPage());
                 result.setPageSize(pagination.getPageSize());
-                result.setTotalPage((result.getTotalSize() + result.getPageSize() - 1) / result.getPageSize());
+                result.setTotalPage((result.getTotalCount() + result.getPageSize() - 1) / result.getPageSize());
 
-                boolean isEnd = result.getPageSize() * result.getCurrentPage() >= totalSize;
+                boolean isEnd = result.getPageSize() * result.getPageNo() >= totalSize;
                 result.setIsEnded(isEnd);
             } else {
-                result.setCurrentPage(1);
+                result.setPageNo(1);
                 result.setTotalPage(1);
                 result.setPageSize(totalSize);
                 result.setIsEnded(true);
             }
         } else {
-            result.setCurrentPage(1);
+            result.setPageNo(1);
             result.setTotalPage(1);
             result.setPageSize(1);
             result.setIsEnded(true);
@@ -66,8 +66,19 @@ public interface CurdRepository<Entity> {
     }
 
     @InsertProvider(type = SqlProvider.class, method = "insert")
-    @Options(useGeneratedKeys=true, keyColumn = "id")
+    @Options(useGeneratedKeys=true, keyColumn = "id", keyProperty = "id")
     Integer insert(Entity entity);
+
+    default void add(Entity entity) {
+        EntityDefinition ed = SqlProvider.parseEntityDefinition(this.getClass());
+        FieldDefinition primaryField = ed.getPrimaryField();
+        Object id = insert(entity);
+        try {
+            primaryField.getFieldSetMethod().invoke(entity, id);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @UpdateProvider(type = SqlProvider.class, method = "update")
     Integer update(Entity entity);
@@ -77,13 +88,8 @@ public interface CurdRepository<Entity> {
 
         FieldDefinition primaryField = ed.getPrimaryField();
         Object primaryValue = SqlProvider.getEntityFieldValue(primaryField, entity);
-        if (null == primaryValue) {
-            Object id = insert(entity);
-            try {
-                primaryField.getFieldSetMethod().invoke(entity, id);
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
+        if (null == primaryValue || (primaryValue instanceof Integer && ((int) primaryValue) == 0)) {
+            insert(entity);
         } else {
             update(entity);
         }

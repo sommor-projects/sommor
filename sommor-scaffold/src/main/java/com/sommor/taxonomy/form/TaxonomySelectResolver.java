@@ -1,5 +1,7 @@
 package com.sommor.taxonomy.form;
 
+import com.sommor.api.error.ErrorCode;
+import com.sommor.api.error.ErrorCodeException;
 import com.sommor.extensibility.config.Implement;
 import com.sommor.taxonomy.entity.TaxonomyEntity;
 import com.sommor.taxonomy.repository.TaxonomyRepository;
@@ -24,10 +26,6 @@ public class TaxonomySelectResolver implements FormFieldResolver<TaxonomySelect>
     private TaxonomyRepository taxonomyRepository;
 
     @Override
-    public void resolveOnInit(TaxonomySelect taxonomySelect, FormFieldDefinition definition) {
-    }
-
-    @Override
     public void resolveOnRender(TaxonomySelect taxonomySelect, FieldView view, FormView formView, FormField formField) {
         SelectView selectView = (SelectView) view;
 
@@ -36,35 +34,34 @@ public class TaxonomySelectResolver implements FormFieldResolver<TaxonomySelect>
         }
 
         int parentId = taxonomySelect.parentId();
-        if (parentId < 0) {
-            Integer pid = null;
-
-            if (taxonomySelect.parentIsSelf()) {
-                pid = (Integer) formField.getValue();
-            } else {
-                FormField parentIdField = formView.getFormField("parentId");
-                if (null != parentIdField) {
-                    pid = (Integer) parentIdField.getValue();
+        int rootId = taxonomySelect.rootId();
+        if (parentId > 0) {
+            TaxonomyEntity entity = taxonomyRepository.findById(parentId);
+            if (null == entity) {
+                throw new ErrorCodeException(ErrorCode.of("parentId is not exists", parentId));
+            }
+            rootId = entity.getRootId();
+        } else if (rootId <= 0) {
+            FormField rootIdField = formView.getFormField("rootId");
+            if (null != rootIdField) {
+                Integer rootIdInteger = (Integer) rootIdField.getValue();
+                if (null != rootIdInteger && rootIdInteger > 0) {
+                    rootId = rootIdInteger;
+                    TaxonomyEntity entity = taxonomyRepository.findById(rootId);
+                    if (null == entity) {
+                        throw new ErrorCodeException(ErrorCode.of("rootId is not exists", rootId));
+                    }
                 }
             }
+        }
 
-            if (null != pid) {
-                parentId = pid;
+        if (rootId > 0) {
+            List<TaxonomyEntity> list = taxonomyRepository.findTaxonomiesByRootId(rootId);
+            for (TaxonomyEntity taxonomyEntity : list) {
+                selectView.addOption(taxonomyEntity.getId(), taxonomyEntity.getParentId(), taxonomyEntity.getTitle());
             }
-
-            if (parentId < 0) {
-                throw new RuntimeException("parentId should be specified");
-            }
         }
 
-        TaxonomyEntity entity = taxonomyRepository.findById(parentId);
-        if (null == entity) {
-            throw new RuntimeException("parentId should not exists");
-        }
 
-        List<TaxonomyEntity> list = taxonomyRepository.findTaxonomiesByRootId(entity.getRootId());
-        for (TaxonomyEntity taxonomyEntity : list) {
-            selectView.addOption(String.valueOf(taxonomyEntity.getId()), taxonomyEntity.getTitle());
-        }
     }
 }

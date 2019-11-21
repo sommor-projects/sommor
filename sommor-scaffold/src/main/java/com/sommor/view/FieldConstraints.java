@@ -11,6 +11,9 @@ public class FieldConstraints {
 
     private static final String REQUIRED = "required";
 
+
+    private static final String MIN_LENGTH = "minLength";
+
     private static final String MAX_LENGTH = "maxLength";
 
     private Map<String, Object> constraints = new HashMap<>();
@@ -34,6 +37,16 @@ public class FieldConstraints {
 
     public boolean isRequired() {
         return Boolean.TRUE.equals(this.constraints.get(REQUIRED));
+    }
+
+
+    public FieldConstraints minLength(int minLength) {
+        this.constraints.put(MIN_LENGTH, minLength);
+        return this;
+    }
+
+    public Integer getMinLength() {
+        return (Integer) this.constraints.get(MIN_LENGTH);
     }
 
     public FieldConstraints maxLength(int maxLength) {

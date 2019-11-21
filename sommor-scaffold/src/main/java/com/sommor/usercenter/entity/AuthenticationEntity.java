@@ -22,11 +22,11 @@ public class AuthenticationEntity {
 
     @Getter @Setter
     @Column
-    private Long authTime;
+    private Integer authTime;
 
     @Getter @Setter
     @Column
-    private Long expireTime;
+    private Integer expireTime;
 
     @Getter @Setter
     @Column

@@ -6,9 +6,8 @@ import com.sommor.extensibility.config.Implement;
 import com.sommor.usercenter.entity.UserEntity;
 import com.sommor.usercenter.extension.Authenticator;
 import com.sommor.usercenter.model.Identity;
-import com.sommor.usercenter.request.UserRegisterParam;
-import com.sommor.usercenter.response.LoginUser;
-import com.sommor.usercenter.service.RegisterService;
+import com.sommor.usercenter.model.UserRegisterParam;
+import com.sommor.usercenter.service.UserRegisterService;
 import com.sommor.wechat.entity.WechatUserEntity;
 import com.sommor.wechat.repository.WechatUserRepository;
 import com.sommor.wechat.request.WechatLoginParam;
@@ -31,7 +30,7 @@ public class WechatAuthenticator implements Authenticator<WechatLoginParam> {
     private WechatUserRepository wechatUserRepository;
 
     @Resource
-    private RegisterService registerService;
+    private UserRegisterService userRegisterService;
 
     @Override
     public Response<Identity> authenticate(WechatLoginParam wechatLoginParam) {
@@ -47,13 +46,7 @@ public class WechatAuthenticator implements Authenticator<WechatLoginParam> {
         }
 
         UserRegisterParam userRegisterParam = parseUserRegisterParam(wechatSession);
-        Response<UserEntity> response = registerService.register(userRegisterParam);
-        if (! response.isSuccess()) {
-            return Response.error(response);
-        }
-
-        UserEntity userEntity = response.getResult();
-
+        UserEntity userEntity = userRegisterService.register(userRegisterParam);
         WechatUserEntity wechatUserEntity = wechatUserRepository.findByOpenid(wechatSession.getOpenid());
         if (null == wechatUserEntity) {
             wechatUserEntity = new WechatUserEntity();

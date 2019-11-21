@@ -12,10 +12,12 @@ public class SlugParser {
         for (int i=0; i<name.length(); i++) {
             char c = name.charAt(i);
             if (isUpperChar(c)) {
-                if (i > 0) {
+                if (i > 0 && sb.charAt(sb.length()-1) != '-') {
                     sb.append("-");
                 }
                 sb.append((char)(c+32));
+            } else if (' ' == c && sb.charAt(sb.length()-1) != '-') {
+                sb.append("-");
             } else {
                 sb.append(c);
             }

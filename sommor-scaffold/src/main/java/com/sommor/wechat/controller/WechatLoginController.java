@@ -2,7 +2,7 @@ package com.sommor.wechat.controller;
 
 import com.sommor.api.response.ApiResponse;
 import com.sommor.api.response.Response;
-import com.sommor.usercenter.response.LoginUser;
+import com.sommor.usercenter.model.LoginUser;
 import com.sommor.usercenter.service.AuthenticateService;
 import com.sommor.wechat.request.WechatLoginParam;
 import io.swagger.annotations.Api;

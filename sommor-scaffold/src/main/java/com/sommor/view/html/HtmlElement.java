@@ -2,9 +2,7 @@ package com.sommor.view.html;
 
 import com.sommor.view.View;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author yanguanwei@qq.com
@@ -16,21 +14,52 @@ public class HtmlElement {
 
     private Object value;
 
+    private List<HtmlElement> prependElements;
+
+    private List<HtmlElement> appendElements;
+
     private String propertyKeyOfValue;
+
+    private boolean hasClosingTag = true;
 
     private Map<String, HtmlProperty> properties = new HashMap<>();
 
     public HtmlElement(String tag) {
-        this(tag, null);
+        this(tag, null, true);
     }
 
     public HtmlElement(String tag, String propertyKeyOfValue) {
+        this(tag, propertyKeyOfValue, true);
+    }
+
+    public HtmlElement(String tag, boolean hasClosingTag) {
+        this(tag, null, hasClosingTag);
+    }
+
+    public HtmlElement(String tag, String propertyKeyOfValue, boolean hasClosingTag) {
         this.tag = tag;
         this.propertyKeyOfValue = propertyKeyOfValue;
+        this.hasClosingTag = hasClosingTag;
     }
 
     public HtmlElement value(Object value) {
         this.value = value;
+        return this;
+    }
+
+    public HtmlElement append(HtmlElement element) {
+        if (null == this.appendElements) {
+            this.appendElements = new ArrayList<>();
+        }
+        this.appendElements.add(element);
+        return this;
+    }
+
+    public HtmlElement prepend(HtmlElement element) {
+        if (null == this.prependElements) {
+            this.prependElements = new ArrayList<>();
+        }
+        this.prependElements.add(element);
         return this;
     }
 
@@ -39,6 +68,25 @@ public class HtmlElement {
             this.addProperty(entry.getKey(), entry.getValue());
         }
         return this;
+    }
+
+    public HtmlElement cssClass(String className) {
+        cssClass().addClass(className);
+        return this;
+    }
+
+    public HtmlElement cssClass(String... classNames) {
+        cssClass().addClass(classNames);
+        return this;
+    }
+
+    private CssClassProperty cssClass() {
+        CssClassProperty property = (CssClassProperty) this.properties.get("class");
+        if (null == property) {
+            property = new CssClassProperty();
+            this.addProperty(property);
+        }
+        return property;
     }
 
     public HtmlElement addProperty(String key, Object value) {
@@ -63,11 +111,32 @@ public class HtmlElement {
         }
 
         String stringValue = parseValue(value);
+        if (null != propertyKeyOfValue) {
+            builder.append(" ").append(propertyKeyOfValue).append("=\"").append(stringValue).append("\"");
+        }
 
-        if (null == propertyKeyOfValue) {
-            builder.append(">").append(stringValue).append("</").append(tag).append(">");
+        if (hasClosingTag) {
+            builder.append(">");
+
+            if (null != prependElements) {
+                for (int i=prependElements.size()-1; i>=0; i--) {
+                    builder.append(prependElements.get(i));
+                }
+            }
+
+            if (null == propertyKeyOfValue) {
+                builder.append(stringValue);
+            }
+
+            if (null != appendElements) {
+                for (HtmlElement appendElement : appendElements) {
+                    builder.append(appendElement);
+                }
+            }
+
+            builder.append("</").append(tag).append(">");
         } else {
-            builder.append(" ").append(propertyKeyOfValue).append("=\"").append(stringValue).append("\" />");
+            builder.append(" />");
         }
 
         return builder.toString();

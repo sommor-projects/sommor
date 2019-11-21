@@ -1,11 +1,6 @@
 package com.sommor.wechat.service;
 
-import com.sommor.api.error.ErrorCode;
-import com.sommor.api.response.Response;
-import com.sommor.usercenter.response.LoginUser;
-import com.sommor.usercenter.service.AuthenticateService;
 import com.sommor.wechat.sdk.WechatClient;
-import com.sommor.wechat.sdk.WechatSession;
 
 import javax.annotation.Resource;
 

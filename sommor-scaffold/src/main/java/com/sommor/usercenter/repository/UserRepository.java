@@ -14,9 +14,9 @@ import org.apache.ibatis.annotations.SelectProvider;
 public interface UserRepository extends CurdRepository<UserEntity> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
-    UserEntity findByTelephone(String telephone);
+    UserEntity findByMobilePhone(String mobilePhone);
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
-    UserEntity findByWeixinOpenid(String weixinOpenid);
+    UserEntity findByUserName(String userName);
 
 }

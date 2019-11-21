@@ -15,10 +15,13 @@ import java.util.List;
 @Mapper
 public interface TaxonomyRepository extends CurdRepository<TaxonomyEntity> {
 
-    default List<TaxonomyEntity> findRootTaxonomies(Integer rootId) {
+    default List<TaxonomyEntity> findRootTaxonomies() {
         return this.findTaxonomiesByRootId(0);
     }
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     List<TaxonomyEntity> findTaxonomiesByRootId(Integer rootId);
+
+    @SelectProvider(type = SqlProvider.class, method = "findBy")
+    List<TaxonomyEntity> findTaxonomiesByParentId(Integer parentId);
 }

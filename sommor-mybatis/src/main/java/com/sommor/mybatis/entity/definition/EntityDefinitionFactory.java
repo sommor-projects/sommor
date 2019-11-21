@@ -27,6 +27,7 @@ public class EntityDefinitionFactory {
                 ed = ENTITY_DEFINITION_MAP.get(entityClass);
                 if (null == ed) {
                     ed = new EntityDefinition();
+                    ed.setEntityClass(entityClass);
                     Table table = (Table) entityClass.getAnnotation(Table.class);
                     if (null == table) {
                         String className = entityClass.getSimpleName();
@@ -87,14 +88,14 @@ public class EntityDefinitionFactory {
         fieldDefinition.setFieldGetMethod(parseMethod(getMethodName, entityClass));
 
         String setMethodName = "set" + methodNameSuffix;
-        fieldDefinition.setFieldSetMethod(parseMethod(setMethodName, entityClass));
+        fieldDefinition.setFieldSetMethod(parseMethod(setMethodName, entityClass, field.getType()));
 
         return fieldDefinition;
     }
 
-    private static Method parseMethod(String methodName, Class clazz) {
+    private static Method parseMethod(String methodName, Class clazz, Class... argTypes) {
         try {
-            Method method = clazz.getMethod(methodName);
+            Method method = clazz.getMethod(methodName, argTypes);
             method.setAccessible(true);
             return method;
         } catch (NoSuchMethodException e) {

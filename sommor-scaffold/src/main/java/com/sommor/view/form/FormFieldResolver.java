@@ -11,7 +11,9 @@ import com.sommor.view.FormView;
 @Extension(name = "表单字段解析器")
 public interface FormFieldResolver<ViewConfig> {
 
-    void resolveOnInit(ViewConfig viewConfig, FormFieldDefinition definition);
+    default void resolveOnInit(ViewConfig viewConfig, FormFieldDefinition definition) {
+    }
 
-    void resolveOnRender(ViewConfig viewConfig, FieldView view, FormView formView, FormField formField);
+    default void resolveOnRender(ViewConfig viewConfig, FieldView view, FormView formView, FormField formField) {
+    }
 }
