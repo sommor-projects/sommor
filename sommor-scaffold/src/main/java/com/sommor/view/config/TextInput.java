@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@FieldView(TextInputView.class)
+@FieldConfig(TextInputView.class)
 public @interface TextInput {
 
 }

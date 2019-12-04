@@ -1,5 +1,6 @@
 package com.sommor.usercenter.entity;
 
+import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.mybatis.entity.config.Column;
 import com.sommor.mybatis.entity.config.Table;
 import com.sommor.usercenter.validator.UserIdExist;
@@ -15,10 +16,7 @@ import javax.validation.constraints.NotBlank;
 @Table("user_roles")
 @Setter
 @Getter
-public class UserRoleEntity {
-
-    @Column
-    private Integer id;
+public class UserRoleEntity extends BaseEntity {
 
     @Column
     @UserIdExist

@@ -1,7 +1,6 @@
 package com.sommor.taxonomy.form;
 
-import com.sommor.view.SelectView;
-import com.sommor.view.config.FieldView;
+import com.sommor.view.config.FieldConfig;
 
 import java.lang.annotation.*;
 
@@ -11,13 +10,19 @@ import java.lang.annotation.*;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@FieldView(SelectView.class)
+@FieldConfig(TaxonomySelectView.class)
 @Documented
 public @interface TaxonomySelect {
 
     boolean multiple() default false;
 
-    int rootId() default -1;
+    boolean tree() default false;
+
+    boolean rootSelection() default false;
+
+    int typeId() default -1;
+
+    String type() default "";
 
     int parentId() default -1;
 }

@@ -1,5 +1,6 @@
 package com.sommor.usercenter.entity;
 
+import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.mybatis.entity.config.Column;
 import com.sommor.mybatis.entity.config.Table;
 import com.sommor.usercenter.auth.Encryption;
@@ -11,15 +12,11 @@ import lombok.Setter;
  * @since 2019/1/13
  */
 @Table("users")
-public class UserEntity {
+public class UserEntity extends BaseEntity {
 
     public static final Integer GENDER_MALE = 0;
 
     public static final Integer GENDER_FEMALE = 1;
-
-    @Getter @Setter
-    @Column
-    private Integer id;
 
     @Getter @Setter
     @Column

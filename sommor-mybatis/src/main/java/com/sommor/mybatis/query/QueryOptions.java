@@ -1,28 +1,19 @@
 package com.sommor.mybatis.query;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * @author yanguanwei@qq.com
  * @since 2019/10/25
  */
 public class QueryOptions {
 
-    private Boolean pageableEnabled;
+    @Getter
+    @Setter
+    private boolean pageableEnabled;
 
-    private Boolean orderlyEnabled;
-
-    public Boolean getPageableEnabled() {
-        return pageableEnabled;
-    }
-
-    public void setPageableEnabled(Boolean pageableEnabled) {
-        this.pageableEnabled = pageableEnabled;
-    }
-
-    public Boolean getOrderlyEnabled() {
-        return orderlyEnabled;
-    }
-
-    public void setOrderlyEnabled(Boolean orderlyEnabled) {
-        this.orderlyEnabled = orderlyEnabled;
-    }
+    @Getter
+    @Setter
+    private boolean orderlyEnabled;
 }

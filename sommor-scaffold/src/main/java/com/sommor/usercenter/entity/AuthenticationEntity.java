@@ -1,5 +1,6 @@
 package com.sommor.usercenter.entity;
 
+import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.mybatis.entity.config.Column;
 import com.sommor.mybatis.entity.config.Table;
 import lombok.Getter;
@@ -10,11 +11,7 @@ import lombok.Setter;
  * @since 2019/2/3
  */
 @Table("authentications")
-public class AuthenticationEntity {
-
-    @Getter @Setter
-    @Column
-    private Integer id;
+public class AuthenticationEntity extends BaseEntity {
 
     @Getter @Setter
     @Column

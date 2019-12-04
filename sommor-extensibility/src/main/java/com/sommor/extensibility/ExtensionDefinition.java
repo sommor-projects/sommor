@@ -1,7 +1,5 @@
 package com.sommor.extensibility;
 
-import java.util.List;
-
 /**
  * @author yanguanwei@qq.com
  * @since 2019/10/24
@@ -12,12 +10,12 @@ public class ExtensionDefinition {
 
     private String name;
 
-    private boolean hasAnnotatedTypes;
+    private boolean annotated;
 
-    public ExtensionDefinition(Class clazz, String name, boolean hasAnnotatedTypes) {
+    public ExtensionDefinition(Class clazz, String name, boolean annotated) {
         this.clazz = clazz;
         this.name = name;
-        this.hasAnnotatedTypes = hasAnnotatedTypes;
+        this.annotated = annotated;
     }
 
     public Class getClazz() {
@@ -28,7 +26,7 @@ public class ExtensionDefinition {
         return name;
     }
 
-    public boolean hasAnnotatedTypes() {
-        return hasAnnotatedTypes;
+    public boolean annotated() {
+        return annotated;
     }
 }

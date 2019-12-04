@@ -1,8 +1,16 @@
 package com.sommor.taxonomy.service;
 
+import com.sommor.api.error.ErrorCode;
+import com.sommor.api.error.ErrorCodeException;
+import com.sommor.mybatis.query.Query;
+import com.sommor.mybatis.sql.select.OrderType;
+import com.sommor.scaffold.service.CurdService;
 import com.sommor.taxonomy.entity.TaxonomyEntity;
-import com.sommor.taxonomy.model.TaxonomyForm;
-import com.sommor.taxonomy.model.TaxonomyTree;
+import com.sommor.taxonomy.form.TaxonomyForm;
+import com.sommor.taxonomy.model.*;
+import com.sommor.taxonomy.param.TaxonomyFormRenderParam;
+import com.sommor.taxonomy.param.TaxonomyInfoParam;
+import com.sommor.taxonomy.param.TaxonomyQueryParam;
 import com.sommor.taxonomy.repository.TaxonomyRepository;
 import org.springframework.stereotype.Service;
 
@@ -14,35 +22,68 @@ import java.util.*;
  * @since 2019-11-14
  */
 @Service
-public class TaxonomyService {
+public class TaxonomyService extends CurdService<
+        TaxonomyEntity,
+        TaxonomyForm,
+        TaxonomyFormRenderParam,
+        TaxonomyDetail,
+        TaxonomyInfoParam,
+        TaxonomyItem,
+        TaxonomyQueryParam> {
 
     @Resource
     private TaxonomyRepository taxonomyRepository;
 
-    public TaxonomyEntity save(TaxonomyForm taxonomyForm) {
-        TaxonomyEntity entity = taxonomyForm.toEntity();
-        taxonomyRepository.save(entity);
-        return entity;
-    }
-
-    public TaxonomyEntity delete(Integer id) {
+    public void updateTaxonomyPriority(Integer id, String direction) {
         TaxonomyEntity entity = taxonomyRepository.findById(id);
-        if (null != entity) {
-            taxonomyRepository.deleteById(id);
+        if (null == entity) {
+            throw new ErrorCodeException(ErrorCode.of("taxonomy.update.failed.absence", id));
         }
-        return entity;
+
+        Query query = new Query()
+                .where("parentId", entity.getParentId())
+                .orderly("priority", OrderType.ASC);
+
+        List<TaxonomyEntity> entities = taxonomyRepository.find(query);
+        if (null != entities && entities.size() > 1) {
+            LinkedList<TaxonomyEntity> list = new LinkedList<>(entities);
+            int index = -1;
+            int size = list.size();
+            for (int i=0; i<size; i++) {
+                TaxonomyEntity e = list.get(i);
+                if (e.getId().equals(entity.getId())) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index >= 0) {
+                TaxonomyEntity removed = list.remove(index);
+                if ("forward".equals(direction) && index > 0) {
+                    list.add(index-1, removed);
+                } else if ("backward".equals(direction) && index < (size-1)) {
+                    list.add(index+1, removed);
+                } else {
+                    throw new ErrorCodeException(ErrorCode.of("taxonomy.update.priority.failed.direction", direction, index, size));
+                }
+
+                int i=0;
+                for (TaxonomyEntity e : list) {
+                    taxonomyRepository.updatePriorityById(e.getId(), i++);
+                }
+            }
+        }
     }
 
-    public List<TaxonomyTree> getTaxonomyTrees(Integer parentId) {
-        List<TaxonomyEntity> entities = taxonomyRepository.findTaxonomiesByParentId(parentId);
-        Map<Integer, List<TaxonomyEntity>> map = mappedByParentId(entities);
-        return parseTaxonomyTrees(map, parentId);
-    }
+    public List<TaxonomyTree> getTaxonomyTreesByType(Integer typeId, boolean includeSelf) {
+        List<TaxonomyEntity> entities = taxonomyRepository.findByTypeId(typeId);
 
-    public List<TaxonomyTree> getRootTaxonomyTrees() {
-        List<TaxonomyEntity> entities = taxonomyRepository.findRootTaxonomies();
+        if (includeSelf) {
+            TaxonomyEntity root = taxonomyRepository.findById(typeId);
+            entities.add(root);
+        }
+
         Map<Integer, List<TaxonomyEntity>> map = mappedByParentId(entities);
-        return parseTaxonomyTrees(map, 0);
+        return parseTaxonomyTrees(map, includeSelf ? 0 : typeId);
     }
 
     private Map<Integer, List<TaxonomyEntity>> mappedByParentId(List<TaxonomyEntity> entities) {
@@ -61,11 +102,11 @@ public class TaxonomyService {
         if (null != entities) {
             for (TaxonomyEntity entity : entities) {
                 TaxonomyTree taxonomyTree = new TaxonomyTree(entity);
+                taxonomyTree.setChildren(parseTaxonomyTrees(map, entity.getId()));
                 trees.add(taxonomyTree);
             }
+            Collections.sort(trees);
         }
-
-        Collections.sort(trees);
 
         return trees;
     }

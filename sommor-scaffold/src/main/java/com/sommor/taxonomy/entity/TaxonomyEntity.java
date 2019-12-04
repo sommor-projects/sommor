@@ -1,11 +1,12 @@
 package com.sommor.taxonomy.entity;
 
+import com.sommor.mybatis.entity.ConfigurableEntity;
 import com.sommor.mybatis.entity.config.Column;
 import com.sommor.mybatis.entity.config.Table;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Objects;
 
 /**
  * @author yanguanwei@qq.com
@@ -13,22 +14,19 @@ import java.util.List;
  */
 @Table("taxonomies")
 @Getter @Setter
-public class TaxonomyEntity {
+public class TaxonomyEntity extends ConfigurableEntity {
 
     @Column
-    private Integer id;
-
-    @Column
-    private String name;
+    private String slug;
 
     @Column
     private String title;
 
-    /**
-     * 顶层分类ID，最顶层分类该值为0
-     */
     @Column
-    private Integer rootId;
+    private String subTitle;
+
+    @Column
+    private Integer typeId;
 
     /**
      * 父分类ID，最顶层的分类该值为0
@@ -39,15 +37,8 @@ public class TaxonomyEntity {
     @Column
     private Integer priority;
 
-    /**
-     * 关联的分类
-     */
-    @Column
-    private List<Integer> relatedTaxonomies;
-
-    /**
-     * 关联的属性
-     */
-    @Column
-    private List<Integer> relatedAttributes;
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "[id=" + this.getId() + ", name=" + this.getSubTitle() + ", title=" + this.getTitle() + "]";
+    }
 }

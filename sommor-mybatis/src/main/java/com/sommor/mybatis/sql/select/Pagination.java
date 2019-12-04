@@ -4,7 +4,7 @@ package com.sommor.mybatis.sql.select;
  * @author wuyu
  * @since 2019/1/27
  */
-public class Pagination {
+public class Pagination extends Limitation {
 
     public static int defaultPageSize = 20;
 
@@ -34,8 +34,13 @@ public class Pagination {
         return page;
     }
 
-    public int getOffset() {
+    public Integer getOffset() {
         return (page-1) * pageSize;
+    }
+
+    @Override
+    public Integer getCount() {
+        return this.getPageSize();
     }
 
     public int getPageSize() {

@@ -1,29 +1,33 @@
 package com.sommor.mybatis.repository;
 
+import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.mybatis.entity.definition.EntityDefinition;
 import com.sommor.mybatis.entity.definition.FieldDefinition;
 import com.sommor.mybatis.query.PagingResult;
 import com.sommor.mybatis.query.Query;
 import com.sommor.mybatis.sql.SqlProvider;
+import com.sommor.mybatis.sql.field.type.Array;
+import com.sommor.mybatis.sql.select.OrderType;
 import com.sommor.mybatis.sql.select.Pagination;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Options;
-import org.apache.ibatis.annotations.SelectProvider;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
  * @author yanguanwei@qq.com
  * @since 2019/10/25
  */
-public interface CurdRepository<Entity> {
+public interface CurdRepository<Entity extends BaseEntity> {
 
     @SelectProvider(type = SqlProvider.class, method = "findById")
-    Entity findById(Object id);
+    Entity findById(Integer id);
+
+    @SelectProvider(type = SqlProvider.class, method = "findFirst")
+    Entity findFirst(Query query);
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
-    List<Entity> findByIds(List<Integer> id);
+    List<Entity> findByIds(Array id);
 
     @SelectProvider(type = SqlProvider.class, method = "find")
     List<Entity> find(Query query);
@@ -60,6 +64,7 @@ public interface CurdRepository<Entity> {
             result.setTotalPage(1);
             result.setPageSize(1);
             result.setIsEnded(true);
+            result.setData(Collections.emptyList());
         }
 
         return result;
@@ -84,17 +89,14 @@ public interface CurdRepository<Entity> {
     Integer update(Entity entity);
 
     default void save(Entity entity) {
-        EntityDefinition ed = SqlProvider.parseEntityDefinition(this.getClass());
-
-        FieldDefinition primaryField = ed.getPrimaryField();
-        Object primaryValue = SqlProvider.getEntityFieldValue(primaryField, entity);
-        if (null == primaryValue || (primaryValue instanceof Integer && ((int) primaryValue) == 0)) {
+        Integer id = entity.getId();
+        if (null == id || id == 0) {
             insert(entity);
         } else {
             update(entity);
         }
     }
 
-    @SelectProvider(type = SqlProvider.class, method = "deleteById")
+    @DeleteProvider(type = SqlProvider.class, method = "deleteById")
     Integer deleteById(Object id);
 }

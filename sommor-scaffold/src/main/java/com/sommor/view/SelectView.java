@@ -15,34 +15,40 @@ public class SelectView extends FieldView {
     @Getter
     private class Option {
         private Object key;
-        private Object parentKey;
+        private String label;
         private Object value;
 
-        Option(Object key, Object value) {
-            this.key = key;
+        Option(String label, Object value) {
+            this.label = label;
             this.value = value;
-        }
-        Option(Object key, Object parentKey, Object value) {
-            this.key = key;
-            this.parentKey = parentKey;
-            this.value = value;
+            this.key = value;
         }
     }
 
     @Setter
     @Getter
-    private List<Option> options = new ArrayList<>();
+    private List<Option> options;
+
+    @Setter
+    @Getter
+    private List<OptionTree> optionTrees;
 
     public SelectView() {
         super("select");
     }
 
-    public void addOption(Object key, Object value) {
-        this.options.add(new Option(key, value));
+    public void addOptionTree(OptionTree optionTree) {
+        if (null == this.optionTrees) {
+            this.optionTrees = new ArrayList<>();
+        }
+        this.optionTrees.add(optionTree);
     }
 
-    public void addOption(Object key, Object parentKey, Object value) {
-        this.options.add(new Option(key, parentKey, value));
+    public void addOption(String label, Object value) {
+        if (null == this.options) {
+            this.options = new ArrayList<>();
+        }
+        this.options.add(new Option(label, value));
     }
 
     public void multiple() {
@@ -55,7 +61,7 @@ public class SelectView extends FieldView {
         List<HtmlElement> options = new ArrayList<>();
 
         Set selectedSet = new HashSet();
-        Object selected = getValue();
+        Object selected = value();
         if (null != selected) {
             if (selected instanceof Collection) {
                 selectedSet.addAll((Collection) selected);

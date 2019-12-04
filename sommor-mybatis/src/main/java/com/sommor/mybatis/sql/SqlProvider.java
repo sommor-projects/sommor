@@ -7,6 +7,7 @@ import com.sommor.mybatis.entity.definition.FieldDefinition;
 import com.sommor.mybatis.query.Query;
 import com.sommor.mybatis.sql.field.type.Location;
 import com.sommor.mybatis.sql.select.Condition;
+import com.sommor.mybatis.sql.select.Limitation;
 import com.sommor.mybatis.sql.select.OrderBy;
 import com.sommor.mybatis.sql.select.Pagination;
 import org.apache.ibatis.builder.annotation.ProviderContext;
@@ -17,9 +18,12 @@ import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author yanguanwei@qq.com
@@ -41,6 +45,14 @@ public class SqlProvider {
     }
 
     public String findBy(ProviderContext ctx, Object params) {
+        return doFindBy(ctx, params, false);
+    }
+
+    public String countBy(ProviderContext ctx, Object params) {
+        return doFindBy(ctx, params, true);
+    }
+
+    private String doFindBy(ProviderContext ctx, Object params, boolean count) {
         String[] parameterNames = NAME_DISCOVERER.getParameterNames(ctx.getMapperMethod());
         if (null == parameterNames) {
             throw new RuntimeException("parameters of method["+ctx.getMapperMethod().getName()+"] is not namePresent");
@@ -65,13 +77,15 @@ public class SqlProvider {
         }
 
         return doFind(
-            ed,
-            query,
-            false
+                ed,
+                query,
+                count
         );
     }
 
     public String find(ProviderContext ctx, Query query) {
+        enrichConditionParameters(query);
+
         return doFind(
             parseEntityDefinition(ctx.getMapperType()),
             query,
@@ -79,8 +93,27 @@ public class SqlProvider {
         );
     }
 
+    private void enrichConditionParameters(Query query) {
+        if (query.getClass() == Query.class) {
+            query.enrichConditionParameters();
+        }
+    }
+
+    public String findFirst(ProviderContext ctx, Query query) {
+        enrichConditionParameters(query);
+
+        query.limit(1);
+
+        return doFind(
+                parseEntityDefinition(ctx.getMapperType()),
+                query,
+                false
+        );
+    }
 
     public String count(ProviderContext ctx, Query query) {
+        enrichConditionParameters(query);
+
         return doFind(
             parseEntityDefinition(ctx.getMapperType()),
             query,
@@ -96,7 +129,9 @@ public class SqlProvider {
     private String doFind(EntityDefinition ed, Query query, boolean count) {
         SQL sql = new SQL()
             .SELECT(count ? "COUNT(1)" : query.projection().toString())
-            .FROM(ed.getTableName());
+            .FROM(ed.getTableName() + " " + ed.getTableName());
+
+        query.from(ed.getTableName());
 
         Condition condition = query.condition();
         if (null != condition) {
@@ -113,9 +148,9 @@ public class SqlProvider {
         String sqlString = sql.toString();
 
         if (! count) {
-            Pagination pagination = query.pagination();
-            if (null != pagination) {
-                sqlString += " LIMIT " + pagination.getOffset() + ", " + pagination.getPageSize();
+            Limitation limitation = query.limitation();
+            if (null != limitation) {
+                sqlString += " LIMIT " + limitation.getOffset() + ", " + limitation.getCount();
             }
         }
 
@@ -140,18 +175,57 @@ public class SqlProvider {
     public String update(ProviderContext ctx, Object entity) {
         EntityDefinition definition = parseEntityDefinition(ctx.getMapperType());
 
-        SQL sql = new SQL().UPDATE(definition.getTableName());
-        String primaryKey = definition.getPrimaryKey();
-        for (FieldDefinition fieldDefinition : definition.getFieldDefinitions()) {
-            if (! primaryKey.equals(fieldDefinition.getColumnName())) {
-                Object v = getEntityFieldValue(fieldDefinition, entity);
-                if (null != v) {
-                    sql.SET(fieldDefinition.getColumnName() + " = " + getEntityColumnValueRef(fieldDefinition));
-                }
-            }
+        List<FieldDefinition> setFields = definition.getFieldDefinitions().stream()
+                .filter(p-> ! p.getColumnName().equals(definition.getPrimaryKey()))
+                .filter(p-> null != getEntityFieldValue(p, entity))
+                .collect(Collectors.toList());
+
+        List<FieldDefinition> conditionFields = new ArrayList<>();
+        conditionFields.add(definition.getPrimaryField());
+
+        return doUpdate(
+                definition,
+                setFields,
+                conditionFields
+        );
+    }
+
+    public String updateBy(ProviderContext ctx, Object params) {
+        String[] parameterNames = NAME_DISCOVERER.getParameterNames(ctx.getMapperMethod());
+        if (null == parameterNames) {
+            throw new RuntimeException("parameters of method["+ctx.getMapperMethod().getName()+"] is not namePresent");
         }
 
-        sql.WHERE(definition.getPrimaryKey() + " = " + getEntityColumnValueRef(definition.getPrimaryField()));
+        Map<String, Object> map;
+        if (params instanceof Map) {
+            map = (Map<String, Object>) params;
+        } else {
+            throw new RuntimeException("unknown params: " + params);
+        }
+
+        EntityDefinition definition = parseEntityDefinition(ctx.getMapperType());
+
+        List<FieldDefinition> setFields = new ArrayList<>();
+        for (int i=1; i<parameterNames.length; i++) {
+            setFields.add(definition.getFieldDefinition(parameterNames[i]));
+        }
+
+        List<FieldDefinition> conditionFields = new ArrayList<>();
+        conditionFields.add(definition.getFieldDefinition(parameterNames[0]));
+
+        return doUpdate(definition, setFields, conditionFields);
+    }
+
+    private String doUpdate(EntityDefinition definition, List<FieldDefinition> setFields, List<FieldDefinition> conditionFields) {
+        SQL sql = new SQL().UPDATE(definition.getTableName());
+
+        for (FieldDefinition fieldDefinition : setFields) {
+            sql.SET(fieldDefinition.getColumnName() + " = " + getEntityColumnValueRef(fieldDefinition));
+        }
+
+        for (FieldDefinition fieldDefinition : conditionFields) {
+            sql.WHERE(fieldDefinition.getColumnName() + " = " + getEntityColumnValueRef(fieldDefinition));
+        }
 
         return sql.toString();
     }
@@ -186,6 +260,39 @@ public class SqlProvider {
         }
 
         return "#{" + fd.getFieldName() + "}";
+    }
+
+    public String deleteBy(ProviderContext ctx, Object params) {
+        String[] parameterNames = NAME_DISCOVERER.getParameterNames(ctx.getMapperMethod());
+        if (null == parameterNames) {
+            throw new RuntimeException("parameters of method["+ctx.getMapperMethod().getName()+"] is not namePresent");
+        }
+
+        Map<String, Object> map;
+        if (params instanceof Map) {
+            map = (Map<String, Object>) params;
+        } else {
+            throw new RuntimeException("unknown params: " + params);
+        }
+
+        EntityDefinition definition = parseEntityDefinition(ctx.getMapperType());
+
+        List<FieldDefinition> conditionFields = new ArrayList<>();
+        for (int i=0; i<parameterNames.length; i++) {
+            conditionFields.add(definition.getFieldDefinition(parameterNames[i]));
+        }
+
+        return doDelete(definition, conditionFields);
+    }
+
+    private String doDelete(EntityDefinition definition, List<FieldDefinition> conditionFields) {
+        SQL sql = new SQL().DELETE_FROM(definition.getTableName());
+
+        for (FieldDefinition fieldDefinition : conditionFields) {
+            sql.WHERE(fieldDefinition.getColumnName() + " = " + getEntityColumnValueRef(fieldDefinition));
+        }
+
+        return sql.toString();
     }
 
     public String deleteById(ProviderContext ctx, Object id) {

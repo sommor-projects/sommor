@@ -1,6 +1,7 @@
 package com.sommor.mybatis.sql.select;
 
 
+import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -13,6 +14,9 @@ import java.util.stream.Collectors;
  * @since 2019/2/11
  */
 public class OrderBy {
+
+    @Setter
+    private String tableAlias;
 
     private List<String> expressions = new ArrayList<>();
 
@@ -31,6 +35,12 @@ public class OrderBy {
         }
 
         return this.expressions.stream()
+                .map(s -> {
+                    if (null != this.tableAlias) {
+                        return this.tableAlias + "." + s;
+                    }
+                    return s;
+                })
             .collect(Collectors.joining(", "));
     }
 

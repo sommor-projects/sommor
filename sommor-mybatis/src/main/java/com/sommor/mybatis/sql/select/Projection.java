@@ -1,5 +1,7 @@
 package com.sommor.mybatis.sql.select;
 
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,22 +15,31 @@ public class Projection {
 
     private List<String> expressions = new ArrayList<>();
 
-    public Projection all(String tableName) {
+    @Setter
+    private String tableAlias;
+
+    public Projection() {
+    }
+
+    public Projection(String tableAlias) {
+        this.tableAlias = tableAlias;
+    }
+
+    public Projection all() {
         String allExpression = "*";
-        if (null != tableName) {
-            allExpression = tableName + "." + allExpression;
+        if (null != this.tableAlias) {
+            allExpression = this.tableAlias + "." + allExpression;
         }
         this.expressions.add(allExpression);
 
         return this;
     }
 
-    public Projection all() {
-        return all(null);
-    }
-
     public Projection columns(String... columns) {
-        this.expressions.add(Arrays.asList(columns).stream().collect(Collectors.joining(", ")));
+        this.expressions.add(
+                Arrays.asList(columns)
+                .stream().collect(Collectors.joining(", "))
+        );
 
         return this;
     }
@@ -41,6 +52,13 @@ public class Projection {
 
     @Override
     public String toString() {
-        return expressions.stream().collect(Collectors.joining(", "));
+        return expressions.stream()
+                .map(column -> {
+                    if (null != this.tableAlias) {
+                        return this.tableAlias + "." + column;
+                    }
+                    return column;
+                })
+                .collect(Collectors.joining(", "));
     }
 }

@@ -8,9 +8,9 @@ import java.lang.annotation.*;
  * @author yanguanwei@qq.com
  * @since 2019/11/7
  */
-@Target(ElementType.TYPE)
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@FieldView(SelectView.class)
+@FieldConfig(SelectView.class)
 public @interface Select {
 }

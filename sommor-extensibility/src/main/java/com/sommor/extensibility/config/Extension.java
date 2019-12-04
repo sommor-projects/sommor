@@ -16,4 +16,6 @@ public @interface Extension {
 
     String name();
 
+    boolean annotated() default true;
+
 }

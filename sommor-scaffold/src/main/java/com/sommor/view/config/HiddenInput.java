@@ -10,7 +10,7 @@ import java.lang.annotation.*;
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-@FieldView(HiddenInputView.class)
+@FieldConfig(HiddenInputView.class)
 @Documented
 public @interface HiddenInput {
 }

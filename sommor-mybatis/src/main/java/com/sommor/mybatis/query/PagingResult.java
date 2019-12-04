@@ -46,4 +46,16 @@ public class PagingResult<Entity> {
 
         return pagingResult;
     }
+
+    public static <Entity> PagingResult<Entity> of(PagingResult result, List<Entity> data) {
+        PagingResult<Entity> pagingResult = new PagingResult<>();
+        pagingResult.setData(data);
+        pagingResult.setTotalCount(result.getTotalCount());
+        pagingResult.setTotalPage(result.getTotalPage());
+        pagingResult.setPageNo(result.getPageNo());
+        pagingResult.setPageSize(result.getPageSize());
+        pagingResult.setIsEnded(result.getIsEnded());
+
+        return pagingResult;
+    }
 }

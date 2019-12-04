@@ -1,5 +1,8 @@
 package com.sommor.mybatis.sql.select;
 
+import com.sommor.mybatis.sql.field.type.Array;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -14,16 +17,35 @@ import java.util.stream.Collectors;
  */
 public class Condition {
 
-    private List<String> expressions = new ArrayList<>();
+    private List<ConditionExpression> expressions = new ArrayList<>();
+
+    @Setter
+    private String tableAlias;
+
+    @Getter
+    private class ConditionExpression {
+        private String andOr;
+        private String fieldName;
+        private String columnName;
+        private String operator;
+
+        public ConditionExpression(String andOr, String fieldName, String columnName, String operator) {
+            this.andOr = andOr;
+            this.fieldName = fieldName;
+            this.columnName = columnName;
+            this.operator = operator;
+        }
+    }
 
     public Condition() {
     }
 
-    public Condition(Condition condition) {
-        if (null != condition) {
-            this.expressions = new ArrayList<>(condition.expressions);
-        }
+    public Condition(String tableAlias) {
+        this.tableAlias = tableAlias;
     }
+
+    @Setter
+    private String entityPrefix;
 
     public Condition and(String columnName, String fieldName, String operator, Object value) {
         this.add("AND", columnName, fieldName, operator, value);
@@ -36,25 +58,17 @@ public class Condition {
     }
 
     private void add(String andOr, String columnName, String fieldName, String operator, Object value) {
-        if (! expressions.isEmpty()) {
-            expressions.add(andOr);
+        if (expressions.isEmpty()) {
+            andOr = null;
         }
 
-        if (value instanceof Collection) {
+        if (value instanceof Array && ((Array) value).size() > 1) {
             operator = "in";
         }
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("(").append(columnName).append(" ").append(operator).append(" ");
-        if ("in".equalsIgnoreCase(operator)) {
-            builder.append("(${").append(fieldName).append("})");
-        } else {
-            builder.append("#{").append(fieldName).append("}");
-        }
-
-        builder.append(")");
-
-        expressions.add(builder.toString());
+        this.expressions.add(
+                new ConditionExpression(andOr, fieldName, columnName, operator)
+        );
     }
 
     public String toExpression() {
@@ -62,7 +76,32 @@ public class Condition {
             return "";
         }
 
-        return this.expressions.stream().collect(Collectors.joining(" "));
+        return this.expressions.stream().map( e -> {
+            StringBuilder builder = new StringBuilder();
+            if (null != e.getAndOr()) {
+                builder.append(e.getAndOr()).append(" ");
+            }
+            builder.append("(");
+            if (null != this.tableAlias) {
+                builder.append(this.tableAlias).append(".");
+            }
+
+            builder.append(e.getColumnName()).append(" ").append(e.getOperator()).append(" ");
+
+            String fieldName = e.getFieldName();
+            if (null != this.entityPrefix) {
+                fieldName = this.entityPrefix + "." + fieldName;
+            }
+
+            if ("in".equalsIgnoreCase(e.getOperator())) {
+                builder.append("(${").append(fieldName).append("})");
+            } else {
+                builder.append("#{").append(fieldName).append("}");
+            }
+            builder.append(")");
+
+            return builder.toString();
+        }).collect(Collectors.joining(" "));
     }
 
     @Override

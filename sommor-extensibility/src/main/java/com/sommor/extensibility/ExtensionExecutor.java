@@ -4,7 +4,6 @@ import com.sommor.extensibility.callback.P1RCallback;
 import com.sommor.extensibility.callback.P1VCallback;
 import com.sommor.extensibility.reducer.Reducer;
 import com.sommor.extensibility.reducer.Reducers;
-import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
@@ -26,6 +25,10 @@ public class ExtensionExecutor<Ext> {
 
     public <R> R executeFirst(P1RCallback<Ext, R> callback) {
         return this.execute(callback, Reducers.first());
+    }
+
+    public <R> R executeFirstNotNull(P1RCallback<Ext, R> callback) {
+        return this.execute(callback, Reducers.firstNotNull());
     }
 
     public <R> R executeFirst(Class annotatedType, P1RCallback<Ext, R> callback) {
@@ -102,7 +105,7 @@ public class ExtensionExecutor<Ext> {
         ExtensionDefinition ed = em.getExtensionDefinition(extensionClass);
 
         Class annotatedType = Void.class;
-        if (ed.hasAnnotatedTypes()) {
+        if (ed.annotated()) {
             annotatedType = parseAnnotatedType(args[0]);
         }
 
@@ -115,6 +118,10 @@ public class ExtensionExecutor<Ext> {
     };
 
     private static Class parseAnnotatedType(Object o) {
+        if (o instanceof Class) {
+            return (Class) o;
+        }
+
         Class annotatedType;
         if (o instanceof Proxy) {
             annotatedType = o.getClass().getInterfaces()[0];

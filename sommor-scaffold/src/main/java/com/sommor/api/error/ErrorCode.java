@@ -1,5 +1,6 @@
 package com.sommor.api.error;
 
+import com.alibaba.fastjson.JSON;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.Locale;
@@ -28,5 +29,10 @@ public class ErrorCode {
 
     public ErrorMessage toErrorMessage() {
         return toErrorMessage(LocaleContextHolder.getLocale());
+    }
+
+    @Override
+    public String toString() {
+        return "ErrorCode[code: " + code + ", params: " + JSON.toJSONString(params) + "]";
     }
 }

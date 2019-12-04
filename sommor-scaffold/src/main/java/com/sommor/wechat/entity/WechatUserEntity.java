@@ -1,5 +1,6 @@
 package com.sommor.wechat.entity;
 
+import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.mybatis.entity.config.Column;
 import com.sommor.mybatis.entity.config.Table;
 import lombok.Getter;
@@ -10,12 +11,7 @@ import lombok.Setter;
  * @since 2019/2/5
  */
 @Table("wechat_users")
-public class WechatUserEntity {
-
-    @Getter
-    @Setter
-    @Column
-    private Integer id;
+public class WechatUserEntity extends BaseEntity {
 
     @Getter
     @Setter

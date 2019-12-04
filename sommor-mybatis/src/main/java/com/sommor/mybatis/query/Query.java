@@ -20,61 +20,43 @@ import java.util.Map;
  * @author yanguanwei@qq.com
  * @since 2019/10/24
  */
-public class Query<Q extends Query> {
-    private static final QueryOptions DEFAULT_QUERY_OPTIONS = new QueryOptions();
+public class Query {
 
     @Getter @Setter
-    private Integer page;
-
-    @Getter @Setter
-    private Integer pageSize;
-
-    @Getter @Setter
-    private String orderBy;
-
-    @Getter @Setter
-    private String orderType;
-
-    private Boolean pageableEnabled;
-
-    private Boolean orderlyEnabled;
+    private Limitation limitation;
 
     private Projection projection;
 
     private Condition condition;
 
-    private static final Map<Class, QueryOptions> QUERY_OPTIONS_MAP = new HashMap<>(128);
+    private OrderBy orderBy;
 
-    private static QueryOptions getQueryOptions(Class clazz) {
-        QueryOptions queryOptions = QUERY_OPTIONS_MAP.get(clazz);
-        if (null == queryOptions) {
-            synchronized (QUERY_OPTIONS_MAP) {
-                queryOptions = QUERY_OPTIONS_MAP.get(clazz);
-                if (null == queryOptions) {
-                    QueryConfig queryConfig = (QueryConfig) clazz.getAnnotation(QueryConfig.class);
-                    if (null != queryConfig) {
-                        queryOptions = new QueryOptions();
-                        queryOptions.setPageableEnabled(queryConfig.enablePageable());
-                        queryOptions.setOrderlyEnabled(queryConfig.enableOrderly());
-                    } else {
-                        queryOptions = DEFAULT_QUERY_OPTIONS;
-                    }
+    @Getter
+    private Map<String, Object> parameters = new HashMap<>();
 
-                    QUERY_OPTIONS_MAP.put(clazz, queryOptions);
-                }
-            }
+    public Query from(String table) {
+        if (null != this.projection) {
+            this.projection.setTableAlias(table);
         }
 
-        return queryOptions;
+        if (null != this.condition) {
+            this.condition.setTableAlias(table);
+        }
+
+        if (null != this.orderBy) {
+            this.orderBy.setTableAlias(table);
+        }
+
+        return this;
     }
 
-    public Q select(String expressions) {
+    public Query select(String expressions) {
         Projection projection = new Projection();
         projection.columns(expressions);
 
         this.projection = projection;
 
-        return (Q) this;
+        return this;
     }
 
     public Projection projection() {
@@ -82,88 +64,56 @@ public class Query<Q extends Query> {
     }
 
     public Pagination pagination() {
-        if (! isPageableEnabled()) {
-            return null;
-        }
-
-        return Pagination.of(this.getPage(), this.getPageSize());
-    }
-
-    public Q enablePageable() {
-        this.pageableEnabled = true;
-
-        return (Q) this;
-    }
-
-    public Q pageable(Integer page, Integer pageSize) {
-        this.setPage(page);
-        this.setPageSize(pageSize);
-
-        this.enablePageable();
-
-        return (Q) this;
-    }
-
-    public Q enableOrderly() {
-        this.orderlyEnabled = true;
-
-        return (Q) this;
-    }
-
-    public Q orderly(String orderBy, OrderType orderType) {
-        this.setOrderBy(orderBy);
-        this.setOrderType(orderType.name());
-
-        this.enableOrderly();
-
-        return (Q) this;
-    }
-
-    private boolean isPageableEnabled() {
-        return Boolean.TRUE.equals(this.pageableEnabled)
-            || Boolean.TRUE.equals(getQueryOptions(this.getClass()).getPageableEnabled());
-    }
-
-    public OrderBy orderBy() {
-        if (! isOrderlyEnabled()) {
-            return null;
-        }
-
-        String orderBy = this.getOrderBy();
-
-        if (null != orderBy) {
-            OrderType orderType = OrderType.of(this.getOrderType());
-            String orderByColumnName = NamingParseStrategy.INST.parseFieldName2ColumnName(orderBy);
-            return new OrderBy(orderByColumnName, orderType == null ? OrderType.DESC : orderType);
+        if (this.limitation instanceof Pagination) {
+            return (Pagination) this.limitation;
         }
 
         return null;
     }
 
-    private boolean isOrderlyEnabled() {
-        return Boolean.TRUE.equals(this.orderlyEnabled)
-        || Boolean.TRUE.equals(getQueryOptions(this.getClass()).getOrderlyEnabled());
+    public Limitation limitation() {
+        return this.limitation;
+    }
+
+    public Query pageable(Integer page, Integer pageSize) {
+        this.setLimitation(Pagination.of(page, pageSize));
+        return this;
+    }
+
+    public Query limit(Integer count) {
+        this.setLimitation(new Limitation(0, count));
+        return this;
+    }
+    public Query orderly(String orderBy, String orderType) {
+        return this.orderly(orderBy, orderType == null ? OrderType.ASC : OrderType.valueOf(orderType));
+    }
+
+    public Query orderly(String orderBy, OrderType orderType) {
+        String orderByColumnName = NamingParseStrategy.INST.parseFieldName2ColumnName(orderBy);
+        this.orderBy = new OrderBy(orderByColumnName, orderType == null ? OrderType.DESC : orderType);
+        return this;
+    }
+
+    public OrderBy orderBy() {
+        return this.orderBy;
     }
 
     public Condition condition() {
-        Condition condition = new Condition(this.condition);
-
-        List<ConditionalField> conditionalFields = parseConditionalFields(this.getClass());
-        if (! CollectionUtils.isEmpty(conditionalFields)) {
-            for (ConditionalField field : conditionalFields) {
-                Object value = field.getValue(this);
-                if (null != value) {
-                    condition.and(field.columnName, field.fieldName, field.operator, value);
-                }
-            }
-        }
-
-        return condition;
+        return this.condition;
     }
 
-    public Q where(String fieldName, Object value) {
+    public Query enrichConditionParameters() {
+        if (null != condition) {
+            condition.setEntityPrefix("parameters");
+        }
+
+        return this;
+    }
+
+    public Query where(String fieldName, Object value) {
         this.addConditional(null, fieldName, "=", value);
-        return (Q) this;
+        this.parameters.put(fieldName, value);
+        return this;
     }
 
     private void addConditional(String columnName, String fieldName, String operator, Object value) {
@@ -176,84 +126,5 @@ public class Query<Q extends Query> {
         }
 
         this.condition.and(columnName, fieldName, operator, value);
-    }
-
-    private static class ConditionalField {
-        String columnName;
-        String fieldName;
-        Field field;
-        Method method;
-        String operator;
-
-        Object getValue(Object o) {
-            try {
-                if (null != field) {
-                    return field.get(o);
-                }
-
-                if (null != method) {
-                    return method.invoke(o);
-                }
-            } catch (Throwable e) {
-                throw new RuntimeException("get value exception, column: "+columnName+", class: " + o.getClass().getName());
-            }
-
-            return null;
-        }
-    }
-
-    private final static Map<Class, List<ConditionalField>> conditionalFieldsMap = new HashMap<>(128);
-
-    private static List<ConditionalField> parseConditionalFields(Class clazz) {
-        List<ConditionalField> fields = conditionalFieldsMap.get(clazz);
-        if (null == fields) {
-            synchronized (conditionalFieldsMap) {
-                fields = conditionalFieldsMap.get(clazz);
-                if (null == fields) {
-                    fields = new ArrayList<>();
-
-                    for (Field field : clazz.getDeclaredFields()) {
-                        Conditional conditional = field.getAnnotation(Conditional.class);
-                        if (null != conditional) {
-                            String fieldName = field.getName();
-                            field.setAccessible(true);
-                            ConditionalField conditionalField = new ConditionalField();
-                            conditionalField.columnName = NamingParseStrategy.INST.parseFieldName2ColumnName(fieldName);
-                            conditionalField.fieldName = fieldName;
-                            conditionalField.field = field;
-                            conditionalField.operator = conditional.operator();
-
-                            fields.add(conditionalField);
-                        }
-                    }
-
-                    for (Method method : clazz.getMethods()) {
-                        if (method.getModifiers() == Modifier.PUBLIC
-                            && method.getParameterCount() == 0
-                            && method.getName().startsWith("get")) {
-
-
-                            Conditional conditional = method.getAnnotation(Conditional.class);
-                            if (null != conditional) {
-                                String fieldName = method.getName().substring(3);
-                                method.setAccessible(true);
-
-                                ConditionalField conditionalField = new ConditionalField();
-                                conditionalField.columnName = NamingParseStrategy.INST.parseFieldName2ColumnName(fieldName);
-                                conditionalField.fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
-                                conditionalField.method = method;
-                                conditionalField.operator = conditional.operator();
-
-                                fields.add(conditionalField);
-                            }
-                        }
-                    }
-                }
-
-                conditionalFieldsMap.put(clazz, fields);
-            }
-        }
-
-        return fields;
     }
 }

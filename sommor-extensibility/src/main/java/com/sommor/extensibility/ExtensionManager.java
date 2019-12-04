@@ -39,7 +39,7 @@ public class ExtensionManager {
                 );
 
                 List<Class> annotatedTypes = getAnnotatedTypes(implementor.getTarget().getClass());
-                if (CollectionUtils.isEmpty(annotatedTypes)) {
+                if ((!extensionDefinition.annotated()) || CollectionUtils.isEmpty(annotatedTypes)) {
                     List<Implementor> implementors = implementorsMapByAnnotatedType.computeIfAbsent(Void.class, p -> new LinkedList<>());
                     implementors.add(implementor);
                 } else {
@@ -104,8 +104,8 @@ public class ExtensionManager {
                 if (null == extensionDefinition) {
                     Extension extension = (Extension) extensionClass.getAnnotation(Extension.class);
                     if (null != extension) {
-                        boolean hasAnnotatedTypes = hasAnnotatedType(extensionClass);
-                        extensionDefinition = new ExtensionDefinition(extensionClass, extension.name(), hasAnnotatedTypes);
+                        boolean annotated = extension.annotated() && hasAnnotatedType(extensionClass);
+                        extensionDefinition = new ExtensionDefinition(extensionClass, extension.name(), annotated);
                         extensionDefinitionMap.put(extensionClass, extensionDefinition);
                     }
                 }

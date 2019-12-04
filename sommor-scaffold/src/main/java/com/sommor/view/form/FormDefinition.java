@@ -2,31 +2,30 @@ package com.sommor.view.form;
 
 import com.sommor.mybatis.entity.definition.EntityDefinition;
 import lombok.Getter;
+import lombok.Setter;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
- * @author young.alway@gmail.com
- * @since 2019-11-14
+ * @author yanguanwei@qq.com
+ * @since 2019/11/26
  */
-@Getter
 public class FormDefinition {
 
+    @Getter
+    @Setter
     private EntityDefinition entityDefinition;
 
-    private List<FormFieldDefinition> fieldDefinitions;
-
-    private Map<String, FormFieldDefinition> formFieldDefinitionMap;
-
-    public FormDefinition(EntityDefinition entityDefinition, List<FormFieldDefinition> fieldDefinitions) {
-        this.entityDefinition = entityDefinition;
-        this.fieldDefinitions = fieldDefinitions;
-        this.formFieldDefinitionMap = fieldDefinitions.stream().collect(Collectors.toMap(FormFieldDefinition::getName, p -> p));
-    }
+    @Getter
+    @Setter
+    private FormFieldsetDefinition fieldsetDefinition;
 
     public FormFieldDefinition getField(String fieldName) {
-        return this.formFieldDefinitionMap.get(fieldName);
+        return null == fieldsetDefinition ? null : fieldsetDefinition.getField(fieldName);
     }
+
+    public List<FormFieldDefinition> getFields() {
+        return null == fieldsetDefinition ? Collections.emptyList() : fieldsetDefinition.getFields();
+    }
+
 }
