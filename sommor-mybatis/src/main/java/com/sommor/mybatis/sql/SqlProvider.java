@@ -1,28 +1,25 @@
 package com.sommor.mybatis.sql;
 
+import com.sommor.mybatis.sql.select.ConditionExpression;
 import com.sommor.mybatis.entity.definition.EntityClassParser;
 import com.sommor.mybatis.entity.definition.EntityDefinition;
-import com.sommor.mybatis.entity.definition.EntityDefinitionFactory;
-import com.sommor.mybatis.entity.definition.FieldDefinition;
+import com.sommor.mybatis.entity.definition.EntityManager;
+import com.sommor.mybatis.entity.definition.EntityFieldDefinition;
 import com.sommor.mybatis.query.Query;
 import com.sommor.mybatis.sql.field.type.Location;
 import com.sommor.mybatis.sql.select.Condition;
 import com.sommor.mybatis.sql.select.Limitation;
 import com.sommor.mybatis.sql.select.OrderBy;
-import com.sommor.mybatis.sql.select.Pagination;
+import com.sommor.mybatis.sql.select.Where;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.apache.ibatis.jdbc.SQL;
 import org.springframework.core.DefaultParameterNameDiscoverer;
 
-import java.lang.reflect.AnnotatedType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Proxy;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -95,7 +92,15 @@ public class SqlProvider {
 
     private void enrichConditionParameters(Query query) {
         if (query.getClass() == Query.class) {
-            query.enrichConditionParameters();
+            Where where = query.getWhere();
+            if (null != where) {
+               where.setFieldPrefix("parameters");
+               for (Condition condition : where.getConditions()) {
+                   for (ConditionExpression expression : condition.getExpressions()) {
+                       query.addParameter(expression.getFieldName(), expression.getValue());
+                   }
+               }
+            }
         }
     }
 
@@ -123,7 +128,7 @@ public class SqlProvider {
 
     public static EntityDefinition parseEntityDefinition(Class repositoryClass) {
         Class entityClass = getEntityClassByRepoClass(repositoryClass);
-        return EntityDefinitionFactory.getDefinition(entityClass);
+        return EntityManager.getDefinition(entityClass);
     }
 
     private String doFind(EntityDefinition ed, Query query, boolean count) {
@@ -133,9 +138,12 @@ public class SqlProvider {
 
         query.from(ed.getTableName());
 
-        Condition condition = query.condition();
-        if (null != condition) {
-            sql.WHERE(condition.toExpression());
+        Where where = query.getWhere();
+        if (null != where) {
+            String whereClause = where.toExpression();
+            if (StringUtils.isNotBlank(whereClause)) {
+                sql.WHERE(whereClause);
+            }
         }
 
         if (! count) {
@@ -162,7 +170,7 @@ public class SqlProvider {
 
         SQL sql = new SQL().INSERT_INTO(definition.getTableName());
 
-        for (FieldDefinition fieldDefinition : definition.getFieldDefinitions()) {
+        for (EntityFieldDefinition fieldDefinition : definition.getFieldDefinitions()) {
             Object v = getEntityFieldValue(fieldDefinition, entity);
             if (null != v) {
                 sql.VALUES(fieldDefinition.getColumnName(), getEntityColumnValueRef(fieldDefinition));
@@ -175,12 +183,12 @@ public class SqlProvider {
     public String update(ProviderContext ctx, Object entity) {
         EntityDefinition definition = parseEntityDefinition(ctx.getMapperType());
 
-        List<FieldDefinition> setFields = definition.getFieldDefinitions().stream()
+        List<EntityFieldDefinition> setFields = definition.getFieldDefinitions().stream()
                 .filter(p-> ! p.getColumnName().equals(definition.getPrimaryKey()))
                 .filter(p-> null != getEntityFieldValue(p, entity))
                 .collect(Collectors.toList());
 
-        List<FieldDefinition> conditionFields = new ArrayList<>();
+        List<EntityFieldDefinition> conditionFields = new ArrayList<>();
         conditionFields.add(definition.getPrimaryField());
 
         return doUpdate(
@@ -205,25 +213,25 @@ public class SqlProvider {
 
         EntityDefinition definition = parseEntityDefinition(ctx.getMapperType());
 
-        List<FieldDefinition> setFields = new ArrayList<>();
+        List<EntityFieldDefinition> setFields = new ArrayList<>();
         for (int i=1; i<parameterNames.length; i++) {
             setFields.add(definition.getFieldDefinition(parameterNames[i]));
         }
 
-        List<FieldDefinition> conditionFields = new ArrayList<>();
+        List<EntityFieldDefinition> conditionFields = new ArrayList<>();
         conditionFields.add(definition.getFieldDefinition(parameterNames[0]));
 
         return doUpdate(definition, setFields, conditionFields);
     }
 
-    private String doUpdate(EntityDefinition definition, List<FieldDefinition> setFields, List<FieldDefinition> conditionFields) {
+    private String doUpdate(EntityDefinition definition, List<EntityFieldDefinition> setFields, List<EntityFieldDefinition> conditionFields) {
         SQL sql = new SQL().UPDATE(definition.getTableName());
 
-        for (FieldDefinition fieldDefinition : setFields) {
+        for (EntityFieldDefinition fieldDefinition : setFields) {
             sql.SET(fieldDefinition.getColumnName() + " = " + getEntityColumnValueRef(fieldDefinition));
         }
 
-        for (FieldDefinition fieldDefinition : conditionFields) {
+        for (EntityFieldDefinition fieldDefinition : conditionFields) {
             sql.WHERE(fieldDefinition.getColumnName() + " = " + getEntityColumnValueRef(fieldDefinition));
         }
 
@@ -233,7 +241,7 @@ public class SqlProvider {
     public String save(ProviderContext ctx, Object entity) {
         EntityDefinition ed = parseEntityDefinition(ctx.getMapperType());
 
-        FieldDefinition primaryField = ed.getPrimaryField();
+        EntityFieldDefinition primaryField = ed.getPrimaryField();
         Object primaryValue = getEntityFieldValue(primaryField, entity);
         if (null == primaryValue) {
             return insert(ctx, entity);
@@ -242,19 +250,19 @@ public class SqlProvider {
         }
     }
 
-    public static Object getEntityFieldValue(FieldDefinition fieldDefinition, Object entity) {
-        if (null == entity || ! fieldDefinition.getFieldGetMethod().getDeclaringClass().isAssignableFrom(entity.getClass())) {
+    public static Object getEntityFieldValue(EntityFieldDefinition fieldDefinition, Object entity) {
+        if (null == entity || ! fieldDefinition.getGetter().getDeclaringClass().isAssignableFrom(entity.getClass())) {
             return null;
         }
 
         try {
-            return fieldDefinition.getFieldGetMethod().invoke(entity);
+            return fieldDefinition.getGetter().invoke(entity);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
     }
 
-    private String getEntityColumnValueRef(FieldDefinition fd) {
+    private String getEntityColumnValueRef(EntityFieldDefinition fd) {
         if (Location.class.equals(fd.getField().getType())) {
             return "ST_GeomFromText("+"#{" + fd.getFieldName() + "}"+")";
         }
@@ -268,16 +276,9 @@ public class SqlProvider {
             throw new RuntimeException("parameters of method["+ctx.getMapperMethod().getName()+"] is not namePresent");
         }
 
-        Map<String, Object> map;
-        if (params instanceof Map) {
-            map = (Map<String, Object>) params;
-        } else {
-            throw new RuntimeException("unknown params: " + params);
-        }
-
         EntityDefinition definition = parseEntityDefinition(ctx.getMapperType());
 
-        List<FieldDefinition> conditionFields = new ArrayList<>();
+        List<EntityFieldDefinition> conditionFields = new ArrayList<>();
         for (int i=0; i<parameterNames.length; i++) {
             conditionFields.add(definition.getFieldDefinition(parameterNames[i]));
         }
@@ -285,10 +286,10 @@ public class SqlProvider {
         return doDelete(definition, conditionFields);
     }
 
-    private String doDelete(EntityDefinition definition, List<FieldDefinition> conditionFields) {
+    private String doDelete(EntityDefinition definition, List<EntityFieldDefinition> conditionFields) {
         SQL sql = new SQL().DELETE_FROM(definition.getTableName());
 
-        for (FieldDefinition fieldDefinition : conditionFields) {
+        for (EntityFieldDefinition fieldDefinition : conditionFields) {
             sql.WHERE(fieldDefinition.getColumnName() + " = " + getEntityColumnValueRef(fieldDefinition));
         }
 
@@ -298,14 +299,12 @@ public class SqlProvider {
     public String deleteById(ProviderContext ctx, Object id) {
         EntityDefinition definition = parseEntityDefinition(ctx.getMapperType());
 
-        FieldDefinition primaryKeyField = definition.getPrimaryField();
+        EntityFieldDefinition primaryKeyField = definition.getPrimaryField();
         SQL sql = new SQL().DELETE_FROM(definition.getTableName())
             .WHERE(primaryKeyField.getColumnName() + "=" + getEntityColumnValueRef(primaryKeyField));
 
         return sql.toString();
     }
-
-    private static final Map<Class, Class> ENTITY_CLASS_MAP_BY_REPO_CLASS = new ConcurrentHashMap<>(128);
 
     private static Class getEntityClassByRepoClass(Class repoClass) {
         Class entityClass = EntityClassParser.parse(repoClass);

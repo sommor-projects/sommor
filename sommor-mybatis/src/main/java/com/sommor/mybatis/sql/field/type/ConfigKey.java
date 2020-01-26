@@ -6,9 +6,10 @@ import java.lang.annotation.*;
  * @author yanguanwei@qq.com
  * @since 2019/11/27
  */
-@Target(ElementType.TYPE)
+@Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ConfigKey {
-    String value();
+    String value() default "";
+
 }

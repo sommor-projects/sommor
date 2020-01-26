@@ -2,15 +2,15 @@ package com.sommor.mybatis.repository;
 
 import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.mybatis.entity.definition.EntityDefinition;
-import com.sommor.mybatis.entity.definition.FieldDefinition;
+import com.sommor.mybatis.entity.definition.EntityFieldDefinition;
 import com.sommor.mybatis.query.PagingResult;
 import com.sommor.mybatis.query.Query;
 import com.sommor.mybatis.sql.SqlProvider;
 import com.sommor.mybatis.sql.field.type.Array;
-import com.sommor.mybatis.sql.select.OrderType;
 import com.sommor.mybatis.sql.select.Pagination;
 import org.apache.ibatis.annotations.*;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -29,6 +29,10 @@ public interface CurdRepository<Entity extends BaseEntity> {
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     List<Entity> findByIds(Array id);
 
+    default List<Entity> findByIds(Collection<Integer> id) {
+        return findByIds(new Array(id));
+    }
+
     @SelectProvider(type = SqlProvider.class, method = "find")
     List<Entity> find(Query query);
 
@@ -43,6 +47,12 @@ public interface CurdRepository<Entity extends BaseEntity> {
 
         if (totalSize > 0) {
             List<Entity> entities = this.find(query);
+            if (null != entities && entities.size() > 1) {
+                if (entities.get(0) instanceof Comparable) {
+                    Collections.sort((List<? extends Comparable>) entities);
+                }
+            }
+
             result.setData(entities);
 
             Pagination pagination = query.pagination();
@@ -76,10 +86,10 @@ public interface CurdRepository<Entity extends BaseEntity> {
 
     default void add(Entity entity) {
         EntityDefinition ed = SqlProvider.parseEntityDefinition(this.getClass());
-        FieldDefinition primaryField = ed.getPrimaryField();
+        EntityFieldDefinition primaryField = ed.getPrimaryField();
         Object id = insert(entity);
         try {
-            primaryField.getFieldSetMethod().invoke(entity, id);
+            primaryField.getSetter().invoke(entity, id);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -99,4 +109,12 @@ public interface CurdRepository<Entity extends BaseEntity> {
 
     @DeleteProvider(type = SqlProvider.class, method = "deleteById")
     Integer deleteById(Object id);
+
+
+    @DeleteProvider(type = SqlProvider.class, method = "deleteBy")
+    Integer deleteByIds(Array id);
+
+    default Integer deleteByIds(Collection<Integer> id) {
+        return this.deleteByIds(new Array(id));
+    }
 }

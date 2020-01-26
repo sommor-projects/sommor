@@ -23,23 +23,27 @@ public class EntityDefinition {
 
     @Getter
     @Setter
+    private String subjectName;
+
+    @Getter
+    @Setter
     private String primaryKey;
 
     @Getter
     @Setter
-    private FieldDefinition primaryField;
+    private EntityFieldDefinition primaryField;
 
     @Getter
-    private List<FieldDefinition> fieldDefinitions;
+    private List<EntityFieldDefinition> fieldDefinitions;
 
-    private Map<String, FieldDefinition> fieldDefinitionMap;
+    private Map<String, EntityFieldDefinition> fieldDefinitionMap;
 
-    public void setFieldDefinitions(List<FieldDefinition> fieldDefinitions) {
+    public void setFieldDefinitions(List<EntityFieldDefinition> fieldDefinitions) {
         this.fieldDefinitions = fieldDefinitions;
         this.fieldDefinitionMap = fieldDefinitions.stream().collect(Collectors.toMap(p->p.getFieldName(), p->p));
     }
 
-    public FieldDefinition getFieldDefinition(String fieldName) {
+    public EntityFieldDefinition getFieldDefinition(String fieldName) {
         return this.fieldDefinitionMap == null ? null : this.fieldDefinitionMap.get(fieldName);
     }
 }

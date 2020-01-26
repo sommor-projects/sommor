@@ -18,5 +18,7 @@ public @interface Table {
      */
     String value() default "";
 
+    String subject() default "";
+
     String primaryKey() default "id";
 }

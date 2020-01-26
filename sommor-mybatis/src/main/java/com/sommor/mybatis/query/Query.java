@@ -6,7 +6,7 @@ import com.sommor.mybatis.query.config.QueryConfig;
 import com.sommor.mybatis.sql.select.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.util.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -27,9 +27,10 @@ public class Query {
 
     private Projection projection;
 
-    private Condition condition;
-
     private OrderBy orderBy;
+
+    @Getter
+    private Where where;
 
     @Getter
     private Map<String, Object> parameters = new HashMap<>();
@@ -39,8 +40,8 @@ public class Query {
             this.projection.setTableAlias(table);
         }
 
-        if (null != this.condition) {
-            this.condition.setTableAlias(table);
+        if (null != this.where) {
+            this.where.setColumnPrefix(table);
         }
 
         if (null != this.orderBy) {
@@ -84,6 +85,7 @@ public class Query {
         this.setLimitation(new Limitation(0, count));
         return this;
     }
+
     public Query orderly(String orderBy, String orderType) {
         return this.orderly(orderBy, orderType == null ? OrderType.ASC : OrderType.valueOf(orderType));
     }
@@ -98,33 +100,25 @@ public class Query {
         return this.orderBy;
     }
 
-    public Condition condition() {
-        return this.condition;
-    }
-
-    public Query enrichConditionParameters() {
-        if (null != condition) {
-            condition.setEntityPrefix("parameters");
+    public Where where() {
+        if (null == this.where) {
+            this.where = new Where();
         }
-
-        return this;
+        return this.where;
     }
 
     public Query where(String fieldName, Object value) {
-        this.addConditional(null, fieldName, "=", value);
-        this.parameters.put(fieldName, value);
+        this.where().condition().and(fieldName, value);
         return this;
     }
 
-    private void addConditional(String columnName, String fieldName, String operator, Object value) {
-        if (null == this.condition) {
-            this.condition = new Condition();
-        }
+    public boolean hasWhereClause() {
+        return null != this.where
+                && CollectionUtils.isNotEmpty(this.where.getConditions())
+                && CollectionUtils.isNotEmpty(this.where.getConditions().get(0).getExpressions());
+    }
 
-        if (null == columnName) {
-            columnName = NamingParseStrategy.INST.parseFieldName2ColumnName(fieldName);
-        }
-
-        this.condition.and(columnName, fieldName, operator, value);
+    public void addParameter(String key, Object value) {
+        this.parameters.put(key, value);
     }
 }

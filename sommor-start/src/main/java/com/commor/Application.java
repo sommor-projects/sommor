@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
  */
 @SpringBootApplication
 @Import(SommorConfiguration.class)
-@MapperScan("com.sommor.*.repository")
+@MapperScan("com.sommor.bundles.*.repository")
 @ComponentScan({
     "com.sommor"
 })

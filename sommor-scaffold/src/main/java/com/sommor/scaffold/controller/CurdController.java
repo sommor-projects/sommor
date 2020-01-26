@@ -2,18 +2,19 @@ package com.sommor.scaffold.controller;
 
 import com.sommor.api.response.ApiResponse;
 import com.sommor.mybatis.entity.BaseEntity;
-import com.sommor.mybatis.query.EntityQueryParam;
-import com.sommor.mybatis.query.PagingResult;
-import com.sommor.mybatis.query.Query;
-import com.sommor.scaffold.param.EntityFormRenderParam;
-import com.sommor.scaffold.param.EntityInfoParam;
+import com.sommor.mybatis.entity.definition.EntityManager;
+import com.sommor.scaffold.param.EntityDeleteParam;
 import com.sommor.scaffold.service.CurdManager;
 import com.sommor.scaffold.service.CurdService;
 import com.sommor.scaffold.utils.ClassAnnotatedTypeParser;
-import com.sommor.view.FormView;
-import com.sommor.view.PageView;
-import com.sommor.view.form.EntityForm;
+import com.sommor.scaffold.view.FormView;
+import com.sommor.scaffold.view.DetailView;
+import com.sommor.scaffold.view.TableView;
+import com.sommor.scaffold.view.field.action.Add;
+import com.sommor.scaffold.view.field.action.Edit;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,12 +27,13 @@ import java.util.List;
  */
 public class CurdController<
         Entity extends BaseEntity,
-        Form extends EntityForm<Entity>,
-        FormRenderParam extends EntityFormRenderParam,
-        EntityInfo,
-        InfoParam extends EntityInfoParam,
-        EntityListItem,
-        QueryParam extends EntityQueryParam> {
+        Form,
+        FormRenderParam,
+        Detail,
+        DetailParam,
+        Table,
+        QueryParam>
+        implements ApplicationListener<ContextRefreshedEvent> {
 
     private Class entityClass;
 
@@ -39,6 +41,7 @@ public class CurdController<
     private CurdManager curdManager;
 
     private CurdService curdService;
+
 
     public CurdController() {
         Class[] classes = ClassAnnotatedTypeParser.parse(this.getClass());
@@ -64,17 +67,17 @@ public class CurdController<
     @ApiOperation(value = "列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @SuppressWarnings("unchecked")
-    public ApiResponse<PagingResult<EntityListItem>> renderList(QueryParam queryParam) {
-        PagingResult<EntityListItem> pagingResult = curdService().renderList(queryParam);
-        return ApiResponse.success(pagingResult);
+    public ApiResponse<TableView> renderTable(QueryParam queryParam) {
+        TableView tableView = curdService().renderTable(queryParam);
+        return ApiResponse.success(tableView);
     }
 
     @ApiOperation(value = "详情")
-    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    @RequestMapping(value = "/detail", method = RequestMethod.GET)
     @SuppressWarnings("unchecked")
-    public ApiResponse<PageView<EntityInfo>> renderInfo(InfoParam param) {
-        PageView<EntityInfo> pageView = curdService().renderInfo(param);
-        return ApiResponse.success(pageView);
+    public ApiResponse<DetailView> renderDetail(DetailParam param) {
+        DetailView detailView = curdService().renderDetail(param);
+        return ApiResponse.success(detailView);
     }
 
     @ApiOperation(value = "表单")
@@ -85,10 +88,18 @@ public class CurdController<
         return ApiResponse.success(formView);
     }
 
-    @ApiOperation(value = "保存")
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
+    @ApiOperation(value = "添加")
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
     @SuppressWarnings("unchecked")
-    public ApiResponse<Entity> save(@Validated @RequestBody Form form) {
+    public ApiResponse<Entity> add(@Validated({Add.class}) @RequestBody Form form) {
+        Entity entity = (Entity) curdService().saveForm(form);
+        return ApiResponse.success(entity);
+    }
+
+    @ApiOperation(value = "添加")
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    @SuppressWarnings("unchecked")
+    public ApiResponse<Entity> edit(@Validated({Edit.class}) @RequestBody Form form) {
         Entity entity = (Entity) curdService().saveForm(form);
         return ApiResponse.success(entity);
     }
@@ -96,7 +107,8 @@ public class CurdController<
     @ApiOperation(value = "删除")
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @SuppressWarnings("unchecked")
-    public ApiResponse<Entity> delete(@RequestParam("id") Integer id) {
+    public ApiResponse<Entity> delete(@RequestBody EntityDeleteParam param) {
+        Integer id = param.getId();
         Entity entity = (Entity) curdService().delete(id);
         return ApiResponse.success(entity);
     }
@@ -104,8 +116,15 @@ public class CurdController<
     @ApiOperation(value = "批量删除")
     @RequestMapping(value = "/delete-batch", method = RequestMethod.POST)
     @SuppressWarnings("unchecked")
-    public ApiResponse<List<Entity>> deleteBatch(@RequestParam("ids") List<Integer> ids) {
-        List<Entity> entities = curdService().deleteBatch(ids);
+    public ApiResponse<List<Entity>> deleteBatch(@RequestBody EntityDeleteParam param) {
+        List<Entity> entities = curdService().deleteBatch(param.getIds());
         return ApiResponse.success(entities);
     }
+
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        EntityManager.getDefinition(this.entityClass);
+    }
 }
+
+

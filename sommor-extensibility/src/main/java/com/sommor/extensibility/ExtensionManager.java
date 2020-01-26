@@ -7,6 +7,7 @@ import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author yanguanwei@qq.com
@@ -88,12 +89,26 @@ public class ExtensionManager {
         return getImplementors(extensionClass, Void.class);
     }
 
+    public <Ext> List<Ext> getImplements(Class<Ext> extensionClass) {
+        return getImplements(extensionClass, Void.class);
+    }
+
+    public <Ext> List<Ext> getImplements(Class<Ext> extensionClass, Class annotatedType) {
+        return getImplementors(extensionClass, annotatedType)
+                .stream()
+                .map(p -> (Ext) p.getTarget())
+                .collect(Collectors.toList());
+    }
+
     public List<Implementor> getImplementors(Class extensionClass, Class annotatedType) {
         Map<Class, List<Implementor>> implementorsMapByAnnotatedType = implementorsMapByExtension.get(extensionClass);
+        List<Implementor> implementors = null;
+
         if (null != implementorsMapByAnnotatedType) {
-            return implementorsMapByAnnotatedType.get(annotatedType);
+            implementors = implementorsMapByAnnotatedType.get(annotatedType);
         }
-        return null;
+
+        return null == implementors ? Collections.emptyList() : implementors;
     }
 
     public ExtensionDefinition getExtensionDefinition(Class extensionClass) {

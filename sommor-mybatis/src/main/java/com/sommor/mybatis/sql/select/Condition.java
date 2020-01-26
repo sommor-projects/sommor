@@ -1,15 +1,9 @@
 package com.sommor.mybatis.sql.select;
 
-import com.sommor.mybatis.sql.field.type.Array;
 import lombok.Getter;
-import lombok.Setter;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 /**
  * @author yanguanwei@qq.com
@@ -17,100 +11,119 @@ import java.util.stream.Collectors;
  */
 public class Condition {
 
+    @Getter
     private List<ConditionExpression> expressions = new ArrayList<>();
 
-    @Setter
-    private String tableAlias;
-
-    @Getter
-    private class ConditionExpression {
-        private String andOr;
-        private String fieldName;
-        private String columnName;
-        private String operator;
-
-        public ConditionExpression(String andOr, String fieldName, String columnName, String operator) {
-            this.andOr = andOr;
-            this.fieldName = fieldName;
-            this.columnName = columnName;
-            this.operator = operator;
+    public void setColumnPrefix(String columnPrefix) {
+        for (ConditionExpression expression : expressions) {
+            if (null == expression.getColumnPrefix()) {
+                expression.columnPrefix(columnPrefix);
+            }
         }
     }
 
-    public Condition() {
+    public void setFieldPrefix(String fieldPrefix) {
+        for (ConditionExpression expression : expressions) {
+            if (null == expression.getFieldPrefix()) {
+                expression.fieldPrefix(fieldPrefix);
+            }
+        }
     }
 
-    public Condition(String tableAlias) {
-        this.tableAlias = tableAlias;
-    }
+    public Condition add(ConditionExpression expression) {
+        this.expressions.add(expression);
 
-    @Setter
-    private String entityPrefix;
-
-    public Condition and(String columnName, String fieldName, String operator, Object value) {
-        this.add("AND", columnName, fieldName, operator, value);
         return this;
     }
 
-    public Condition or(String columnName, String fieldName, String operator, Object value) {
-        this.add("OR", columnName, fieldName, operator, value);
+    public Condition and(String fieldName, Object value) {
+        return and(fieldName, null, null, value);
+    }
+
+    public Condition and(String fieldName, ConditionOperator operator, Object value) {
+        return and(fieldName, null, operator, value);
+    }
+
+    public Condition andLike(String fieldName, Object value) {
+        return and(fieldName, null, ConditionOperator.LIKE, value);
+    }
+
+    public Condition and(String fieldName, String columnName, Object value) {
+        return and(fieldName, columnName, null, value);
+    }
+
+    public Condition and(String fieldName, String columnName, ConditionOperator operator, Object value) {
+        ConditionExpression expression = ConditionExpression.of("AND", fieldName, columnName, operator, value);
+        this.add(expression);
+
         return this;
     }
 
-    private void add(String andOr, String columnName, String fieldName, String operator, Object value) {
-        if (expressions.isEmpty()) {
-            andOr = null;
-        }
+    public Condition or(String fieldName, Object value) {
+        return or(fieldName, null, null, value);
+    }
 
-        if (value instanceof Array && ((Array) value).size() > 1) {
-            operator = "in";
-        }
+    public Condition orLike(String fieldName, Object value) {
+        return or(fieldName, null, ConditionOperator.LIKE, value);
+    }
 
-        this.expressions.add(
-                new ConditionExpression(andOr, fieldName, columnName, operator)
-        );
+    public Condition or(String fieldName, String columnName, Object value) {
+        return or(fieldName, columnName, null, value);
+    }
+
+    public Condition or(String fieldName, String columnName, ConditionOperator operator, Object value) {
+        ConditionExpression expression = ConditionExpression.of("OR", fieldName, columnName, operator, value);
+        this.add(expression);
+
+        return this;
     }
 
     public String toExpression() {
-        if (CollectionUtils.isEmpty(this.expressions)) {
+        if (CollectionUtils.isEmpty(expressions)) {
             return "";
         }
 
-        return this.expressions.stream().map( e -> {
-            StringBuilder builder = new StringBuilder();
-            if (null != e.getAndOr()) {
-                builder.append(e.getAndOr()).append(" ");
-            }
-            builder.append("(");
-            if (null != this.tableAlias) {
-                builder.append(this.tableAlias).append(".");
-            }
+        StringBuilder builder = new StringBuilder();
+        builder.append("(");
 
-            builder.append(e.getColumnName()).append(" ").append(e.getOperator()).append(" ");
-
-            String fieldName = e.getFieldName();
-            if (null != this.entityPrefix) {
-                fieldName = this.entityPrefix + "." + fieldName;
+        for (ConditionExpression expression : expressions) {
+            if (builder.length() > 1) {
+                builder.append(" ")
+                        .append(expression.getAndOr())
+                        .append(" ");
             }
 
-            if ("in".equalsIgnoreCase(e.getOperator())) {
+            if (null != expression.getColumnPrefix()) {
+                builder.append(expression.getColumnPrefix())
+                        .append(".");
+            }
+
+            builder.append(expression.getColumnName())
+                    .append(" ")
+                    .append(expression.getOperator())
+                    .append(" ");
+
+            String fieldName = expression.getFieldName();
+            if (null != expression.getFieldPrefix()) {
+                fieldName = expression.getFieldPrefix() + "." + fieldName;
+            }
+
+            if ("in".equalsIgnoreCase(expression.getOperator())) {
                 builder.append("(${").append(fieldName).append("})");
+            } else if ("like".equalsIgnoreCase(expression.getOperator())) {
+                builder.append("CONCAT('%',#{").append(fieldName).append("},'%')");
             } else {
                 builder.append("#{").append(fieldName).append("}");
             }
-            builder.append(")");
+        }
 
-            return builder.toString();
-        }).collect(Collectors.joining(" "));
+        builder.append(")");
+
+        return builder.toString();
     }
 
     @Override
     public String toString() {
-        String expression = toExpression();
-        if (! StringUtils.isEmpty(expression)) {
-            expression = "WHERE " + expression;
-        }
-
-        return expression;
+        return toExpression();
     }
 }

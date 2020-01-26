@@ -11,7 +11,7 @@ import com.qiniu.util.StringMap;
 import com.sommor.api.error.ErrorCode;
 import com.sommor.api.error.ErrorCodeException;
 import com.sommor.extensibility.config.Implement;
-import com.sommor.media.model.UploadedFile;
+import com.sommor.bundles.media.model.UploadedFile;
 import com.sommor.scaffold.qiniu.model.QiniuUploadResult;
 import com.sommor.scaffold.qiniu.settings.QiniuSettings;
 import com.sommor.scaffold.service.AppLauncher;

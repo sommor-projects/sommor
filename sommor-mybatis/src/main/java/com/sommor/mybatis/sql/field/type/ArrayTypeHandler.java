@@ -27,21 +27,7 @@ public class ArrayTypeHandler extends BaseTypeHandler<Array> {
     }
 
     private String getValueString(Array parameter) {
-        StringBuilder builder = new StringBuilder();
-
-        for (Object value : parameter.getCollection()) {
-            if (builder.length() > 0) {
-                builder.append(",");
-            }
-
-            if (value instanceof Number) {
-                builder.append(value);
-            } else {
-                builder.append("'").append(value).append("'");
-            }
-        }
-
-        return builder.toString();
+        return parameter.toString();
     }
 
     @Override

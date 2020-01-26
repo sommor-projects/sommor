@@ -22,6 +22,7 @@ public class SpringSommorLauncher implements BeanPostProcessor {
         if (null != implement) {
             Plugin plugin = PluginManager.getInstance().match(bean.getClass());
             //if (null != plugin) {
+            System.out.println("implementor: " + bean.getClass().getName());
                 Implementor<?> implementor = new Implementor<>(plugin, bean, implement.priority());
                 ExtensionManager.getInstance().registerImplementor(implementor);
             //}

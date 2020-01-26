@@ -2,6 +2,8 @@ package com.sommor.scaffold.service;
 
 import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.mybatis.entity.definition.EntityClassParser;
+import com.sommor.mybatis.entity.definition.EntityDefinition;
+import com.sommor.mybatis.entity.definition.EntityManager;
 import com.sommor.mybatis.repository.CurdRepository;
 import com.sommor.scaffold.utils.ClassAnnotatedTypeParser;
 import org.springframework.beans.BeansException;
@@ -40,11 +42,16 @@ public class CurdManager implements BeanPostProcessor {
         return classes[0];
     }
 
-    public <Entity extends BaseEntity> CurdRepository<Entity> getCurdRepository(Class<Entity> entityClass) {
+    public static <Entity extends BaseEntity> CurdRepository<Entity> getCurdRepository(Class<Entity> entityClass) {
         return entityRepositoryMap.get(entityClass);
     }
 
-    public <Entity extends BaseEntity> CurdService getCurdService(Class<Entity> entityClass) {
+    public static <Entity extends BaseEntity> CurdRepository<Entity> getCurdRepository(String subject) {
+        EntityDefinition entityDefinition = EntityManager.getDefinitionBySubject(subject);
+        return entityRepositoryMap.get(entityDefinition.getEntityClass());
+    }
+
+    public static <Entity extends BaseEntity> CurdService getCurdService(Class<Entity> entityClass) {
         return entityServiceMap.get(entityClass);
     }
 }

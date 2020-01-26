@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,6 +29,12 @@ public class ErrorMessageExceptionHandler {
         if(e instanceof MethodArgumentNotValidException) {
             List<ErrorDetail> errorDetails = ((MethodArgumentNotValidException) e).getBindingResult().getFieldErrors().stream()
                     .map(p-> new ErrorDetail(p.getField(), p.getCode(), p.getDefaultMessage()))
+                    .collect(Collectors.toList());
+            ErrorCode errorCode = ErrorCode.of(errorDetails.get(0).getErrorCode());
+            return ApiResponse.error(errorCode, errorDetails);
+        } else if (e instanceof ConstraintViolationException) {
+            List<ErrorDetail> errorDetails = ((ConstraintViolationException) e).getConstraintViolations().stream()
+                    .map(p -> new ErrorDetail(p.getPropertyPath().toString(), p.getMessageTemplate(), p.getMessage()))
                     .collect(Collectors.toList());
             ErrorCode errorCode = ErrorCode.of(errorDetails.get(0).getErrorCode());
             return ApiResponse.error(errorCode, errorDetails);

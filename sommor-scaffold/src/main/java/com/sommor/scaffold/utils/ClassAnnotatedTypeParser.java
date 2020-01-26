@@ -1,10 +1,14 @@
 package com.sommor.scaffold.utils;
 
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -54,18 +58,28 @@ public class ClassAnnotatedTypeParser {
     }
 
     private static Class[] parseEntityClass(AnnotatedType annotatedType) {
-        Class[] classes = null;
+        List<Class> classes = new ArrayList<>();
 
         if (null != annotatedType && annotatedType.getType() instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) annotatedType.getType();
             Type[] types = parameterizedType.getActualTypeArguments();
-            classes = Arrays.stream(types)
-                    .filter(type -> type instanceof Class)
-                    .map(type -> (Class) type)
-                    .collect(Collectors.toList()).toArray(new Class[0]);
+            for (Type type : types) {
+                if (type instanceof Class) {
+                    classes.add((Class) type);
+                } else if (type instanceof ParameterizedType) {
+                    Type rawType = ((ParameterizedType) type).getRawType();
+                    if (rawType instanceof Class) {
+                        classes.add((Class) rawType);
+                    } else {
+                        throw new RuntimeException("unknown rawType: " + rawType.getTypeName());
+                    }
+                } else {
+                    throw new RuntimeException("unknown type: " + type.getTypeName());
+                }
+            }
         }
 
-        return classes;
+        return classes.toArray(new Class[0]);
     }
 
     private static Class resolveTargetClass(Class targetClass) {

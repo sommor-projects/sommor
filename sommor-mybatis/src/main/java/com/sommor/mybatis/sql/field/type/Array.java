@@ -25,4 +25,23 @@ public class Array {
     public int size() {
         return collection == null ? 0 : collection.size();
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+
+        for (Object value : this.getCollection()) {
+            if (builder.length() > 0) {
+                builder.append(",");
+            }
+
+            if (value instanceof Number) {
+                builder.append(value);
+            } else {
+                builder.append("'").append(value).append("'");
+            }
+        }
+
+        return builder.toString();
+    }
 }

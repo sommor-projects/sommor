@@ -15,4 +15,6 @@ public @interface QueryConfig {
 
     boolean enableOrderly() default false;
 
+    String[] searchFieldsOfKeywords() default {};
+
 }
