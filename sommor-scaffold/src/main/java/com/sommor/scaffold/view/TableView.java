@@ -2,7 +2,7 @@ package com.sommor.scaffold.view;
 
 import com.sommor.mybatis.query.PagingResult;
 import com.sommor.scaffold.view.field.DataSource;
-import com.sommor.scaffold.view.field.OnTableRender;
+import com.sommor.scaffold.view.field.OnTableRowFill;
 import com.sommor.scaffold.view.field.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,9 +46,9 @@ public class TableView extends FieldsetView {
         Table table = this.table;
         this.renderFieldsetView(this);
 
-        OnTableRender onTableRender = null;
-        if (table.getTargetData().getTarget() instanceof OnTableRender) {
-            onTableRender = (OnTableRender) table.getTargetData().getTarget();
+        OnTableRowFill onTableRowFill = null;
+        if (table.getTargetData().getTarget() instanceof OnTableRowFill) {
+            onTableRowFill = (OnTableRowFill) table.getTargetData().getTarget();
         }
 
         int row = 0;
@@ -56,8 +56,8 @@ public class TableView extends FieldsetView {
         for (Object entity : pagingResult.getData()) {
             DataSource sourceData = new DataSource(entity);
             table.fill(sourceData);
-            if (null != onTableRender) {
-                onTableRender.onTableRender(row, total, sourceData);
+            if (null != onTableRowFill) {
+                onTableRowFill.onTableRowFill(row, total, sourceData);
             }
             tableData.add(table.toData());
         }

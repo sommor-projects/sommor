@@ -8,7 +8,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2020/1/25
  */
-public class EntityTable implements OnFieldFill, OnTableRender {
+public class EntityTable implements OnFill, OnTableRowFill {
 
     @Getter
     @Setter
@@ -16,10 +16,10 @@ public class EntityTable implements OnFieldFill, OnTableRender {
     private Integer id;
 
     @Override
-    public void onFieldFill(DataSource targetData) {
+    public void onFill(DataSource targetData) {
     }
 
     @Override
-    public void onTableRender(int row, int total, DataSource dataSource) {
+    public void onTableRowFill(int row, int total, DataSource dataSource) {
     }
 }

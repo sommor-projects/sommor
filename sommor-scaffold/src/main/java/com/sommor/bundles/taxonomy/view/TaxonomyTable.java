@@ -46,8 +46,8 @@ public class TaxonomyTable extends EntityTable {
     private TaxonomyRepository taxonomyRepository = ApplicationContextHolder.getBean(TaxonomyRepository.class);
 
     @Override
-    public void onTableRender(int row, int total, DataSource dataSource) {
-        super.onTableRender(row, total, dataSource);
+    public void onTableRowFill(int row, int total, DataSource dataSource) {
+        super.onTableRowFill(row, total, dataSource);
 
         this.highestPriority = row == 0;
         this.lowestPriority = row == total - 1;

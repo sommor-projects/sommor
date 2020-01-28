@@ -7,6 +7,7 @@ import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.mybatis.entity.definition.EntityDefinition;
 import com.sommor.mybatis.entity.definition.EntityManager;
 import com.sommor.mybatis.repository.CurdRepository;
+import com.sommor.scaffold.view.Option;
 import com.sommor.scaffold.view.field.FieldContext;
 import com.sommor.scaffold.view.field.FieldRenderContext;
 import com.sommor.scaffold.service.CurdManager;
@@ -27,14 +28,17 @@ public class SubjectSelectFieldProcessor implements FieldProcessor<SubjectSelect
 
         view.setSubject(subject);
 
-        EntityDefinition ed = EntityManager.getDefinitionBySubject(subject);
         Integer id = ctx.getFieldValue();
 
-        CurdRepository curdRepository = CurdManager.getCurdRepository(ed.getEntityClass());
-        BaseEntity entity = curdRepository.findById(id);
-        String title = entity.getFieldValue(ed.getFieldDefinition(subjectSelectField.entityTitleName()));
+        if (null != id && id > 0) {
+            EntityDefinition ed = EntityManager.getDefinitionBySubject(subject);
 
-        view.addOption(title, String.valueOf(id));
+            CurdRepository curdRepository = CurdManager.getCurdRepository(ed.getEntityClass());
+            BaseEntity entity = curdRepository.findById(id);
+
+            Option option = CurdManager.getCurdService(ed.getEntityClass()).convertSelectOption(entity);
+            view.addOption(option);
+        }
     }
 
     @Override

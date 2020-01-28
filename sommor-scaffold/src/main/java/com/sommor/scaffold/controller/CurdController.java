@@ -9,6 +9,7 @@ import com.sommor.scaffold.service.CurdService;
 import com.sommor.scaffold.utils.ClassAnnotatedTypeParser;
 import com.sommor.scaffold.view.FormView;
 import com.sommor.scaffold.view.DetailView;
+import com.sommor.scaffold.view.Option;
 import com.sommor.scaffold.view.TableView;
 import com.sommor.scaffold.view.field.action.Add;
 import com.sommor.scaffold.view.field.action.Edit;
@@ -70,6 +71,14 @@ public class CurdController<
     public ApiResponse<TableView> renderTable(QueryParam queryParam) {
         TableView tableView = curdService().renderTable(queryParam);
         return ApiResponse.success(tableView);
+    }
+
+    @ApiOperation(value = "选项")
+    @RequestMapping(value = "/select", method = RequestMethod.GET)
+    @SuppressWarnings("unchecked")
+    public ApiResponse<List<Option>> renderSelect(QueryParam queryParam) {
+        List<Option> options = curdService().renderSelect(queryParam);
+        return ApiResponse.success(options);
     }
 
     @ApiOperation(value = "详情")

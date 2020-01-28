@@ -1,12 +1,16 @@
 package com.sommor.bundles.user.view;
 
 import com.sommor.bundles.media.fields.file.MediaFiles;
+import com.sommor.bundles.media.fields.file.MediaFilesField;
 import com.sommor.bundles.user.entity.UserEntity;
 import com.sommor.bundles.user.fields.gender.GenderField;
 import com.sommor.scaffold.view.field.EntityForm;
+import com.sommor.scaffold.view.field.action.Add;
 import com.sommor.scaffold.view.field.config.TextField;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.validation.constraints.NotBlank;
 
 /**
  * @author yanguanwei@qq.com
@@ -16,23 +20,26 @@ public class UserForm extends EntityForm {
 
     @Getter
     @Setter
-    @TextField
+    @NotBlank
+    @TextField(title = "用户名")
     private String userName;
 
     @Getter @Setter
-    @TextField
+    @TextField(title = "手机号")
     private String mobilePhone;
 
     @Getter @Setter
-    @TextField
+    @TextField(title = "E-Mail")
     private String email;
 
     @Getter @Setter
-    @TextField
+    @NotBlank(groups = {Add.class})
+    @TextField(title = "密码")
     private String password;
 
     @Getter @Setter
-    @TextField
+    @NotBlank
+    @TextField(title = "昵称")
     private String nickName;
 
     /**
@@ -40,9 +47,10 @@ public class UserForm extends EntityForm {
      * @see UserEntity#GENDER_FEMALE
      */
     @Getter @Setter
-    @GenderField
+    @GenderField(title = "性别")
     private Integer gender;
 
     @Getter @Setter
+    @MediaFilesField(maxCount = 1, title = "头像")
     private MediaFiles avatar;
 }

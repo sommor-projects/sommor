@@ -31,9 +31,6 @@ public class TaxonomySelectView extends SelectView {
     private Integer parentId;
 
     @Setter
-    private boolean tree;
-
-    @Setter
     private boolean rootSelection;
 
     @Setter
@@ -48,12 +45,7 @@ public class TaxonomySelectView extends SelectView {
         Integer typeId = this.typeId;
         String type = this.type;
 
-        if (this.tree) {
-        }
-
-        if (this.tree) {
-            this.tree();
-
+        if (this.isTree()) {
             if (null == typeId || typeId <= 0) {
                 if (StringUtils.isNoneBlank(type)) {
                     TaxonomyEntity typeEntity = taxonomyRepository.findByType(type);
@@ -61,7 +53,7 @@ public class TaxonomySelectView extends SelectView {
                         throw new ErrorCodeException(ErrorCode.of("type is not exists", type));
                     }
                     typeId = typeEntity.getId();
-                } else if (null != parentId && parentId >= 0) {
+                } else if (null != parentId && parentId > 0) {
                     TaxonomyEntity parentEntity = taxonomyRepository.findById(parentId);
                     if (null == parentEntity) {
                         throw new ErrorCodeException(ErrorCode.of("parentId is not exists", parentId));

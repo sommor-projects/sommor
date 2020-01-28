@@ -36,8 +36,8 @@ public class UserProfile extends EntityDetail {
 
 
     @Override
-    public void onFieldFill(DataSource targetData) {
-        super.onFieldFill(targetData);
+    public void onFill(DataSource targetData) {
+        super.onFill(targetData);
         this.setUserId(this.getId());
     }
 

@@ -46,31 +46,10 @@ public class PostService extends CurdService<
     }
 
     @Override
-    protected void onTableQuery(PostQueryParam postQueryParam, Query query) {
-        super.onTableQuery(postQueryParam, query);
-
-        TaxonomyEntity taxonomyEntity = parseTaxonomy(postQueryParam.getTypeId(), postQueryParam.getType());
-        if (null == taxonomyEntity) {
-            throw new ErrorCodeException(ErrorCode.of("post.query.type.invalid", postQueryParam.getTypeId(), postQueryParam.getType()));
-        }
-
-        postQueryParam.setTypeId(taxonomyEntity.getId());
-    }
-
-    private TaxonomyEntity parseTaxonomy(Integer typeId, String type) {
-        if (null != typeId) {
-            return taxonomyRepository.findById(typeId);
-        } else if (null != type) {
-            return taxonomyRepository.findByType(type);
-        }
-
-        return null;
-    }
-
-    @Override
     protected void onFormSaving(Form form, PostEntity entity, PostEntity originalEntity) {
         super.onFormSaving(form, entity, originalEntity);
-
-        entity.setUserId(AuthenticationHolder.getAuthUser().getUserId());
+        if (null == entity.getUserId()) {
+            entity.setUserId(AuthenticationHolder.getAuthUser().getUserId());
+        }
     }
 }

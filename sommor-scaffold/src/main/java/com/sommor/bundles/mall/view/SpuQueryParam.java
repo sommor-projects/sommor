@@ -1,6 +1,6 @@
 package com.sommor.bundles.mall.view;
 
-import com.sommor.mybatis.query.config.Conditional;
+import com.sommor.scaffold.fields.conditional.Conditional;
 import com.sommor.scaffold.fields.keywords.KeywordsField;
 import com.sommor.scaffold.param.EntitySearchParam;
 import lombok.Getter;

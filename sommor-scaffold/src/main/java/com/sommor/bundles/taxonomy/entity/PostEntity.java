@@ -15,6 +15,9 @@ import lombok.Setter;
 public class PostEntity extends ConfigurableEntity {
 
     @Column
+    private Integer taxonomy;
+
+    @Column
     private String subject;
 
     @Column

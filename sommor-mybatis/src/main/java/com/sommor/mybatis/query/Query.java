@@ -1,19 +1,12 @@
 package com.sommor.mybatis.query;
 
 import com.sommor.mybatis.entity.naming.NamingParseStrategy;
-import com.sommor.mybatis.query.config.Conditional;
-import com.sommor.mybatis.query.config.QueryConfig;
 import com.sommor.mybatis.sql.select.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

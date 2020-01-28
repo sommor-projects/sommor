@@ -4,9 +4,12 @@ import com.sommor.scaffold.context.Extensible;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.groups.Default;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -54,9 +57,16 @@ public class FieldDefinition extends Extensible {
     @Setter
     private Annotation fieldConfig;
 
-    @Getter
-    @Setter
-    private FieldConstraints constraints = new FieldConstraints();
+    private Map<Class, FieldConstraints> constraintsMap = new HashMap<>();
+
+    public FieldConstraints getConstraints(Class group) {
+        FieldConstraints fieldConstraints = constraintsMap.computeIfAbsent(group, p->new FieldConstraints());
+        return fieldConstraints;
+    }
+
+    public FieldConstraints getConstraints() {
+        return getConstraints(Default.class);
+    }
 
     public <Field extends Annotation> Field getFieldConfig() {
         return (Field) this.fieldConfig;

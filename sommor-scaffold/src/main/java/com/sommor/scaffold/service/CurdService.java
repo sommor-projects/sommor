@@ -106,6 +106,28 @@ public class CurdService<
         return tableView;
     }
 
+    public List<Option> renderSelect(SearchParam searchParam) {
+        Form form = new Form(searchParam);
+        form.setAction(Search.ACTION);
+
+        Query query = new Query();
+        form.query(query);
+        this.onTableQuery(searchParam, query);
+
+        PagingResult<Entity> pagingResult = curdRepository().findByPaging(query);
+
+        List<Option> options = new ArrayList<>();
+        for (Entity entity : pagingResult.getData()) {
+            Option option = convertSelectOption(entity);
+            options.add(option);
+        }
+        return options;
+    }
+
+    public Option convertSelectOption(Entity entity) {
+        return new Option(entity.getFieldValue("title"), entity.getId());
+    }
+
     protected void onTableQuery(SearchParam searchParam, Query query) {
     }
 

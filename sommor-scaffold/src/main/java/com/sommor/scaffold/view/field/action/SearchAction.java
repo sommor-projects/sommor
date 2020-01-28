@@ -4,7 +4,12 @@ package com.sommor.scaffold.view.field.action;
  * @author yanguanwei@qq.com
  * @since 2019/12/28
  */
-public class SearchAction implements FormAction {
+public class SearchAction extends AbstractAction {
+
+    public SearchAction() {
+        super(Search.class);
+    }
+
     @Override
     public String action() {
         return "search";

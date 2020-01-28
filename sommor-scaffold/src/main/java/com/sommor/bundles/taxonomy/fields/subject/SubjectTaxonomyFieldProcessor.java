@@ -58,7 +58,7 @@ public class SubjectTaxonomyFieldProcessor implements FieldProcessor<SubjectTaxo
                 taxonomySelectView.setStyle(te.getConfig().getString("fs"));
                 taxonomySelectView.setTitle(te.getTitle());
                 taxonomySelectView.setTypeId(taxonomyRelationConfig.getTypeId());
-                taxonomySelectView.setTree(true);
+                taxonomySelectView.tree();
                 if (Boolean.TRUE.equals(taxonomyRelationConfig.getMultiple())) {
                     taxonomySelectView.multiple();
                 }

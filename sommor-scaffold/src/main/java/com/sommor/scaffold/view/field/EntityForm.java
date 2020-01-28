@@ -8,12 +8,16 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2019/12/29
  */
-public class EntityForm implements OnFieldRender {
+public class EntityForm implements OnFieldRender, OnFill {
     @Getter
     @Setter
     private Integer id;
 
     @Override
     public void onFieldRender(FieldView fieldView) {
+    }
+
+    @Override
+    public void onFill(DataSource targetData) {
     }
 }

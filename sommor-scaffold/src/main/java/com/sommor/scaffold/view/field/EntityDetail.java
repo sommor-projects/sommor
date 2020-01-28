@@ -8,7 +8,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2020/1/25
  */
-public class EntityDetail implements OnFieldFill {
+public class EntityDetail implements OnFill {
 
     @Getter
     @Setter
@@ -16,7 +16,7 @@ public class EntityDetail implements OnFieldFill {
     private Integer id;
 
     @Override
-    public void onFieldFill(DataSource targetData) {
+    public void onFill(DataSource targetData) {
     }
 
     public void fill(Object source) {

@@ -4,7 +4,10 @@ import com.sommor.scaffold.view.field.FieldRenderContext;
 import com.sommor.scaffold.view.field.Form;
 import com.sommor.scaffold.view.field.FieldDefinition;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.util.Map;
 
 /**
@@ -70,5 +73,15 @@ public class FormView extends FieldsetView {
         }
 
         super.onFieldRender(ctx);
+
+        renderConstraints(ctx.getFieldView());
+    }
+
+    private void renderConstraints(FieldView fieldView) {
+        FieldDefinition fd = fieldView.definition();
+        if (null != fd) {
+            Class actionClass = this.form.getAction().actionClass();
+            fieldView.getConstraints().merge(fd.getConstraints(actionClass));
+        }
     }
 }

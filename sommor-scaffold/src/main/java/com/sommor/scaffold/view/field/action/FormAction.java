@@ -6,6 +6,8 @@ package com.sommor.scaffold.view.field.action;
  */
 public interface FormAction {
 
+    Class actionClass();
+
     String action();
 
     String actionTitle();

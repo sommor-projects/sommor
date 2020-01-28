@@ -24,7 +24,7 @@ public class ControllerAspect {
 
     @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
     public Object aroundController(ProceedingJoinPoint joinPoint) throws Throwable {
-        int sleepTime = new Random(System.currentTimeMillis()).nextInt(2000);
+        int sleepTime = new Random(System.currentTimeMillis()).nextInt(1000);
         if (sleepTime > 0) {
             Thread.sleep(sleepTime);
         }

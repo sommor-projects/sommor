@@ -7,5 +7,5 @@ import javax.validation.groups.Default;
  * @since 2019/12/16
  */
 public interface Edit extends Default {
-    EditionAction ACTION = new EditionAction();
+    EditAction ACTION = new EditAction();
 }

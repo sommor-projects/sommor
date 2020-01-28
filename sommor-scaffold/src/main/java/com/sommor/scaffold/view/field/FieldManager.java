@@ -7,6 +7,7 @@ import com.sommor.scaffold.view.field.config.FieldsetConfig;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.validation.groups.Default;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -201,21 +202,40 @@ public class FieldManager {
     private static void enrichConstraints(Field field, FieldDefinition definition) {
         NotBlank notBlank = field.getAnnotation(NotBlank.class);
         if (null != notBlank) {
-            definition.getConstraints().required();
+            Class[] groups = notBlank.groups();
+            if (groups.length == 0) {
+                groups = new Class[] { Default.class };
+            }
+            for (Class group : groups) {
+                definition.getConstraints(group).required();
+            }
         }
 
         NotNull notNull = field.getAnnotation(NotNull.class);
         if (null != notNull) {
-            definition.getConstraints().required();
+            Class[] groups = notNull.groups();
+            if (groups.length == 0) {
+                groups = new Class[] { Default.class };
+            }
+            for (Class group : groups) {
+                definition.getConstraints(group).required();
+            }
         }
 
         Size size = field.getAnnotation(Size.class);
         if (null != size) {
-            if (size.min() > 0) {
-                definition.getConstraints().minLength(size.min());
+            Class[] groups = notNull.groups();
+            if (groups.length == 0) {
+                groups = new Class[] { Default.class };
             }
-            if (size.max() > 0) {
-                definition.getConstraints().maxLength(size.max());
+            for (Class group : groups) {
+                FieldConstraints fc = definition.getConstraints(group);
+                if (size.min() > 0) {
+                    fc.minLength(size.min());
+                }
+                if (size.max() > 0) {
+                    fc.maxLength(size.max());
+                }
             }
         }
     }

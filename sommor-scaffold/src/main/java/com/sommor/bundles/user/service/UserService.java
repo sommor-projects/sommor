@@ -3,6 +3,7 @@ package com.sommor.bundles.user.service;
 import com.sommor.bundles.user.view.UserQueryParam;
 import com.sommor.bundles.user.view.UserDetail;
 import com.sommor.bundles.user.view.UserTable;
+import com.sommor.scaffold.view.Option;
 import com.sommor.scaffold.view.field.Form;
 import com.sommor.scaffold.param.EntityFormRenderParam;
 import com.sommor.scaffold.param.EntityDetailParam;
@@ -48,5 +49,11 @@ public class UserService extends CurdService<
         if (null == originalEntity) {
             originalEntity.setStatus(UserEntity.STATUS_NORMAL);
         }
+    }
+
+    @Override
+    public Option convertSelectOption(UserEntity entity) {
+        String label = entity.getUserName() + "(" + entity.getId() + ", " + entity.getNickName()+")";
+        return new Option(label, entity.getId());
     }
 }

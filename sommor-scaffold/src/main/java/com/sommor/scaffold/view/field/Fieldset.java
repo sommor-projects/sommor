@@ -57,6 +57,8 @@ public class Fieldset {
                         ext -> ext.processOnQuery(fd.getFieldConfig(), ctx)
                 );
             }
+
+            fieldInterceptor.run(ext -> ext.interceptOnQuery(ctx));
         }
     }
 
@@ -99,8 +101,8 @@ public class Fieldset {
         }
 
         Object target = targetData.getTarget();
-        if (target instanceof OnFieldFill) {
-            ((OnFieldFill) target).onFieldFill(sourceData);
+        if (target instanceof OnFill) {
+            ((OnFill) target).onFill(sourceData);
         }
     }
 
