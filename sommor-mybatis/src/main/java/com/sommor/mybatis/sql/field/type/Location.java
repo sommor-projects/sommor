@@ -14,16 +14,16 @@ public class Location {
      */
     @Getter
     @Setter
-    private double longitude;
+    private String longitude;
 
     /**
      * 经度
      */
     @Getter
     @Setter
-    private double latitude;
+    private String latitude;
 
-    public Location(double longitude, double latitude) {
+    public Location(String longitude, String latitude) {
         this.longitude = longitude;
         this.latitude = latitude;
     }

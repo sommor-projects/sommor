@@ -1,6 +1,6 @@
 package com.sommor.scaffold.fields.subject.select;
 
-import com.sommor.scaffold.view.SelectView;
+import com.sommor.core.view.SelectView;
 import lombok.Getter;
 import lombok.Setter;
 

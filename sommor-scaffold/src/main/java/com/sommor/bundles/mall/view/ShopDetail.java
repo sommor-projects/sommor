@@ -1,8 +1,8 @@
 package com.sommor.bundles.mall.view;
 
 import com.sommor.mybatis.sql.field.type.Location;
-import com.sommor.scaffold.view.field.EntityDetail;
-import com.sommor.scaffold.view.field.config.TextField;
+import com.sommor.core.view.field.EntityDetail;
+import com.sommor.core.view.field.config.TextField;
 import lombok.Getter;
 import lombok.Setter;
 

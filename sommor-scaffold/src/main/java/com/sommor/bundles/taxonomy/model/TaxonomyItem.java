@@ -15,15 +15,11 @@ public class TaxonomyItem implements Comparable<TaxonomyItem> {
 
     @Getter
     @Setter
-    private String name;
-
-    @Getter
-    @Setter
-    private String slug;
-
-    @Getter
-    @Setter
     private String title;
+
+    @Getter
+    @Setter
+    private String subTitle;
 
     @Getter
     @Setter
@@ -43,9 +39,8 @@ public class TaxonomyItem implements Comparable<TaxonomyItem> {
 
     public void from(TaxonomyEntity entity) {
         this.setId(entity.getId());
-        this.setName(entity.getSubTitle());
-        this.setSlug(entity.getSlug());
         this.setTitle(entity.getTitle());
+        this.setSubTitle(entity.getSubTitle());
         this.setPriority(entity.getPriority());
     }
 

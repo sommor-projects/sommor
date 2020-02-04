@@ -4,7 +4,7 @@ import com.sommor.bundles.user.view.UserQueryParam;
 import com.sommor.bundles.user.service.UserService;
 import com.sommor.bundles.user.view.UserDetail;
 import com.sommor.bundles.user.view.UserTable;
-import com.sommor.scaffold.controller.CurdController;
+import com.sommor.core.curd.CurdController;
 import com.sommor.scaffold.param.EntityFormRenderParam;
 import com.sommor.scaffold.param.EntityDetailParam;
 import com.sommor.bundles.user.config.Authority;

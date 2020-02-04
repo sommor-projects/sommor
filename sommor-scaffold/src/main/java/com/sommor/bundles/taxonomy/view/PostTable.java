@@ -1,6 +1,7 @@
 package com.sommor.bundles.taxonomy.view;
 
-import com.sommor.scaffold.view.field.EntityTable;
+import com.sommor.mybatis.sql.field.type.ConfigKey;
+import com.sommor.core.view.field.EntityTable;
 import com.sommor.scaffold.fields.datetime.DateTimeField;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,6 +35,11 @@ public class PostTable extends EntityTable {
     @Getter
     @Setter
     private String cover;
+
+    @Getter
+    @Setter
+    @ConfigKey
+    private String qrCode;
 
     @Getter
     @Setter

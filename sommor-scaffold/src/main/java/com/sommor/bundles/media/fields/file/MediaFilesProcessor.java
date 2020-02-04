@@ -11,11 +11,11 @@ import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.mybatis.entity.definition.EntityDefinition;
 import com.sommor.mybatis.entity.definition.EntityFieldDefinition;
 import com.sommor.mybatis.sql.field.type.Array;
-import com.sommor.scaffold.view.field.FieldContext;
-import com.sommor.scaffold.view.field.FieldRenderContext;
-import com.sommor.scaffold.view.field.FieldProcessor;
-import com.sommor.scaffold.view.field.FieldSaveContext;
-import com.sommor.scaffold.view.field.FieldDefinition;
+import com.sommor.core.view.field.FieldContext;
+import com.sommor.core.view.field.FieldRenderContext;
+import com.sommor.core.view.field.FieldProcessor;
+import com.sommor.core.view.field.FieldSaveContext;
+import com.sommor.core.view.field.FieldDefinition;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 

@@ -10,11 +10,11 @@ import com.sommor.bundles.media.fields.file.MediaFile;
 import com.sommor.bundles.media.model.UploadedFile;
 import com.sommor.bundles.media.repository.MediaFileRepository;
 import com.sommor.bundles.media.repository.MediaFileSubjectRelationRepository;
-import com.sommor.scaffold.view.field.EntityForm;
+import com.sommor.core.view.field.EntityForm;
 import com.sommor.scaffold.param.EntityFormRenderParam;
 import com.sommor.scaffold.param.EntityDetailParam;
-import com.sommor.scaffold.param.EntitySearchParam;
-import com.sommor.scaffold.service.CurdService;
+import com.sommor.scaffold.param.EntityQueryParam;
+import com.sommor.core.curd.CurdService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -32,7 +32,7 @@ public class MediaService extends CurdService<
         MediaFileEntity,
         EntityDetailParam,
         MediaFileTable,
-        EntitySearchParam> {
+        EntityQueryParam> {
 
     private MediaFileProcessor mediaFileProcessor = ExtensionExecutor.proxyOf(MediaFileProcessor.class);
 

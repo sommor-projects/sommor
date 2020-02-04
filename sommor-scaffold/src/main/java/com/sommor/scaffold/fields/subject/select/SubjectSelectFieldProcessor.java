@@ -7,11 +7,11 @@ import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.mybatis.entity.definition.EntityDefinition;
 import com.sommor.mybatis.entity.definition.EntityManager;
 import com.sommor.mybatis.repository.CurdRepository;
-import com.sommor.scaffold.view.Option;
-import com.sommor.scaffold.view.field.FieldContext;
-import com.sommor.scaffold.view.field.FieldRenderContext;
-import com.sommor.scaffold.service.CurdManager;
-import com.sommor.scaffold.view.field.FieldProcessor;
+import com.sommor.core.view.Option;
+import com.sommor.core.view.field.FieldContext;
+import com.sommor.core.view.field.FieldRenderContext;
+import com.sommor.core.curd.CurdManager;
+import com.sommor.core.view.field.FieldProcessor;
 
 /**
  * @author yanguanwei@qq.com

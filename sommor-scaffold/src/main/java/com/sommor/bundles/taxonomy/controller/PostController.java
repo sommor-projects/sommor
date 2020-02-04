@@ -1,6 +1,6 @@
 package com.sommor.bundles.taxonomy.controller;
 
-import com.sommor.scaffold.controller.CurdController;
+import com.sommor.core.curd.CurdController;
 import com.sommor.scaffold.param.EntityDetailParam;
 import com.sommor.bundles.taxonomy.entity.PostEntity;
 import com.sommor.bundles.taxonomy.view.PostForm;

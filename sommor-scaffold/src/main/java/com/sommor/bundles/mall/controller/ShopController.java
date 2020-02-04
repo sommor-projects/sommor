@@ -4,7 +4,7 @@ import com.sommor.bundles.mall.view.ShopQueryParam;
 import com.sommor.bundles.mall.view.ShopDetail;
 import com.sommor.bundles.mall.view.ShopTable;
 import com.sommor.bundles.taxonomy.view.SubjectFormRenderParam;
-import com.sommor.scaffold.controller.CurdController;
+import com.sommor.core.curd.CurdController;
 import com.sommor.scaffold.param.EntityDetailParam;
 import com.sommor.bundles.mall.entity.ShopEntity;
 import com.sommor.bundles.mall.view.ShopForm;

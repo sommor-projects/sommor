@@ -1,7 +1,7 @@
 package com.sommor.bundles.user.fields.gender;
 
-import com.sommor.scaffold.view.SelectView;
-import com.sommor.scaffold.view.field.config.FieldConfig;
+import com.sommor.core.view.SelectView;
+import com.sommor.core.view.field.config.FieldConfig;
 
 import java.lang.annotation.*;
 

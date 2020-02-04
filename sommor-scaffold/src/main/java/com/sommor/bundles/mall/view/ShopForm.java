@@ -2,10 +2,10 @@ package com.sommor.bundles.mall.view;
 
 import com.sommor.bundles.media.fields.file.MediaFiles;
 import com.sommor.bundles.media.fields.file.MediaFilesField;
-import com.sommor.bundles.taxonomy.fields.subject.SubjectTaxonomy;
-import com.sommor.scaffold.view.field.EntityForm;
+import com.sommor.bundles.taxonomy.view.fields.subject.SubjectTaxonomy;
+import com.sommor.core.view.field.EntityForm;
 import com.sommor.scaffold.fields.subject.select.SubjectSelectField;
-import com.sommor.scaffold.view.field.config.TextField;
+import com.sommor.core.view.field.config.TextField;
 import lombok.Getter;
 import lombok.Setter;
 

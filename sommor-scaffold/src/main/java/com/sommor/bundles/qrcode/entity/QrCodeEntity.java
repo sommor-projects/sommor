@@ -16,6 +16,9 @@ import lombok.Setter;
 public class QrCodeEntity extends TimedEntity {
 
     @Column
+    private String code;
+
+    @Column
     private String subject;
 
     @Column
@@ -23,5 +26,4 @@ public class QrCodeEntity extends TimedEntity {
 
     @Column
     private Integer userId;
-
 }

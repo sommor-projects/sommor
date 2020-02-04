@@ -1,9 +1,9 @@
 package com.sommor.bundles.taxonomy.model;
 
 import com.sommor.mybatis.sql.field.type.ConfigKey;
-import com.sommor.bundles.taxonomy.fields.taxonomy.select.TaxonomySelect;
+import com.sommor.bundles.taxonomy.view.fields.taxonomy.select.TaxonomySelect;
 import com.sommor.scaffold.fields.subject.name.SubjectNameSelectField;
-import com.sommor.scaffold.view.field.config.SwitchField;
+import com.sommor.core.view.field.config.SwitchField;
 import lombok.Getter;
 import lombok.Setter;
 

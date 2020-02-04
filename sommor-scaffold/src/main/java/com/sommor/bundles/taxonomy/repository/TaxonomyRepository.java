@@ -51,18 +51,14 @@ public interface TaxonomyRepository extends CurdRepository<TaxonomyEntity> {
         return paths;
     }
 
-    default TaxonomyEntity findByType(String type) {
-        return this.findBySlug(0, type);
-    }
-
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     TaxonomyEntity findByName(String name);
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
-    TaxonomyEntity findBySlug(Integer typeId, String slug);
+    List<TaxonomyEntity> findByTypeId(Integer typeId);
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
-    List<TaxonomyEntity> findByTypeId(Integer typeId);
+    List<TaxonomyEntity> findByTypeIdAndGroup(Integer typeId, String group);
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     List<TaxonomyEntity> findByParentId(Integer parentId);

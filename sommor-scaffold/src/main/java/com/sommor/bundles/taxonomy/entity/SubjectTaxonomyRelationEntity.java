@@ -10,7 +10,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2019/11/22
  */
-@Table("taxonomy_subject_relations")
+@Table(value = "taxonomy_subject_relations", subject = "taxonomy_subject")
 @Getter
 @Setter
 public class SubjectTaxonomyRelationEntity extends BaseEntity {

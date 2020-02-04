@@ -1,14 +1,16 @@
 package com.sommor.bundles.taxonomy.view;
 
-import com.sommor.bundles.taxonomy.fields.subject.style.SubjectTaxonomyStyleField;
-import com.sommor.bundles.taxonomy.fields.taxonomy.select.TaxonomySelect;
-import com.sommor.bundles.taxonomy.fields.taxonomy.select.TaxonomySelectView;
+import com.sommor.bundles.taxonomy.view.fields.subject.style.SubjectTaxonomyStyleField;
+import com.sommor.bundles.taxonomy.view.fields.taxonomy.select.TaxonomySelect;
+import com.sommor.bundles.taxonomy.view.fields.taxonomy.select.TaxonomySelectView;
 import com.sommor.bundles.taxonomy.model.TaxonomyRelationConfig;
+import com.sommor.core.view.FieldView;
+import com.sommor.core.view.field.FieldRenderContext;
 import com.sommor.mybatis.sql.field.type.ConfigKey;
-import com.sommor.scaffold.view.field.EntityForm;
-import com.sommor.scaffold.view.FieldView;
-import com.sommor.scaffold.view.field.config.FieldsetConfig;
-import com.sommor.scaffold.view.field.config.TextField;
+import com.sommor.core.view.field.EntityForm;
+import com.sommor.core.view.FormFieldView;
+import com.sommor.core.view.field.config.FieldsetConfig;
+import com.sommor.core.view.field.config.TextField;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,8 +38,11 @@ public class TaxonomyForm extends EntityForm {
     @NotBlank
     private String subTitle;
 
-    @TextField(title = "Slug")
-    private String slug;
+    @TextField(title = "名称")
+    private String name;
+
+    @TextField(title = "分组名")
+    private String group;
 
     @FieldsetConfig(TaxonomyRelationConfig.class)
     private List<TaxonomyRelationConfig> relationConfigs;
@@ -46,15 +51,12 @@ public class TaxonomyForm extends EntityForm {
     @ConfigKey("fs")
     private String fieldStyle;
 
-    @Override
-    public void onFieldRender(FieldView fieldView) {
-        if (fieldView instanceof TaxonomySelectView && "parentId".equals(fieldView.getFullName())) {
-            TaxonomySelectView selectView = (TaxonomySelectView) fieldView;
-            selectView.setParentId(this.getParentId());
+    public void renderParentId(FieldRenderContext ctx) {
+        TaxonomySelectView selectView = ctx.getFieldView();
+        selectView.setParentId(this.getParentId());
 
-            if (this.getParentId() == null || this.getParentId() == 0) {
-                selectView.setRootSelection(true);
-            }
+        if (this.getParentId() == null || this.getParentId() == 0) {
+            selectView.setRootSelection(true);
         }
     }
 }

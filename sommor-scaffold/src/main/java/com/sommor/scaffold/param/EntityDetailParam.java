@@ -1,7 +1,7 @@
 package com.sommor.scaffold.param;
 
 import com.sommor.mybatis.query.Query;
-import com.sommor.scaffold.view.field.OnQuery;
+import com.sommor.core.view.field.OnQuery;
 import lombok.Getter;
 import lombok.Setter;
 

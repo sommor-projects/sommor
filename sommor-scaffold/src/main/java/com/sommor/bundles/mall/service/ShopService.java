@@ -8,7 +8,7 @@ import com.sommor.bundles.mall.view.ShopForm;
 import com.sommor.bundles.mall.view.ShopTable;
 import com.sommor.bundles.taxonomy.view.SubjectFormRenderParam;
 import com.sommor.scaffold.param.EntityDetailParam;
-import com.sommor.scaffold.service.CurdService;
+import com.sommor.core.curd.CurdService;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;

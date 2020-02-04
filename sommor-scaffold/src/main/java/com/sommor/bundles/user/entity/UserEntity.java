@@ -3,7 +3,7 @@ package com.sommor.bundles.user.entity;
 import com.sommor.scaffold.entity.configurable.ConfigurableEntity;
 import com.sommor.mybatis.entity.config.Column;
 import com.sommor.mybatis.entity.config.Table;
-import com.sommor.bundles.user.auth.Encryption;
+import com.sommor.core.utils.Encryption;
 import lombok.Getter;
 import lombok.Setter;
 

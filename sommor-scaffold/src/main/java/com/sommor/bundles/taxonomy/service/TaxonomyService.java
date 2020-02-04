@@ -3,17 +3,15 @@ package com.sommor.bundles.taxonomy.service;
 import com.sommor.api.error.ErrorCode;
 import com.sommor.api.error.ErrorCodeException;
 import com.sommor.bundles.taxonomy.utils.SlugParser;
-import com.sommor.bundles.taxonomy.view.TaxonomyTable;
+import com.sommor.bundles.taxonomy.view.*;
 import com.sommor.mybatis.query.Query;
 import com.sommor.mybatis.sql.select.OrderType;
-import com.sommor.scaffold.service.CurdService;
+import com.sommor.core.curd.CurdService;
 import com.sommor.bundles.taxonomy.entity.TaxonomyEntity;
-import com.sommor.bundles.taxonomy.view.TaxonomyForm;
 import com.sommor.bundles.taxonomy.model.*;
-import com.sommor.bundles.taxonomy.view.TaxonomyFormRenderParam;
-import com.sommor.bundles.taxonomy.view.TaxonomyDetailParam;
-import com.sommor.bundles.taxonomy.view.TaxonomyQueryParam;
 import com.sommor.bundles.taxonomy.repository.TaxonomyRepository;
+import com.sommor.core.view.FormView;
+import com.sommor.core.view.field.action.Add;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -79,7 +77,17 @@ public class TaxonomyService extends CurdService<
     }
 
     public List<TaxonomyTree> getTaxonomyTreesByType(Integer typeId, boolean includeSelf) {
-        List<TaxonomyEntity> entities = taxonomyRepository.findByTypeId(typeId);
+        return this.getTaxonomyTreesByType(typeId, null, includeSelf);
+    }
+
+    public List<TaxonomyTree> getTaxonomyTreesByType(Integer typeId, String group, boolean includeSelf) {
+        List<TaxonomyEntity> entities;
+
+        if (StringUtils.isNotBlank(group)) {
+            entities = taxonomyRepository.findByTypeIdAndGroup(typeId, group);
+        } else {
+            entities = taxonomyRepository.findByTypeId(typeId);
+        }
 
         if (includeSelf) {
             TaxonomyEntity root = taxonomyRepository.findById(typeId);
@@ -121,17 +129,18 @@ public class TaxonomyService extends CurdService<
 
         List<TaxonomyEntity> paths = taxonomyRepository.findTaxonomyPaths(entity.getParentId());
 
-        if (null == original) {
-            // 添加分类时，typeId从父分类中获取
-            // 编辑时不能修改分类
-            if (CollectionUtils.isEmpty(paths)) {
-                entity.setTypeId(0);
-            } else {
-                entity.setTypeId(paths.get(0).getId());
-            }
+        if (CollectionUtils.isEmpty(paths)) {
+            entity.setTypeId(0);
         } else {
-            // 编辑分类时不能修改typeId
-            entity.setTypeId(null);
+            entity.setTypeId(paths.get(0).getId());
+        }
+
+        if (StringUtils.isBlank(entity.getName())) {
+            String name = SlugParser.parse(entity.getSubTitle());
+            if (entity.getParentId() > 0 && paths.size() > 0) {
+                name = paths.get(0).getName() + "-" + name;
+            }
+            entity.setName(name);
         }
 
         if (null != original) {
@@ -155,12 +164,6 @@ public class TaxonomyService extends CurdService<
                 }
             }
         } else {
-            if (StringUtils.isBlank(entity.getSlug())) {
-                entity.setSlug(SlugParser.parse(entity.getSubTitle()));
-            } else {
-                entity.setSlug(SlugParser.parse(entity.getSlug()));
-            }
-
             TaxonomyEntity lowest = taxonomyRepository.findLowestPriority(entity.getParentId());
             int priority = 0;
             if (null != lowest) {
@@ -178,5 +181,17 @@ public class TaxonomyService extends CurdService<
         if (count > 0) {
             throw new ErrorCodeException(ErrorCode.of("taxonomy.delete.failed.children", entity.getSubTitle(), entity.getTitle()));
         }
+    }
+
+    public FormView renderSubjectTaxonomyForm(String type) {
+        TaxonomyEntity typeEntity = taxonomyRepository.findByName(type);
+
+        if (null == typeEntity) {
+            throw new ErrorCodeException(ErrorCode.of("taxonomy.subject.select.type.invalid", type));
+        }
+
+        SubjectTaxonomyForm form = new SubjectTaxonomyForm(typeEntity);
+
+        return renderForm(form, null, Add.ACTION);
     }
 }

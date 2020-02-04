@@ -1,6 +1,6 @@
 package com.sommor.bundles.user.view;
 
-import com.sommor.scaffold.view.field.EntityDetail;
+import com.sommor.core.view.field.EntityDetail;
 import lombok.Getter;
 import lombok.Setter;
 

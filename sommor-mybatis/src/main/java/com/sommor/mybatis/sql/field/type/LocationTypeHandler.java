@@ -34,7 +34,7 @@ public class LocationTypeHandler extends BaseTypeHandler<Location> {
     private Location parseResult(String value) {
         if (null != value) {
             String[] s = value.substring(value.indexOf("(")+1,value.length()-1).split(" ");
-            return new Location(Double.parseDouble(s[0]), Double.parseDouble(s[1]));
+            return new Location(s[0], s[1]);
         }
 
         return null;

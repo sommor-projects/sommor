@@ -3,7 +3,7 @@ package com.sommor.bundles.user.service;
 import com.sommor.api.response.Response;
 import com.sommor.api.error.ErrorCode;
 import com.sommor.extensibility.ExtensionExecutor;
-import com.sommor.scaffold.utils.DateTimeUtil;
+import com.sommor.core.utils.DateTimeUtil;
 import com.sommor.bundles.user.entity.AuthenticationEntity;
 import com.sommor.bundles.user.entity.UserEntity;
 import com.sommor.bundles.user.extension.Authenticator;

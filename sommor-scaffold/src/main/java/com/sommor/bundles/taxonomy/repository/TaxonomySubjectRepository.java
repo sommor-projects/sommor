@@ -4,6 +4,7 @@ import com.sommor.mybatis.repository.CurdRepository;
 import com.sommor.mybatis.sql.SqlProvider;
 import com.sommor.bundles.taxonomy.entity.SubjectTaxonomyRelationEntity;
 import org.apache.ibatis.annotations.DeleteProvider;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.SelectProvider;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
  * @author yanguanwei@qq.com
  * @since 2019/12/3
  */
+@Mapper
 public interface TaxonomySubjectRepository extends CurdRepository<SubjectTaxonomyRelationEntity> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")

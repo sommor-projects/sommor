@@ -1,15 +1,12 @@
 package com.sommor.bundles.taxonomy.controller;
 
 import com.sommor.api.response.ApiResponse;
-import com.sommor.bundles.taxonomy.view.TaxonomyTable;
-import com.sommor.scaffold.controller.CurdController;
+import com.sommor.bundles.taxonomy.view.*;
+import com.sommor.core.curd.CurdController;
 import com.sommor.bundles.taxonomy.entity.TaxonomyEntity;
-import com.sommor.bundles.taxonomy.view.TaxonomyForm;
 import com.sommor.bundles.taxonomy.model.*;
-import com.sommor.bundles.taxonomy.view.TaxonomyFormRenderParam;
-import com.sommor.bundles.taxonomy.view.TaxonomyDetailParam;
-import com.sommor.bundles.taxonomy.view.TaxonomyQueryParam;
 import com.sommor.bundles.taxonomy.service.TaxonomyService;
+import com.sommor.core.view.FormView;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +37,12 @@ public class TaxonomyController extends CurdController<
     public ApiResponse updatePriority(@Validated @RequestBody TaxonomyPriorityForm taxonomyPriorityForm) {
         taxonomyService.updateTaxonomyPriority(taxonomyPriorityForm.getId(), taxonomyPriorityForm.getDirection());
         return ApiResponse.success();
+    }
+
+    @ApiOperation(value = "渲染分类选择字段")
+    @RequestMapping(value = "/form/subject", method = RequestMethod.GET)
+    public ApiResponse<FormView> renderSubjectTaxonomySelect(@RequestParam String taxonomy) {
+        FormView formView = taxonomyService.renderSubjectTaxonomyForm(taxonomy);
+        return ApiResponse.success(formView);
     }
 }

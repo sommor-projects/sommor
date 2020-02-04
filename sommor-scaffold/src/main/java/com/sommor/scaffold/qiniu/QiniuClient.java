@@ -14,7 +14,7 @@ import com.sommor.extensibility.config.Implement;
 import com.sommor.bundles.media.model.UploadedFile;
 import com.sommor.scaffold.qiniu.model.QiniuUploadResult;
 import com.sommor.scaffold.qiniu.settings.QiniuSettings;
-import com.sommor.scaffold.service.AppLauncher;
+import com.sommor.core.curd.AppLauncher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 

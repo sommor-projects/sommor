@@ -2,10 +2,10 @@ package com.sommor.bundles.taxonomy.view;
 
 import com.sommor.bundles.taxonomy.repository.TaxonomyRepository;
 import com.sommor.mybatis.entity.BaseEntity;
-import com.sommor.scaffold.view.field.DataSource;
-import com.sommor.scaffold.view.field.EntityTable;
+import com.sommor.core.view.field.DataSource;
+import com.sommor.core.view.field.EntityTable;
 import com.sommor.scaffold.spring.ApplicationContextHolder;
-import com.sommor.scaffold.view.field.config.TextField;
+import com.sommor.core.view.field.config.TextField;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +17,7 @@ public class TaxonomyTable extends EntityTable {
 
     @Getter @Setter
     @TextField
-    private String slug;
+    private String name;
 
     @Getter @Setter
     @TextField

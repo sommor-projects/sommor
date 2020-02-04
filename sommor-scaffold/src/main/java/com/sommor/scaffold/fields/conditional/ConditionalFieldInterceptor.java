@@ -1,8 +1,8 @@
 package com.sommor.scaffold.fields.conditional;
 
 import com.sommor.extensibility.config.Implement;
-import com.sommor.scaffold.view.field.FieldInterceptor;
-import com.sommor.scaffold.view.field.FieldQueryContext;
+import com.sommor.core.view.field.FieldInterceptor;
+import com.sommor.core.view.field.FieldQueryContext;
 import org.apache.commons.lang3.StringUtils;
 
 /**

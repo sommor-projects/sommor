@@ -1,8 +1,8 @@
 package com.sommor.scaffold.fields.pagination;
 
 import com.sommor.extensibility.config.Implement;
-import com.sommor.scaffold.view.field.FieldProcessor;
-import com.sommor.scaffold.view.field.FieldQueryContext;
+import com.sommor.core.view.field.FieldProcessor;
+import com.sommor.core.view.field.FieldQueryContext;
 
 /**
  * @author yanguanwei@qq.com

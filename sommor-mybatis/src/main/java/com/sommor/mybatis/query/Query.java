@@ -1,5 +1,7 @@
 package com.sommor.mybatis.query;
 
+import com.sommor.mybatis.entity.definition.EntityDefinition;
+import com.sommor.mybatis.entity.definition.EntityManager;
 import com.sommor.mybatis.entity.naming.NamingParseStrategy;
 import com.sommor.mybatis.sql.select.*;
 import lombok.Getter;
@@ -14,16 +16,18 @@ import java.util.Map;
  * @since 2019/10/24
  */
 public class Query {
-
-    @Getter @Setter
-    private Limitation limitation;
-
     private Projection projection;
 
-    private OrderBy orderBy;
+    @Getter
+    private Join join;
 
     @Getter
     private Where where;
+
+    private OrderBy orderBy;
+
+    @Getter @Setter
+    private Limitation limitation;
 
     @Getter
     private Map<String, Object> parameters = new HashMap<>();
@@ -53,8 +57,32 @@ public class Query {
         return this;
     }
 
+    public Join join() {
+        return this.join == null ? (this.join = new Join()) : this.join;
+    }
+
+    public Query leftJoin(Class entityClass, String condition, String... fields) {
+        EntityDefinition ed = EntityManager.getDefinition(entityClass);
+        return leftJoin(ed.getSubjectName(), condition, fields);
+    }
+
+    public Query leftJoin(String subject, String condition, String... fields) {
+        this.join().left(subject, condition);
+
+        Projection projection = this.projection();
+        for (String field : fields) {
+            projection.columns(subject + "." + field);
+        }
+        return this;
+    }
+
+    public Query rightJoin(String subject, String condition) {
+        this.join().right(subject, condition);
+        return this;
+    }
+
     public Projection projection() {
-        return null == this.projection ? new Projection().all() : this.projection;
+        return null == this.projection ? (this.projection = new Projection().all()) : this.projection;
     }
 
     public Pagination pagination() {

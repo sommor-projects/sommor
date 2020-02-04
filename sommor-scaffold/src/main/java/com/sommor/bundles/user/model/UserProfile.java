@@ -1,9 +1,9 @@
 package com.sommor.bundles.user.model;
 
 import com.sommor.bundles.media.fields.file.MediaFilesField;
-import com.sommor.scaffold.view.field.DataSource;
-import com.sommor.scaffold.view.field.EntityDetail;
-import com.sommor.scaffold.view.field.config.TextField;
+import com.sommor.core.view.field.DataSource;
+import com.sommor.core.view.field.EntityDetail;
+import com.sommor.core.view.field.config.TextField;
 import lombok.Getter;
 import lombok.Setter;
 

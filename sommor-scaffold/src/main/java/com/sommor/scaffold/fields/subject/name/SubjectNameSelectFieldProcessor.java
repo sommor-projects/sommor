@@ -3,9 +3,9 @@ package com.sommor.scaffold.fields.subject.name;
 import com.sommor.extensibility.config.Implement;
 import com.sommor.mybatis.entity.definition.EntityDefinition;
 import com.sommor.mybatis.entity.definition.EntityManager;
-import com.sommor.scaffold.view.field.FieldRenderContext;
-import com.sommor.scaffold.view.SelectView;
-import com.sommor.scaffold.view.field.FieldProcessor;
+import com.sommor.core.view.field.FieldRenderContext;
+import com.sommor.core.view.SelectView;
+import com.sommor.core.view.field.FieldProcessor;
 
 /**
  * @author yanguanwei@qq.com

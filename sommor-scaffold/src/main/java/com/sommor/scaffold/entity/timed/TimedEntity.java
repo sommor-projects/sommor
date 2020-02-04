@@ -3,6 +3,7 @@ package com.sommor.scaffold.entity.timed;
 import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.mybatis.entity.config.Column;
 import com.sommor.scaffold.entity.EntityLifecycle;
+import com.sommor.core.utils.DateTimeUtil;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,7 +23,7 @@ public class TimedEntity extends BaseEntity implements EntityLifecycle {
 
     @Override
     public void onSaving(BaseEntity original) {
-        int now = (int) (System.currentTimeMillis() / 1000);
+        int now = DateTimeUtil.now();
         this.setUpdateTime(now);
         if (original == null) {
             this.setCreateTime(now);

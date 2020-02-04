@@ -1,6 +1,6 @@
 package com.sommor.scaffold.fields.subject.select;
 
-import com.sommor.scaffold.view.field.config.FieldConfig;
+import com.sommor.core.view.field.config.FieldConfig;
 
 import java.lang.annotation.*;
 

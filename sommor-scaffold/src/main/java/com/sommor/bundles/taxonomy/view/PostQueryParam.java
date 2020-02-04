@@ -10,7 +10,11 @@ import lombok.Setter;
  * @since 2019/11/27
  */
 @Getter @Setter
-public class PostQueryParam extends SubjectTaxonomySearchParam {
+public class PostQueryParam extends SubjectTaxonomyQueryParam {
+
+    public PostQueryParam() {
+        super("post");
+    }
 
     @Override
     public void onQuery(Query query) {

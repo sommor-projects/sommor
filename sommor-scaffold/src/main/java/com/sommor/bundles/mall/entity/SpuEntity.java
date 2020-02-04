@@ -16,9 +16,6 @@ import lombok.Setter;
 public class SpuEntity extends ConfigurableEntity {
 
     @Column
-    private String sellerId;
-
-    @Column
     private Integer shopId;
 
     @Column
@@ -26,9 +23,6 @@ public class SpuEntity extends ConfigurableEntity {
 
     @Column
     private String subTitle;
-
-    @Column
-    private Integer qrCode;
 
     @Column
     private Integer taxonomy;

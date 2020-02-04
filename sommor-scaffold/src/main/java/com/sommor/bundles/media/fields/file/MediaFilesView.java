@@ -1,6 +1,6 @@
 package com.sommor.bundles.media.fields.file;
 
-import com.sommor.scaffold.view.FieldView;
+import com.sommor.core.view.FormFieldView;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +8,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2019/12/4
  */
-public class MediaFilesView extends FieldView {
+public class MediaFilesView extends FormFieldView {
 
     @Getter
     @Setter

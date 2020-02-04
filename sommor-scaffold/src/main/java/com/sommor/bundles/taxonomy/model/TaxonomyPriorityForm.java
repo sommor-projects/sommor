@@ -1,7 +1,7 @@
 package com.sommor.bundles.taxonomy.model;
 
-import com.sommor.scaffold.view.field.EntityForm;
-import com.sommor.scaffold.view.field.config.TextField;
+import com.sommor.core.view.field.EntityForm;
+import com.sommor.core.view.field.config.TextField;
 import lombok.Getter;
 import lombok.Setter;
 

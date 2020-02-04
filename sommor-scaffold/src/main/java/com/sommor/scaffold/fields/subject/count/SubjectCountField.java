@@ -1,7 +1,7 @@
 package com.sommor.scaffold.fields.subject.count;
 
-import com.sommor.scaffold.view.TextView;
-import com.sommor.scaffold.view.field.config.FieldConfig;
+import com.sommor.core.view.TextView;
+import com.sommor.core.view.field.config.FieldConfig;
 
 import java.lang.annotation.*;
 

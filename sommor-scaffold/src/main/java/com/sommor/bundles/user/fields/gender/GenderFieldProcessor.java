@@ -2,10 +2,10 @@ package com.sommor.bundles.user.fields.gender;
 
 import com.sommor.bundles.user.entity.UserEntity;
 import com.sommor.extensibility.config.Implement;
-import com.sommor.scaffold.view.field.FieldRenderContext;
-import com.sommor.scaffold.view.Option;
-import com.sommor.scaffold.view.SelectView;
-import com.sommor.scaffold.view.field.FieldProcessor;
+import com.sommor.core.view.field.FieldRenderContext;
+import com.sommor.core.view.Option;
+import com.sommor.core.view.SelectView;
+import com.sommor.core.view.field.FieldProcessor;
 
 /**
  * @author yanguanwei@qq.com

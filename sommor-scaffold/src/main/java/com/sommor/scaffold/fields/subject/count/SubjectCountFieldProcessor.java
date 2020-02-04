@@ -3,9 +3,9 @@ package com.sommor.scaffold.fields.subject.count;
 import com.sommor.extensibility.config.Implement;
 import com.sommor.mybatis.query.Query;
 import com.sommor.mybatis.repository.CurdRepository;
-import com.sommor.scaffold.service.CurdManager;
-import com.sommor.scaffold.view.field.FieldContext;
-import com.sommor.scaffold.view.field.FieldProcessor;
+import com.sommor.core.curd.CurdManager;
+import com.sommor.core.view.field.FieldContext;
+import com.sommor.core.view.field.FieldProcessor;
 
 /**
  * @author yanguanwei@qq.com

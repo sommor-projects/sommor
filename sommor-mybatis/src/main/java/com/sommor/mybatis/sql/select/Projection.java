@@ -35,18 +35,18 @@ public class Projection {
         return this;
     }
 
-    public Projection columns(String... columns) {
-        this.expressions.add(
-                Arrays.asList(columns)
-                .stream().collect(Collectors.joining(", "))
-        );
+    public Projection columns(String column) {
+        this.expressions.add(column);
+        return this;
+    }
 
+    public Projection columns(String... columns) {
+        this.expressions.add(String.join(", ", columns));
         return this;
     }
 
     public Projection count() {
         this.expressions.add("COUNT(1)");
-
         return this;
     }
 
@@ -54,7 +54,7 @@ public class Projection {
     public String toString() {
         return expressions.stream()
                 .map(column -> {
-                    if (null != this.tableAlias) {
+                    if (! column.contains(".") && null != this.tableAlias) {
                         return this.tableAlias + "." + column;
                     }
                     return column;

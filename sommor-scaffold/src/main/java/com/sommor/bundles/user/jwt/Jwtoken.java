@@ -1,7 +1,7 @@
 package com.sommor.bundles.user.jwt;
 
 import com.alibaba.fastjson.JSON;
-import com.sommor.bundles.user.auth.Encryption;
+import com.sommor.core.utils.Encryption;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

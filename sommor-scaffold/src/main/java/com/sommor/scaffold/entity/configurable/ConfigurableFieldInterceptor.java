@@ -3,12 +3,12 @@ package com.sommor.scaffold.entity.configurable;
 import com.sommor.extensibility.config.Implement;
 import com.sommor.mybatis.sql.field.type.Config;
 import com.sommor.mybatis.sql.field.type.ConfigKey;
-import com.sommor.scaffold.view.field.FieldContext;
-import com.sommor.scaffold.view.field.FieldInterceptor;
-import com.sommor.scaffold.view.field.FieldSaveContext;
-import com.sommor.scaffold.view.field.FieldDefinition;
-import com.sommor.scaffold.view.field.FieldsetDefinition;
-import com.sommor.scaffold.view.field.config.FieldsetConfig;
+import com.sommor.core.view.field.FieldContext;
+import com.sommor.core.view.field.FieldInterceptor;
+import com.sommor.core.view.field.FieldSaveContext;
+import com.sommor.core.view.field.FieldDefinition;
+import com.sommor.core.view.field.FieldsetDefinition;
+import com.sommor.core.view.field.config.FieldsetConfig;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;

@@ -1,7 +1,7 @@
 package com.sommor.scaffold.spring;
 
 import com.sommor.extensibility.ExtensionExecutor;
-import com.sommor.scaffold.service.AppLauncher;
+import com.sommor.core.curd.AppLauncher;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;

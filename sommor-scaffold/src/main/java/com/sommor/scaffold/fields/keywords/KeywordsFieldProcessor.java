@@ -2,8 +2,8 @@ package com.sommor.scaffold.fields.keywords;
 
 import com.sommor.extensibility.config.Implement;
 import com.sommor.mybatis.sql.select.Condition;
-import com.sommor.scaffold.view.field.FieldProcessor;
-import com.sommor.scaffold.view.field.FieldQueryContext;
+import com.sommor.core.view.field.FieldProcessor;
+import com.sommor.core.view.field.FieldQueryContext;
 import org.apache.commons.lang3.StringUtils;
 
 /**

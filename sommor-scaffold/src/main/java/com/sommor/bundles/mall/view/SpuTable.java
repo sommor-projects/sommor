@@ -1,7 +1,7 @@
 package com.sommor.bundles.mall.view;
 
-import com.sommor.scaffold.view.field.EntityTable;
-import com.sommor.scaffold.view.field.config.TextField;
+import com.sommor.core.view.field.EntityTable;
+import com.sommor.core.view.field.config.TextField;
 import lombok.Getter;
 import lombok.Setter;
 

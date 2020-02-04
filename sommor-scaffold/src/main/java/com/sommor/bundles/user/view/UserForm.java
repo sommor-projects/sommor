@@ -4,9 +4,9 @@ import com.sommor.bundles.media.fields.file.MediaFiles;
 import com.sommor.bundles.media.fields.file.MediaFilesField;
 import com.sommor.bundles.user.entity.UserEntity;
 import com.sommor.bundles.user.fields.gender.GenderField;
-import com.sommor.scaffold.view.field.EntityForm;
-import com.sommor.scaffold.view.field.action.Add;
-import com.sommor.scaffold.view.field.config.TextField;
+import com.sommor.core.view.field.EntityForm;
+import com.sommor.core.view.field.action.Add;
+import com.sommor.core.view.field.config.TextField;
 import lombok.Getter;
 import lombok.Setter;
 

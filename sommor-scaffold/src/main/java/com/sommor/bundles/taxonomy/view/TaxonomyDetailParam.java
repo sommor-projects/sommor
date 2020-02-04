@@ -14,16 +14,20 @@ public class TaxonomyDetailParam extends EntityDetailParam {
 
     @Setter
     @Getter
-    private String type;
+    private String taxonomy;
 
     @Override
     public void onQuery(Query query) {
         super.onQuery(query);
 
-        if ((this.getId() == null || this.getId() == 0) && StringUtils.isNotBlank(type)) {
-            query.where().condition()
-                    .and("typeId", 0)
-                    .and("slug", type);
+        if ((this.getId() == null || this.getId() == 0) && StringUtils.isNotBlank(taxonomy)) {
+            if (StringUtils.isNumeric(taxonomy)) {
+                query.where().condition()
+                        .and("id", Integer.valueOf(taxonomy));
+            } else {
+                query.where().condition()
+                        .and("name", taxonomy);
+            }
         }
     }
 }

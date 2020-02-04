@@ -1,9 +1,9 @@
 package com.sommor.scaffold.fields.orderby;
 
 import com.sommor.extensibility.config.Implement;
-import com.sommor.scaffold.view.field.FieldQueryContext;
+import com.sommor.core.view.field.FieldQueryContext;
 import com.sommor.scaffold.fields.pagination.PaginationParamField;
-import com.sommor.scaffold.view.field.FieldProcessor;
+import com.sommor.core.view.field.FieldProcessor;
 
 /**
  * @author yanguanwei@qq.com

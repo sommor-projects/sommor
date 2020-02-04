@@ -38,6 +38,10 @@ public class EntityDefinition {
 
     private Map<String, EntityFieldDefinition> fieldDefinitionMap;
 
+    public String getTableAlias() {
+        return this.getSubjectName() == null ? this.getTableName() : this.getSubjectName();
+    }
+
     public void setFieldDefinitions(List<EntityFieldDefinition> fieldDefinitions) {
         this.fieldDefinitions = fieldDefinitions;
         this.fieldDefinitionMap = fieldDefinitions.stream().collect(Collectors.toMap(p->p.getFieldName(), p->p));

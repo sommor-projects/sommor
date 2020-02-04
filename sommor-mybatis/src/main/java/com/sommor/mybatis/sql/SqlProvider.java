@@ -1,16 +1,12 @@
 package com.sommor.mybatis.sql;
 
-import com.sommor.mybatis.sql.select.ConditionExpression;
+import com.sommor.mybatis.sql.select.*;
 import com.sommor.mybatis.entity.definition.EntityClassParser;
 import com.sommor.mybatis.entity.definition.EntityDefinition;
 import com.sommor.mybatis.entity.definition.EntityManager;
 import com.sommor.mybatis.entity.definition.EntityFieldDefinition;
 import com.sommor.mybatis.query.Query;
 import com.sommor.mybatis.sql.field.type.Location;
-import com.sommor.mybatis.sql.select.Condition;
-import com.sommor.mybatis.sql.select.Limitation;
-import com.sommor.mybatis.sql.select.OrderBy;
-import com.sommor.mybatis.sql.select.Where;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.builder.annotation.ProviderContext;
 import org.apache.ibatis.jdbc.SQL;
@@ -132,11 +128,22 @@ public class SqlProvider {
     }
 
     private String doFind(EntityDefinition ed, Query query, boolean count) {
+        String tableAlias = ed.getTableAlias();
+
         SQL sql = new SQL()
             .SELECT(count ? "COUNT(1)" : query.projection().toString())
-            .FROM(ed.getTableName() + " " + ed.getTableName());
+            .FROM(ed.getTableName() + " " + tableAlias);
 
-        query.from(ed.getTableName());
+        query.from(tableAlias);
+
+        Join join = query.getJoin();
+        if (null != join) {
+            for (JoinClause joinClause : join.getClauses()) {
+                if (joinClause.getType().equalsIgnoreCase("LEFT")) {
+                    sql.LEFT_OUTER_JOIN(joinClause.toJointExpression());
+                }
+            }
+        }
 
         Where where = query.getWhere();
         if (null != where) {

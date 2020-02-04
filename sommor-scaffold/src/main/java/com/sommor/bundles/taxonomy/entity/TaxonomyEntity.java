@@ -15,7 +15,7 @@ import lombok.Setter;
 public class TaxonomyEntity extends ConfigurableEntity implements Comparable<TaxonomyEntity> {
 
     @Column
-    private String slug;
+    private String name;
 
     @Column
     private String title;
@@ -34,6 +34,9 @@ public class TaxonomyEntity extends ConfigurableEntity implements Comparable<Tax
 
     @Column
     private Integer priority;
+
+    @Column
+    private String group;
 
     @Override
     public String toString() {

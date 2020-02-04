@@ -1,7 +1,7 @@
 package com.sommor.bundles.taxonomy.model;
 
 import com.sommor.bundles.taxonomy.entity.TaxonomyEntity;
-import com.sommor.scaffold.view.TreeOption;
+import com.sommor.core.view.TreeOption;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,7 +24,7 @@ public class TaxonomyTree extends TaxonomyItem {
     }
 
     public TreeOption toTreeOption() {
-        String label = this.getTitle() + "(" + this.getName() + ")";
+        String label = this.getTitle() + "(" + this.getSubTitle() + ")";
         TreeOption tree = new TreeOption(label, this.getId());
 
         if (null != children) {

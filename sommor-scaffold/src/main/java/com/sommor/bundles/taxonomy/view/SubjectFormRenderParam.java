@@ -4,16 +4,17 @@ import com.sommor.scaffold.param.EntityFormRenderParam;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * @author yanguanwei@qq.com
  * @since 2019/11/28
  */
-@Getter
-@Setter
 public class SubjectFormRenderParam extends EntityFormRenderParam {
 
-    private String type;
-
-    private Integer typeId;
+    @Getter
+    @Setter
+    @NotBlank
+    private String taxonomy;
 
 }
