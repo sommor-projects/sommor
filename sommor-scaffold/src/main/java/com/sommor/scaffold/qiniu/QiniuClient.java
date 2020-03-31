@@ -11,10 +11,10 @@ import com.qiniu.util.StringMap;
 import com.sommor.api.error.ErrorCode;
 import com.sommor.api.error.ErrorCodeException;
 import com.sommor.extensibility.config.Implement;
-import com.sommor.bundles.media.model.UploadedFile;
+import com.sommor.bundle.media.model.UploadedFile;
 import com.sommor.scaffold.qiniu.model.QiniuUploadResult;
 import com.sommor.scaffold.qiniu.settings.QiniuSettings;
-import com.sommor.core.curd.AppLauncher;
+import com.sommor.launcher.AppLauncher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 
@@ -49,9 +49,9 @@ public class QiniuClient implements AppLauncher {
         this.auth = auth;
     }
 
-    public String resolveUrl(String key) {
-        if (null != key && key.startsWith(QiniuClient.URL_KEY_PREFIX)) {
-            String k = key.substring(QiniuClient.URL_KEY_PREFIX.length());
+    public String resolveUrl(String url) {
+        if (null != url && url.startsWith(QiniuClient.URL_KEY_PREFIX)) {
+            String k = url.substring(QiniuClient.URL_KEY_PREFIX.length());
             return QiniuSettings.urlDomain + k;
         }
 

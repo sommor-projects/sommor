@@ -1,7 +1,7 @@
 package com.sommor.scaffold.param;
 
 import com.sommor.mybatis.query.Query;
-import com.sommor.core.view.field.OnQuery;
+import com.sommor.curd.query.OnModelQuery;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +9,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2020/1/25
  */
-public class EntityQueryParam implements OnQuery {
+public class EntityQueryParam implements OnModelQuery {
 
     @Getter @Setter
     private Integer pageNo;
@@ -24,7 +24,7 @@ public class EntityQueryParam implements OnQuery {
     private String orderType;
 
     @Override
-    public void onQuery(Query query) {
+    public void onModelQuery(Query query) {
         if (null != pageNo) {
             query.pageable(pageNo, pageSize);
         }

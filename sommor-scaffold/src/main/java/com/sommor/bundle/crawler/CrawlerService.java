@@ -1,0 +1,19 @@
+package com.sommor.bundle.crawler;
+
+import org.springframework.stereotype.Service;
+import us.codecraft.webmagic.Spider;
+
+/**
+ * @author yanguanwei@qq.com
+ * @since 2020/2/2
+ */
+@Service
+public class CrawlerService {
+
+    public void crawl(Crawler crawler) {
+        Spider.create(crawler)
+                .addRequest(crawler.getRequest())
+                .thread(5)
+                .run();
+    }
+}

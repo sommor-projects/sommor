@@ -51,15 +51,7 @@ public class SqlProvider {
             throw new RuntimeException("parameters of method["+ctx.getMapperMethod().getName()+"] is not namePresent");
         }
 
-        Map<String, Object> map;
-        if (params instanceof Map) {
-            map = (Map<String, Object>) params;
-        } else if (parameterNames.length == 1) {
-            map = new HashMap<>();
-            map.put(parameterNames[0], params);
-        } else {
-            throw new RuntimeException("unknown params: " + params);
-        }
+        Map<String, Object> map = parseParams(params, parameterNames);
 
         EntityDefinition ed = parseEntityDefinition(ctx.getMapperType());
         Query query = new Query();
@@ -75,6 +67,21 @@ public class SqlProvider {
                 count
         );
     }
+
+    private Map<String, Object> parseParams(Object params, String[] parameterNames) {
+        Map<String, Object> map;
+        if (params instanceof Map) {
+            map = (Map<String, Object>) params;
+        } else if (parameterNames.length == 1) {
+            map = new HashMap<>();
+            map.put(parameterNames[0], params);
+        } else {
+            throw new RuntimeException("unknown params: " + params);
+        }
+
+        return map;
+    }
+
 
     public String find(ProviderContext ctx, Query query) {
         enrichConditionParameters(query);
@@ -283,21 +290,24 @@ public class SqlProvider {
             throw new RuntimeException("parameters of method["+ctx.getMapperMethod().getName()+"] is not namePresent");
         }
 
+        Map<String, Object> map = parseParams(params, parameterNames);
+
         EntityDefinition definition = parseEntityDefinition(ctx.getMapperType());
 
-        List<EntityFieldDefinition> conditionFields = new ArrayList<>();
-        for (int i=0; i<parameterNames.length; i++) {
-            conditionFields.add(definition.getFieldDefinition(parameterNames[i]));
-        }
-
-        return doDelete(definition, conditionFields);
-    }
-
-    private String doDelete(EntityDefinition definition, List<EntityFieldDefinition> conditionFields) {
         SQL sql = new SQL().DELETE_FROM(definition.getTableName());
 
-        for (EntityFieldDefinition fieldDefinition : conditionFields) {
-            sql.WHERE(fieldDefinition.getColumnName() + " = " + getEntityColumnValueRef(fieldDefinition));
+        Query query = new Query();
+        for (String parameterName : parameterNames) {
+            Object value = map.get(parameterName);
+            query.where(parameterName, value);
+        }
+
+        Where where = query.getWhere();
+        if (null != where) {
+            String whereClause = where.toExpression();
+            if (StringUtils.isNotBlank(whereClause)) {
+                sql.WHERE(whereClause);
+            }
         }
 
         return sql.toString();

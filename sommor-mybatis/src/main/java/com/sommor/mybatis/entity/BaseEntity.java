@@ -72,6 +72,10 @@ public class BaseEntity {
         return getFieldValue(efd);
     }
 
+    public boolean hasField(String fieldName) {
+        return this.definition().getFieldDefinition(fieldName) != null;
+    }
+
     public <T> T getFieldValue(EntityFieldDefinition efd) {
         try {
             return (T) efd.getGetter().invoke(this);

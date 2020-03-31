@@ -43,7 +43,7 @@ public class EntityManager {
                         }
                         ed.setTableName(tableName);
                         ed.setPrimaryKey(table.primaryKey());
-                        ed.setSubjectName(table.subject().isEmpty() ? null : table.subject());
+                        ed.setSubjectName(table.entityName().isEmpty() ? null : table.entityName());
                     }
 
                     List<EntityFieldDefinition> fieldDefinitions = new ArrayList<>();

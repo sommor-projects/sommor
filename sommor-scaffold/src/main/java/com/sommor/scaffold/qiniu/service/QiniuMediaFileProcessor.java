@@ -1,8 +1,8 @@
 package com.sommor.scaffold.qiniu.service;
 
 import com.sommor.extensibility.config.Implement;
-import com.sommor.bundles.media.model.UploadedFile;
-import com.sommor.bundles.media.service.MediaFileProcessor;
+import com.sommor.bundle.media.model.UploadedFile;
+import com.sommor.bundle.media.service.MediaFileProcessor;
 import com.sommor.scaffold.qiniu.QiniuClient;
 
 import javax.annotation.Resource;

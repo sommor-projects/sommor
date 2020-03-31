@@ -1,10 +1,12 @@
 package com.sommor.scaffold.spring;
 
 import com.sommor.extensibility.ExtensionExecutor;
-import com.sommor.core.curd.AppLauncher;
+import com.sommor.launcher.AppLauncher;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -15,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 2019/10/26
  */
 @Component
-public class ApplicationContextHolder implements ApplicationContextAware {
+public class ApplicationContextHolder implements ApplicationListener<ContextRefreshedEvent> {
 
     private static ApplicationContext applicationContext;
 
@@ -38,8 +40,8 @@ public class ApplicationContextHolder implements ApplicationContextAware {
     }
 
     @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ApplicationContextHolder.applicationContext = applicationContext;
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        ApplicationContextHolder.applicationContext = event.getApplicationContext();
         executor.run(ext -> ext.onLaunched(applicationContext));
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.util.CollectionUtils;
 import java.lang.reflect.AnnotatedType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -23,7 +24,7 @@ public class ExtensionManager {
 
     private final Map<Class, ExtensionDefinition> extensionDefinitionMap = new HashMap<>(128);
 
-    private final Map<Class, Map<Class, List<Implementor>>> implementorsMapByExtension = new HashMap<>(128);
+    private final Map<Class, Map<String, List<Implementor>>> implementorsMapByExtension = new HashMap<>(128);
 
     private final Map<String, List<Implementor>> implementorsMapByPlugin = new HashMap<>(128);
 
@@ -35,19 +36,18 @@ public class ExtensionManager {
         for (Class extensionClass : extensionClasses) {
             ExtensionDefinition extensionDefinition = getExtensionDefinition(extensionClass);
             if (null != extensionDefinition) {
-                Map<Class, List<Implementor>> implementorsMapByAnnotatedType = implementorsMapByExtension.computeIfAbsent(extensionClass,
+                Map<String, List<Implementor>> implementorsMapByAnnotatedType = implementorsMapByExtension.computeIfAbsent(extensionClass,
                     p -> new HashMap<>(16)
                 );
 
-                List<Class> annotatedTypes = getAnnotatedTypes(implementor.getTarget().getClass());
+                List<Class> annotatedTypes = getAnnotatedTypes(implementor.getTarget().getClass(), extensionClass);
                 if ((!extensionDefinition.annotated()) || CollectionUtils.isEmpty(annotatedTypes)) {
-                    List<Implementor> implementors = implementorsMapByAnnotatedType.computeIfAbsent(Void.class, p -> new LinkedList<>());
+                    List<Implementor> implementors = implementorsMapByAnnotatedType.computeIfAbsent(Void.class.getName(), p -> new LinkedList<>());
                     implementors.add(implementor);
                 } else {
-                    for (Class annotatedType : annotatedTypes) {
-                        List<Implementor> implementors = implementorsMapByAnnotatedType.computeIfAbsent(annotatedType, p -> new LinkedList<>());
-                        implementors.add(implementor);
-                    }
+                    String key = annotatedTypes.stream().map(p->p.getName()).collect(Collectors.joining("~"));
+                    List<Implementor> implementors = implementorsMapByAnnotatedType.computeIfAbsent(key, p -> new LinkedList<>());
+                    implementors.add(implementor);
                 }
 
                 if (null != plugin) {
@@ -62,27 +62,106 @@ public class ExtensionManager {
         return clazz.getTypeParameters().length > 0;
     }
 
-    private List<Class> getAnnotatedTypes(Class clazz) {
-        List<Class> annotatedClassLists = new ArrayList<>();
+    private List<Class> getAnnotatedTypes(Class clazz, Class extensionClass) {
+        List<Class> annotatedClassLists = parseExtensionAnnotatedTypes(clazz, extensionClass, Collections.emptyMap());
+        if (! annotatedClassLists.isEmpty()) {
+            return annotatedClassLists;
+        }
 
-        AnnotatedType annotatedType = clazz.getAnnotatedSuperclass();
-        parseAnnotatedTypes(annotatedType, annotatedClassLists);
-        for (AnnotatedType type : clazz.getAnnotatedInterfaces()) {
-            parseAnnotatedTypes(type, annotatedClassLists);
+        if (annotatedClassLists.isEmpty()) {
+            Map<String, Class> annotatedTypeMap = new HashMap<>();
+            AnnotatedType superAnnotatedType = clazz.getAnnotatedSuperclass();;
+            while (null != superAnnotatedType) {
+                Class superClass = parseClass(superAnnotatedType);
+                if (null != superClass) {
+                    annotatedTypeMap.putAll(parseAnnotatedTypeMap(superAnnotatedType));
+                    if (! annotatedTypeMap.isEmpty()) {
+                        annotatedClassLists = parseExtensionAnnotatedTypes(superClass, extensionClass, annotatedTypeMap);
+                        if (! annotatedClassLists.isEmpty()) {
+                            break;
+                        }
+                    }
+                    superAnnotatedType = superClass.getAnnotatedSuperclass();
+                } else {
+                    break;
+                }
+            }
         }
 
         return annotatedClassLists;
     }
 
-    private void parseAnnotatedTypes(AnnotatedType annotatedType, List<Class> annotatedClassLists) {
+    private Class parseClass(AnnotatedType annotatedType) {
+        Type type = annotatedType.getType();
+        if (type instanceof ParameterizedType) {
+            Type rawType = ((ParameterizedType) type).getRawType();
+            if (rawType instanceof Class) {
+                return (Class) rawType;
+            }
+        }
+        return null;
+    }
+
+    private Map<String, Class> parseAnnotatedTypeMap(AnnotatedType annotatedType) {
         if (null != annotatedType && annotatedType.getType() instanceof ParameterizedType) {
             ParameterizedType parameterizedType = (ParameterizedType) annotatedType.getType();
             Type[] types = parameterizedType.getActualTypeArguments();
-            if (null != types && types.length >= 1 && types[0] instanceof Class) {
-                Class annotatedClass = (Class) types[0];
-                annotatedClassLists.add(annotatedClass);
+            Type rawType = parameterizedType.getRawType();
+            if (rawType instanceof Class) {
+                Class clazz = (Class) rawType;
+                TypeVariable<Class>[] tps  = clazz.getTypeParameters();
+                if (tps != types && tps.length >= 1) {
+                    Map<String, Class> map = new HashMap<>();
+                    for (int i=0; i<types.length; i++) {
+                        Type type = types[i];
+                        if (type instanceof Class) {
+                            String typeName = tps[i].getName();
+                            map.put(typeName, (Class) type);
+                        }
+                    }
+                    return map;
+                }
+            }
+
+        }
+        return Collections.emptyMap();
+    }
+
+    private List<Class> parseExtensionAnnotatedTypes(Class clazz, Class extensionClass, Map<String, Class> annotatedTypeMap) {
+        for (AnnotatedType type : clazz.getAnnotatedInterfaces()) {
+            List<Class> annotatedClassLists = parseExtensionAnnotatedTypes(type, extensionClass, annotatedTypeMap);
+            if (! annotatedClassLists.isEmpty()) {
+                return annotatedClassLists;
             }
         }
+        return Collections.emptyList();
+    }
+
+    private List<Class> parseExtensionAnnotatedTypes(AnnotatedType annotatedType, Class extensionClass, Map<String, Class> annotatedTypeMap) {
+        if (null != annotatedType && annotatedType.getType() instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) annotatedType.getType();
+            Type rawType = parameterizedType.getRawType();
+            if (rawType == extensionClass) {
+                Type[] types = parameterizedType.getActualTypeArguments();
+                if (null != types && types.length >= 1) {
+                    List<Class> annotatedClassLists = new ArrayList<>();
+                    for (Type type : types) {
+                        if (type instanceof Class) {
+                            Class annotatedClass = (Class) type;
+                            annotatedClassLists.add(annotatedClass);
+                        } else if (type instanceof TypeVariable) {
+                            TypeVariable typeVariable = (TypeVariable) type;
+                            if (annotatedTypeMap.containsKey(typeVariable.getName())) {
+                                annotatedClassLists.add(annotatedTypeMap.get(typeVariable.getName()));
+                            }
+                        }
+                    }
+                    return annotatedClassLists;
+                }
+            }
+        }
+
+        return Collections.emptyList();
     }
 
     public List<Implementor> getImplementors(Class extensionClass) {
@@ -93,19 +172,20 @@ public class ExtensionManager {
         return getImplements(extensionClass, Void.class);
     }
 
-    public <Ext> List<Ext> getImplements(Class<Ext> extensionClass, Class annotatedType) {
-        return getImplementors(extensionClass, annotatedType)
+    public <Ext> List<Ext> getImplements(Class<Ext> extensionClass, Class... annotatedTypes) {
+        return getImplementors(extensionClass, annotatedTypes)
                 .stream()
                 .map(p -> (Ext) p.getTarget())
                 .collect(Collectors.toList());
     }
 
-    public List<Implementor> getImplementors(Class extensionClass, Class annotatedType) {
-        Map<Class, List<Implementor>> implementorsMapByAnnotatedType = implementorsMapByExtension.get(extensionClass);
+    public List<Implementor> getImplementors(Class extensionClass, Class... annotatedTypes) {
+        Map<String, List<Implementor>> implementorsMapByAnnotatedType = implementorsMapByExtension.get(extensionClass);
         List<Implementor> implementors = null;
 
         if (null != implementorsMapByAnnotatedType) {
-            implementors = implementorsMapByAnnotatedType.get(annotatedType);
+            String key = Arrays.stream(annotatedTypes).map(p -> p.getName()).collect(Collectors.joining("~"));
+            implementors = implementorsMapByAnnotatedType.get(key);
         }
 
         return null == implementors ? Collections.emptyList() : implementors;

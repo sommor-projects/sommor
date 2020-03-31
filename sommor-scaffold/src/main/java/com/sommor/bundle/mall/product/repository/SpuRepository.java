@@ -1,0 +1,18 @@
+package com.sommor.bundle.mall.product.repository;
+
+import com.sommor.bundle.mall.product.entity.SpuEntity;
+import com.sommor.mybatis.repository.CurdRepository;
+import com.sommor.mybatis.sql.SqlProvider;
+import org.apache.ibatis.annotations.SelectProvider;
+import org.mapstruct.Mapper;
+
+/**
+ * @author yanguanwei@qq.com
+ * @since 2019/12/22
+ */
+@Mapper
+public interface SpuRepository extends CurdRepository<SpuEntity> {
+
+    @SelectProvider(type = SqlProvider.class, method = "findBy")
+    SpuEntity findBySubTitle(String subTitle);
+}

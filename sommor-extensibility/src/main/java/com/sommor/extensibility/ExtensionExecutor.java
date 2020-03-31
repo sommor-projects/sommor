@@ -35,6 +35,10 @@ public class ExtensionExecutor<Ext> {
         return this.execute(callback, Reducers.firstNotNull());
     }
 
+    public <R> R executeFirst(Object annotatedInstance, P1RCallback<Ext, R> callback) {
+        return this.execute(annotatedInstance, callback, Reducers.first());
+    }
+
     public <R> R executeFirst(Class annotatedType, P1RCallback<Ext, R> callback) {
         return this.execute(annotatedType, callback, Reducers.first());
     }
