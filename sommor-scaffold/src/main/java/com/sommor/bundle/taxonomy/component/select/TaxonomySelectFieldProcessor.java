@@ -23,12 +23,8 @@ public class TaxonomySelectFieldProcessor implements ViewRenderProcessor<Taxonom
             vc.setMultiple(true);
         }
 
-        if (taxonomySelect.parentId() >= 0) {
-            vc.setParentId(taxonomySelect.parentId());
-        }
-
-        if (taxonomySelect.typeId() >= 0) {
-            vc.setTypeId(taxonomySelect.typeId());
+        if (! taxonomySelect.type().isEmpty()) {
+            vc.setType(taxonomySelect.type());
         }
 
         if (! taxonomySelect.group().isEmpty()) {

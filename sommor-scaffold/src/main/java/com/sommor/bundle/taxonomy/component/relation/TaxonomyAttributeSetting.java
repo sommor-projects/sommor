@@ -1,6 +1,7 @@
 package com.sommor.bundle.taxonomy.component.relation;
 
 import com.sommor.bundle.taxonomy.component.select.TaxonomySelectField;
+import com.sommor.bundle.taxonomy.entity.TaxonomyEntity;
 import com.sommor.component.form.field.SwitchField;
 import com.sommor.component.entity.name.EntityNameSelectField;
 import com.sommor.mybatis.sql.field.type.ConfigKey;
@@ -17,15 +18,15 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @ConfigKey("trc")
-public class TaxonomyRelationSetting {
+public class TaxonomyAttributeSetting {
 
     @NotBlank
-    @EntityNameSelectField(title = "关联的内容")
+    @EntityNameSelectField(title = "实体")
     private String subject;
 
     @NotNull
-    @TaxonomySelectField(parentId = 0, title = "关联的分类")
-    private Integer typeId;
+    @TaxonomySelectField(type = TaxonomyEntity.ROOT,  title = "属性")
+    private String type;
 
     @SwitchField(title = "多选")
     private Boolean multiple;

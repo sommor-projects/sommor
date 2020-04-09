@@ -15,7 +15,7 @@ public class ProductQuotationFormRenderParam {
 
     private Integer productId;
 
-    private Integer taxonomyId;
+    private String taxonomy;
 
 
 

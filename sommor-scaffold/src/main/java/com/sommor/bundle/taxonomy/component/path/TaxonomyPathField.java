@@ -14,8 +14,7 @@ import java.lang.annotation.*;
 @Documented
 public @interface TaxonomyPathField {
 
-    int taxonomyId() default 0;
+    String taxonomyFieldName() default "taxonomy";
 
-    String taxonomyIdFieldName() default "taxonomyId";
-
+    String typeFieldName() default "";
 }

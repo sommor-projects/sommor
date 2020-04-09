@@ -40,7 +40,7 @@ public class WorldWineRegionCrawler extends AbstractCrawler {
 
     public WorldWineRegionCrawler(String region) {
         this.region = region;
-        this.type = taxonomyRepository.findByName(TAXONOMY_REGION_NAME);
+        this.type = taxonomyRepository.findByKey(TAXONOMY_REGION_NAME);
     }
 
     @Override
@@ -60,29 +60,34 @@ public class WorldWineRegionCrawler extends AbstractCrawler {
             return;
         }
 
-        String name = TAXONOMY_REGION_NAME + "-" + SlugParser.parse(regionSubTitle);
-        TaxonomyEntity entity = taxonomyRepository.findByName(name);
+        regionSubTitle = regionSubTitle.trim();
+        String name = SlugParser.parse(regionSubTitle);
+        TaxonomyEntity entity = taxonomyRepository.findByName(name, "wine-region");
         if (null == entity) {
             entity = new TaxonomyEntity();
         }
 
+        if (null != regionTitle) {
+            regionTitle = regionTitle.trim();
+        }
+
         entity.setTitle(regionTitle);
         entity.setSubTitle(regionSubTitle);
-        entity.setTypeId(type.getId());
+        entity.setType(type.getName());
         entity.setName(name);
 
         Map<String, String> map = UrlUtil.parseQueryString(url);
-        Integer parentId;
-        if (null == map.get("parentId")) {
-            parentId = type.getId();
+        String parent;
+        if (null == map.get("parent")) {
+            parent = type.getName();
         } else {
-            parentId = Integer.valueOf(map.get("parentId"));
+            parent = map.get("parent");
         }
-        entity.setParentId(parentId);
+        entity.setParent(parent);
 
         taxonomyService.save(entity);
 
-        Integer id = entity.getId();
+        String nextParent = entity.getName();
 
         System.out.println("=================================");
         System.out.println(url);
@@ -91,7 +96,7 @@ public class WorldWineRegionCrawler extends AbstractCrawler {
         System.out.println("=================================\n");
 
         List<String> links = page.getHtml().$("ul.reglist li").links().all();
-        links = links.stream().map(s -> s + "?parentId=" + id).collect(Collectors.toList());
+        links = links.stream().map(s -> s + "?parent=" + nextParent).collect(Collectors.toList());
         page.addTargetRequests(links);
     }
 

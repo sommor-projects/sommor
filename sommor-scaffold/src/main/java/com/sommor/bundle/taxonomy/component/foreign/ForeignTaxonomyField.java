@@ -19,6 +19,7 @@ public @interface ForeignTaxonomyField {
     /**
      * 外键字段名，默认为模型中声明的字段
      */
-    String taxonomyIdFieldName() default "";
+    String taxonomyFieldName() default "";
 
+    String typeFieldName() default "";
 }

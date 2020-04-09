@@ -6,6 +6,7 @@ import com.sommor.bundle.taxonomy.repository.TaxonomyRepository;
 import com.sommor.extensibility.config.Implement;
 import com.sommor.model.fill.FieldFillContext;
 import com.sommor.model.fill.FieldFillProcessor;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -24,12 +25,14 @@ public class TaxonomyPathFieldProcessor implements FieldFillProcessor<TaxonomyPa
 
     @Override
     public Object processOnFieldFill(TaxonomyPathFieldConfig config, FieldFillContext ctx) {
-        Integer taxonomyId = config.getTaxonomyId();
-        if (null == taxonomyId || taxonomyId <= 0) {
+        String taxonomy = config.getTaxonomy();
+        if (StringUtils.isBlank(taxonomy)) {
             return null;
         }
 
-        List<TaxonomyEntity> taxonomyEntities = taxonomyRepository.findTaxonomyPaths(taxonomyId);
+        String type = config.getType();
+
+        List<TaxonomyEntity> taxonomyEntities = taxonomyRepository.findTaxonomyPaths(taxonomy, type);
 
         return taxonomyEntities.stream()
                 .map(p->new TaxonomyInfo(p))

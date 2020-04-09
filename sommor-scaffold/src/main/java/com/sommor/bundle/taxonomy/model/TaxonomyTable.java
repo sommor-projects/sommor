@@ -1,9 +1,10 @@
 package com.sommor.bundle.taxonomy.model;
 
+import com.sommor.bundle.taxonomy.component.key.TaxonomyKeyField;
+import com.sommor.bundle.taxonomy.entity.TaxonomyEntity;
 import com.sommor.bundle.taxonomy.repository.TaxonomyRepository;
 import com.sommor.component.table.OnTableRowFill;
 import com.sommor.model.Model;
-import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.component.table.EntityTable;
 import com.sommor.scaffold.spring.ApplicationContextHolder;
 import com.sommor.view.field.text.TextField;
@@ -15,6 +16,10 @@ import lombok.Setter;
  * @since 2019/12/17
  */
 public class TaxonomyTable extends EntityTable implements OnTableRowFill {
+
+    @Getter @Setter
+    @TaxonomyKeyField
+    private String key;
 
     @Getter @Setter
     @TextField
@@ -51,7 +56,7 @@ public class TaxonomyTable extends EntityTable implements OnTableRowFill {
         this.highestPriority = row == 0;
         this.lowestPriority = row == total - 1;
 
-        BaseEntity entity = model.getTarget();
-        this.setSubTaxonomyCount(taxonomyRepository.countByParentId(entity.getId()));
+        TaxonomyEntity entity = model.getTarget();
+        this.setSubTaxonomyCount(taxonomyRepository.countByParent(entity.getName(), entity.isRoot() ? entity.getName() : entity.getType()));
     }
 }

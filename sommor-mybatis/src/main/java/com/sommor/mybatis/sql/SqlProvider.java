@@ -119,6 +119,16 @@ public class SqlProvider {
         );
     }
 
+    public String findAll(ProviderContext ctx) {
+        Query query = new Query();
+
+        return doFind(
+                parseEntityDefinition(ctx.getMapperType()),
+                query,
+                false
+        );
+    }
+
     public String count(ProviderContext ctx, Query query) {
         enrichConditionParameters(query);
 

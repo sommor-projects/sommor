@@ -36,12 +36,12 @@ import java.util.stream.Collectors;
  * @since 2020/2/14
  */
 @Implement
-public class TaxonomyRelationViewRenderProcessor implements
-        ViewRenderProcessor<TaxonomyRelationConfig>,
-        FieldFillProcessor<TaxonomyRelationConfig>,
-        FormFieldValidateProcessor<TaxonomyRelationConfig>,
-        FormFieldSavingProcessor<TaxonomyRelationConfig>,
-        FormFieldSavedProcessor<TaxonomyRelationConfig> {
+public class TaxonomyAttributeViewRenderProcessor implements
+        ViewRenderProcessor<TaxonomyAttributeConfig>,
+        FieldFillProcessor<TaxonomyAttributeConfig>,
+        FormFieldValidateProcessor<TaxonomyAttributeConfig>,
+        FormFieldSavingProcessor<TaxonomyAttributeConfig>,
+        FormFieldSavedProcessor<TaxonomyAttributeConfig> {
 
     @Resource
     private TaxonomyRepository taxonomyRepository;
@@ -50,18 +50,18 @@ public class TaxonomyRelationViewRenderProcessor implements
     private TaxonomySubjectRepository taxonomySubjectRepository;
 
     @Override
-    public void processOnViewRender(TaxonomyRelationConfig vc, ViewRenderContext ctx) {
+    public void processOnViewRender(TaxonomyAttributeConfig vc, ViewRenderContext ctx) {
         ViewTree viewTree = vc.getViewTree();
 
-        Integer taxonomyId = vc.getTaxonomyId();
+        String taxonomy = vc.getTaxonomy();
         String entityName = vc.getEntityName();
 
-        List<TaxonomyRelationSetting> taxonomyRelationSettings = parseTaxonomyRelationSettings(taxonomyId, entityName);
-        if (CollectionUtils.isNotEmpty(taxonomyRelationSettings)) {
+        List<TaxonomyAttributeSetting> taxonomyAttributeSettings = parseTaxonomyRelationSettings(taxonomy, entityName);
+        if (CollectionUtils.isNotEmpty(taxonomyAttributeSettings)) {
 
             String fullNamePrefix = (StringUtils.isNotBlank(vc.getPathName()) ? (vc.getPathName() + ".") : "") + ctx.getView().getName() + ".";
-            for (TaxonomyRelationSetting taxonomyRelationSetting : taxonomyRelationSettings) {
-                TaxonomyEntity typeEntity = taxonomyRepository.findById(taxonomyRelationSetting.getTypeId());
+            for (TaxonomyAttributeSetting taxonomyAttributeSetting : taxonomyAttributeSettings) {
+                TaxonomyEntity typeEntity = taxonomyRepository.findByType(taxonomyAttributeSetting.getType());
 
                 TaxonomySelectFieldConfig taxonomySelectFieldConfig = new TaxonomySelectFieldConfig();
 
@@ -70,12 +70,12 @@ public class TaxonomyRelationViewRenderProcessor implements
                 taxonomySelectFieldConfig.setPathName(fullNamePrefix + "relations");
                 taxonomySelectFieldConfig.setStyle(typeEntity.getConfig().getString("fs"));
                 taxonomySelectFieldConfig.setTitle(typeEntity.getTitle());
-                taxonomySelectFieldConfig.setTypeId(taxonomyRelationSetting.getTypeId());
+                taxonomySelectFieldConfig.setType(taxonomyAttributeSetting.getType());
                 taxonomySelectFieldConfig.setTree(true);
-                if (Boolean.TRUE.equals(taxonomyRelationSetting.getMultiple())) {
+                if (Boolean.TRUE.equals(taxonomyAttributeSetting.getMultiple())) {
                     taxonomySelectFieldConfig.setMultiple(true);
                 }
-                if (Boolean.TRUE.equals(taxonomyRelationSetting.getRequired())) {
+                if (Boolean.TRUE.equals(taxonomyAttributeSetting.getRequired())) {
                     taxonomySelectFieldConfig.constraint().required();
                 }
 
@@ -85,17 +85,17 @@ public class TaxonomyRelationViewRenderProcessor implements
         }
     }
 
-    private List<TaxonomyRelationSetting> parseTaxonomyRelationSettings(Integer taxonomyId, String subject) {
-        List<TaxonomyRelationSetting> list = new ArrayList<>();
+    private List<TaxonomyAttributeSetting> parseTaxonomyRelationSettings(String taxonomy, String entityName) {
+        List<TaxonomyAttributeSetting> list = new ArrayList<>();
 
-        List<TaxonomyEntity> paths = taxonomyRepository.findTaxonomyPaths(taxonomyId);
+        List<TaxonomyEntity> paths = taxonomyRepository.findTaxonomyPaths(taxonomy, entityName);
         for (TaxonomyEntity entity : paths) {
             if (null != entity.getConfig()) {
-                List<TaxonomyRelationSetting> relationConfigs = entity.getConfig().getList(TaxonomyRelationSetting.class);
-                if (CollectionUtils.isNotEmpty(relationConfigs)) {
-                    for (TaxonomyRelationSetting relationConfig : relationConfigs) {
-                        if (subject.equals(relationConfig.getSubject())) {
-                            list.add(relationConfig);
+                List<TaxonomyAttributeSetting> attributeSettings = entity.getConfig().getList(TaxonomyAttributeSetting.class);
+                if (CollectionUtils.isNotEmpty(attributeSettings)) {
+                    for (TaxonomyAttributeSetting attributeSetting : attributeSettings) {
+                        if (entityName.equals(attributeSetting.getSubject())) {
+                            list.add(attributeSetting);
                         }
                     }
                 }
@@ -106,31 +106,28 @@ public class TaxonomyRelationViewRenderProcessor implements
     }
 
     @Override
-    public Object processOnFieldFill(TaxonomyRelationConfig config, FieldFillContext ctx) {
+    public Object processOnFieldFill(TaxonomyAttributeConfig config, FieldFillContext ctx) {
         TaxonomyEntity taxonomyEntity = null;
+        String taxonomy =config.getTaxonomy();
 
-        Integer taxonomyId = config.getTaxonomyId();
-        if (null == taxonomyId) {
-            if (StringUtils.isNotBlank(config.getTaxonomy())) {
-                taxonomyEntity = taxonomyRepository.findByName(config.getTaxonomy());
-            }
-        } else {
-            taxonomyEntity = taxonomyRepository.findById(taxonomyId);
+        if (StringUtils.isNotBlank(taxonomy)) {
+            taxonomyEntity = taxonomyRepository.findByName(taxonomy, config.getEntityName());
         }
 
         if (null == taxonomyEntity) {
-            throw new ErrorCodeException(ErrorCode.of("subject.taxonomy.invalid"));
+            throw new ErrorCodeException(ErrorCode.of("entity.taxonomy.invalid"));
         }
 
-        TaxonomyRelationSelection selection = new TaxonomyRelationSelection();
-        selection.setTaxonomyId(taxonomyEntity.getId());
+
+        TaxonomyAttributeSelection selection = new TaxonomyAttributeSelection();
+        selection.setTaxonomy(taxonomyEntity.getName());
 
         Map<Integer, Map<Integer, SubjectTaxonomyRelationEntity>> selections = parseSubjectTaxonomySelections(config.getEntityName(), config.getEntityId());
         if (MapUtils.isNotEmpty(selections)) {
             for (Map.Entry<Integer, Map<Integer, SubjectTaxonomyRelationEntity>> entry : selections.entrySet()) {
-                if (! entry.getValue().containsKey(taxonomyId)) {
+                if (! entry.getValue().containsKey(taxonomy)) {
                     TaxonomyEntity entity = taxonomyRepository.findById(entry.getKey());
-                    selection.addRelation(entity.getName(), entry.getValue().keySet());
+                    selection.addAttribute(entity.getName(), entry.getValue().keySet());
                 }
             }
         }
@@ -159,41 +156,41 @@ public class TaxonomyRelationViewRenderProcessor implements
     }
 
     @Override
-    public void processOnFormValidate(TaxonomyRelationConfig config, FieldContext ctx) {
-        TaxonomyRelationSelection taxonomyRelationSelection = ctx.getFieldValue();
-        if (null == taxonomyRelationSelection) {
-            throw new ErrorCodeException(ErrorCode.of("subject.taxonomy.required"));
+    public void processOnFormValidate(TaxonomyAttributeConfig config, FieldContext ctx) {
+        TaxonomyAttributeSelection taxonomyAttributeSelection = ctx.getFieldValue();
+        if (null == taxonomyAttributeSelection) {
+            throw new ErrorCodeException(ErrorCode.of("entity.taxonomy.attribute.selection.required"));
         }
 
-        if (taxonomyRelationSelection.getTaxonomyId() == null || taxonomyRelationSelection.getTaxonomyId() == 0) {
-            throw new ErrorCodeException(ErrorCode.of("subject.taxonomy.typeId.required"));
+        if (StringUtils.isBlank(taxonomyAttributeSelection.getTaxonomy())) {
+            throw new ErrorCodeException(ErrorCode.of("entity.taxonomy.required"));
         }
 
         String subject = config.getEntityName();
-        List<TaxonomyRelationSetting> taxonomyRelationSettings = parseTaxonomyRelationSettings(taxonomyRelationSelection.getTaxonomyId(), subject);
-        Map<TaxonomyEntity, List<TaxonomyEntity>> selections = parseSubjectTaxonomySelections(taxonomyRelationSelection);
+        List<TaxonomyAttributeSetting> taxonomyAttributeSettings = parseTaxonomyRelationSettings(taxonomyAttributeSelection.getTaxonomy(), subject);
+        Map<TaxonomyEntity, List<TaxonomyEntity>> selections = parseSubjectTaxonomySelections(taxonomyAttributeSelection);
 
-        for (TaxonomyRelationSetting setting : taxonomyRelationSettings) {
-            TaxonomyEntity type = taxonomyRepository.findById(setting.getTypeId());
+        for (TaxonomyAttributeSetting setting : taxonomyAttributeSettings) {
+            TaxonomyEntity type = taxonomyRepository.findByType(setting.getType());
 
             if (Boolean.TRUE.equals(setting.getRequired())) {
                 List<TaxonomyEntity> selection = selections.get(type);
                 if (null == selection) {
-                    throw new ErrorCodeException(ErrorCode.of("subject.taxonomy.select.required", type.getId(), type.getTitle()));
+                    throw new ErrorCodeException(ErrorCode.of("entity.taxonomy.select.required", type.getName(), type.getTitle()));
                 }
             }
         }
 
-        ctx.addExt(taxonomyRelationSelection);
+        ctx.addExt(taxonomyAttributeSelection);
         ctx.addExt("subject_taxonomy_selections", selections);
     }
 
-    private Map<TaxonomyEntity, List<TaxonomyEntity>> parseSubjectTaxonomySelections(TaxonomyRelationSelection taxonomyRelationSelection) {
+    private Map<TaxonomyEntity, List<TaxonomyEntity>> parseSubjectTaxonomySelections(TaxonomyAttributeSelection taxonomyAttributeSelection) {
         Map<TaxonomyEntity, List<TaxonomyEntity>> map = new HashMap<>();
 
-        if (MapUtils.isNotEmpty(taxonomyRelationSelection.getRelations())) {
-            for (Map.Entry<String, Object> entry : taxonomyRelationSelection.getRelations().entrySet()) {
-                TaxonomyEntity typeEntity = taxonomyRepository.findByName(entry.getKey());
+        if (MapUtils.isNotEmpty(taxonomyAttributeSelection.getAttributes())) {
+            for (Map.Entry<String, Object> entry : taxonomyAttributeSelection.getAttributes().entrySet()) {
+                TaxonomyEntity typeEntity = taxonomyRepository.findByKey(entry.getKey());
                 Set<Integer> selected = parseSelectedTaxonomyIds(entry.getValue());
                 if (CollectionUtils.isNotEmpty(selected)) {
                     List<TaxonomyEntity> list = selected.stream()
@@ -220,14 +217,14 @@ public class TaxonomyRelationViewRenderProcessor implements
     }
 
     @Override
-    public void processOnFormSaving(TaxonomyRelationConfig config, FieldSaveContext ctx) {
+    public void processOnFormSaving(TaxonomyAttributeConfig config, FieldSaveContext ctx) {
         BaseEntity entity = ctx.getEntity();
-        TaxonomyRelationSelection taxonomyRelationSelection = ctx.getFieldValue();
-        entity.setFieldValue(config.getTaxonomyIdFieldName(), taxonomyRelationSelection.getTaxonomyId());
+        TaxonomyAttributeSelection taxonomyAttributeSelection = ctx.getFieldValue();
+        entity.setFieldValue(config.getTaxonomyFieldName(), taxonomyAttributeSelection.getTaxonomy());
     }
 
     @Override
-    public void processOnFormSaved(TaxonomyRelationConfig config, FieldSaveContext ctx) {
+    public void processOnFormSaved(TaxonomyAttributeConfig config, FieldSaveContext ctx) {
         BaseEntity entity = ctx.getEntity();
 
         String entityName = entity.definition().getSubjectName();
@@ -237,10 +234,10 @@ public class TaxonomyRelationViewRenderProcessor implements
 
         Map<TaxonomyEntity, List<TaxonomyEntity>> selectedTaxonomiesByType = ctx.getExt("subject_taxonomy_selections");
 
-        if (entity.hasField(config.getTaxonomyIdFieldName())) {
-            TaxonomyRelationSelection taxonomyRelationSelection = ctx.getExt(TaxonomyRelationSelection.class);
-            TaxonomyEntity taxonomyEntity = taxonomyRepository.findById(taxonomyRelationSelection.getTaxonomyId());
-            TaxonomyEntity typeEntity = taxonomyEntity.getTypeId() > 0 ? taxonomyRepository.findById(taxonomyEntity.getTypeId()) : taxonomyEntity;
+        if (entity.hasField(config.getTaxonomyFieldName())) {
+            TaxonomyAttributeSelection taxonomyAttributeSelection = ctx.getExt(TaxonomyAttributeSelection.class);
+            TaxonomyEntity taxonomyEntity = taxonomyRepository.findByName(taxonomyAttributeSelection.getTaxonomy(), entityName);
+            TaxonomyEntity typeEntity = taxonomyEntity.isRoot() ? taxonomyEntity : taxonomyRepository.findByType(taxonomyEntity.getType());
             selectedTaxonomiesByType.put(typeEntity, Lists.newArrayList(taxonomyEntity));
         }
 
@@ -257,7 +254,7 @@ public class TaxonomyRelationViewRenderProcessor implements
                         relationEntity.setTypeId(typeEntity.getId());
                         relationEntity.setTaxonomyId(selected.getId());
 
-                        List<TaxonomyEntity> paths = taxonomyRepository.findTaxonomyPaths(selected.getId());
+                        List<TaxonomyEntity> paths = taxonomyRepository.findTaxonomyPaths(selected.getName(), selected.getType());
                         if (paths.size() > 1) {
                             relationEntity.setTaxonomyId1(paths.get(1).getId());
                         }

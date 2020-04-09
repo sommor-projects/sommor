@@ -14,6 +14,8 @@ import lombok.Setter;
 @Getter @Setter
 public class TaxonomyEntity extends ConfigurableEntity implements Comparable<TaxonomyEntity> {
 
+    public static final String ROOT = "_";
+
     @Column
     private String name;
 
@@ -24,19 +26,44 @@ public class TaxonomyEntity extends ConfigurableEntity implements Comparable<Tax
     private String subTitle;
 
     @Column
-    private Integer typeId;
+    private String type;
 
-    /**
-     * 父分类ID，最顶层的分类该值为0
-     */
     @Column
-    private Integer parentId;
+    private String parent;
 
     @Column
     private Integer priority;
 
     @Column
     private String group;
+
+    public String getKey() {
+        if (ROOT.equals(type)) {
+            return name;
+        }
+
+        return type + ":" + name;
+    }
+
+    public String getParentKey() {
+        if (isRoot()) {
+            return null;
+        }
+
+        if (type.equals(parent)) {
+            return parent;
+        }
+
+        return type + ":" + parent;
+    }
+
+    public boolean isRoot() {
+        return ROOT.equals(parent);
+    }
+
+    public boolean equals(String name, String type) {
+        return this.getName().equals(name) && this.getType().equals(type);
+    }
 
     @Override
     public String toString() {

@@ -31,7 +31,7 @@ public class ProductEntity extends ConfigurableEntity {
     private Integer spuId;
 
     @Column
-    private Integer catalogId;
+    private String catalog;
 
     @Column
     private String qrCode;
@@ -43,7 +43,7 @@ public class ProductEntity extends ConfigurableEntity {
     private String subTitle;
 
     @Column
-    private Integer taxonomyId;
+    private String taxonomy;
 
     @Column
     private String cover;

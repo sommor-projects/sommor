@@ -19,7 +19,7 @@ public class SubjectTaxonomyForm {
     @Setter
     @TaxonomySelectField(tree = true)
     @NotNull
-    private Integer taxonomy;
+    private String taxonomy;
 
     private TaxonomyEntity typeEntity;
 
@@ -29,7 +29,7 @@ public class SubjectTaxonomyForm {
 
     public void renderTaxonomy(ModelFieldViewRenderContext ctx) {
         TaxonomySelectFieldConfig config = ctx.getFieldConfig();
-        config.setTypeId(typeEntity.getId());
+        config.setType(typeEntity.getName());
         config.setTitle(typeEntity.getTitle() + "类型");
     }
 }

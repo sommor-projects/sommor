@@ -9,7 +9,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2020/2/14
  */
-public class TaxonomyRelationConfig extends FieldsetConfig<FieldsetView> {
+public class TaxonomyAttributeConfig extends FieldsetConfig<FieldsetView> {
 
     @Getter
     @Setter
@@ -25,9 +25,5 @@ public class TaxonomyRelationConfig extends FieldsetConfig<FieldsetView> {
 
     @Getter
     @Setter
-    private Integer taxonomyId;
-
-    @Getter
-    @Setter
-    private String taxonomyIdFieldName;
+    private String taxonomyFieldName;
 }

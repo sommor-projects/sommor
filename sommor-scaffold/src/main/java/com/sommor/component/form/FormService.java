@@ -65,7 +65,7 @@ public class FormService<Entity extends BaseEntity, EntityForm, EntityFormParam>
         } else {
             formAction = Add.ACTION;
             paramModel.fill();
-            sourceModel = Model.of(newEntity()).fill(paramModel);
+            sourceModel = paramModel;
         }
 
         EntityForm form = newForm();

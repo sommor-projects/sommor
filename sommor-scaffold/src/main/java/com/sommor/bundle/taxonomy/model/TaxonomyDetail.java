@@ -1,5 +1,6 @@
 package com.sommor.bundle.taxonomy.model;
 
+import com.sommor.bundle.taxonomy.component.key.TaxonomyKeyField;
 import com.sommor.bundle.taxonomy.component.path.TaxonomyPathField;
 import com.sommor.bundle.taxonomy.component.foreign.ForeignTaxonomyField;
 import com.sommor.model.target.EntityDetail;
@@ -17,6 +18,11 @@ public class TaxonomyDetail extends EntityDetail {
 
     @Getter
     @Setter
+    @TaxonomyKeyField
+    private String key;
+
+    @Getter
+    @Setter
     @TextField
     private String name;
 
@@ -27,12 +33,12 @@ public class TaxonomyDetail extends EntityDetail {
 
     @Getter
     @Setter
-    @ForeignTaxonomyField(taxonomyIdFieldName = "typeId")
+    @ForeignTaxonomyField(taxonomyFieldName = "type", typeFieldName = "type")
     private TaxonomyInfo type;
 
     @Getter
     @Setter
-    @TaxonomyPathField(taxonomyIdFieldName = "id")
+    @TaxonomyPathField(taxonomyFieldName = "name", typeFieldName = "type")
     private List<TaxonomyInfo> path;
 
 }

@@ -61,7 +61,7 @@ public class ReflectModelField extends Extensible implements ModelField {
 
     @Override
     public Class getType() {
-        return fieldDefinition.getField().getType();
+        return fieldDefinition.getFieldType();
     }
 
     public Field getReflectField() {

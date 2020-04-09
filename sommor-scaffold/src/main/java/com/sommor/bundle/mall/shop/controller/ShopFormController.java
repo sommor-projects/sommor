@@ -3,9 +3,8 @@ package com.sommor.bundle.mall.shop.controller;
 import com.sommor.bundle.mall.shop.entity.ShopEntity;
 import com.sommor.bundle.mall.shop.model.ShopForm;
 import com.sommor.bundle.mall.shop.service.ShopFormService;
-import com.sommor.bundle.taxonomy.model.TaxonomyRelationFormParam;
+import com.sommor.bundle.taxonomy.model.EntityTaxonomyFormParam;
 import com.sommor.component.form.FormController;
-import com.sommor.component.form.FormService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ShopFormController extends FormController<
         ShopEntity,
         ShopForm,
-        TaxonomyRelationFormParam> {
+        EntityTaxonomyFormParam> {
 
     public ShopFormController(ShopFormService formService) {
         super(formService);

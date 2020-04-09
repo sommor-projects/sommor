@@ -26,6 +26,9 @@ public interface CurdRepository<Entity extends BaseEntity> {
     @SelectProvider(type = SqlProvider.class, method = "findFirst")
     Entity findFirst(Query query);
 
+    @SelectProvider(type = SqlProvider.class, method = "findAll")
+    List<Entity> findAll();
+
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     List<Entity> findByIds(Array id);
 

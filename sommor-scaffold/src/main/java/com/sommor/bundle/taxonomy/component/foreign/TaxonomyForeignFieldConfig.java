@@ -13,6 +13,10 @@ public class TaxonomyForeignFieldConfig extends TargetConfig {
 
     @Getter
     @Setter
-    private Integer taxonomyId;
+    private String taxonomy;
+
+    @Getter
+    @Setter
+    private String type;
 
 }

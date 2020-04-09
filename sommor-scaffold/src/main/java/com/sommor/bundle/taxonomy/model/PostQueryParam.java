@@ -1,6 +1,5 @@
 package com.sommor.bundle.taxonomy.model;
 
-import com.sommor.bundle.taxonomy.model.TaxonomyRelationQueryParam;
 import com.sommor.mybatis.query.Query;
 import com.sommor.mybatis.sql.select.OrderType;
 import lombok.Getter;
@@ -11,7 +10,7 @@ import lombok.Setter;
  * @since 2019/11/27
  */
 @Getter @Setter
-public class PostQueryParam extends TaxonomyRelationQueryParam {
+public class PostQueryParam extends EntityTaxonomyQueryParam {
 
     public PostQueryParam() {
         super("post");

@@ -3,6 +3,7 @@ package com.sommor.bundle.taxonomy.component.select;
 import com.sommor.api.error.ErrorCode;
 import com.sommor.api.error.ErrorCodeException;
 import com.sommor.bundle.taxonomy.entity.TaxonomyEntity;
+import com.sommor.bundle.taxonomy.model.TaxonomyKey;
 import com.sommor.bundle.taxonomy.model.TaxonomyTree;
 import com.sommor.bundle.taxonomy.repository.TaxonomyRepository;
 import com.sommor.bundle.taxonomy.service.TaxonomyService;
@@ -32,8 +33,7 @@ public class TaxonomySelectViewRenderProcessor implements ViewRenderProcessor<Ta
     @Override
     public void processOnViewRender(TaxonomySelectFieldConfig vc, ViewRenderContext ctx) {
         String type = vc.getType();
-        Integer typeId = vc.getTypeId();
-        Integer parentId = vc.getParentId();
+        String parent = vc.getParent();
         String group = vc.getGroup();
 
         boolean isTree = Boolean.TRUE.equals(vc.getTree());
@@ -55,32 +55,43 @@ public class TaxonomySelectViewRenderProcessor implements ViewRenderProcessor<Ta
             selectView.addOption(new TreeOption("最顶层分类", 0));
         }
 
-        if (StringUtils.isNotBlank(type)) {
-            TaxonomyEntity taxonomyEntity = taxonomyRepository.findByName(type);
-            if (null == taxonomyEntity) {
-                throw new ErrorCodeException(ErrorCode.of("type is not exists", type));
+        if (isTree) {
+            TaxonomyEntity typeEntity = null;
+            if (StringUtils.isNotBlank(type)) {
+                typeEntity = taxonomyRepository.findByType(type);
+                if (null == typeEntity) {
+                    throw new ErrorCodeException(ErrorCode.of("type is not exists", type));
+                }
             }
-            typeId = taxonomyEntity.getId();
-        }
 
-        // 如果要展示
-        if (isTree && (null == typeId || typeId < 0 ) && parentId != null && parentId > 0) {
-            TaxonomyEntity taxonomyEntity = taxonomyRepository.findById(parentId);
-            if (null == taxonomyEntity) {
-                throw new ErrorCodeException(ErrorCode.of("taxonomy is not exists", parentId));
-            }
-            typeId = taxonomyEntity.getTypeId() == 0 ? taxonomyEntity.getId() : taxonomyEntity.getTypeId();
-        }
+            // 如果要展示
+            if (null == typeEntity && StringUtils.isNotBlank(parent)) {
+                TaxonomyEntity entity = taxonomyRepository.findByKey(parent);
+                if (null == entity) {
+                    throw new ErrorCodeException(ErrorCode.of("taxonomy is not exists", parent));
+                }
 
-        if (null != typeId && typeId >= 0) {
-            List<TaxonomyTree> taxonomyTrees = taxonomyService.getTaxonomyTreesByType(typeId, group, isIncludeSelf);
-            for (TaxonomyTree taxonomyTree : taxonomyTrees) {
-                selectView.addOption(taxonomyTree.toTreeOption());
+                if (entity.isRoot()) {
+                    typeEntity = entity;
+                } else {
+                    type = entity.getType();
+                    typeEntity = taxonomyRepository.findByType(type);
+                }
             }
-        } else if (null != parentId && parentId >= 0) {
-            List<TaxonomyEntity> taxonomyEntities = taxonomyRepository.findByParentId(parentId);
+
+            if (null != typeEntity) {
+                List<TaxonomyTree> taxonomyTrees = taxonomyService.getTaxonomyTreesByType(typeEntity, group, isIncludeSelf);
+                for (TaxonomyTree taxonomyTree : taxonomyTrees) {
+                    selectView.addOption(taxonomyTree.toTreeOption());
+                }
+            }
+        } else if (StringUtils.isNotBlank(type)) {
+            if (StringUtils.isBlank(parent)) {
+                parent = TaxonomyEntity.ROOT;
+            }
+            List<TaxonomyEntity> taxonomyEntities = taxonomyRepository.findByParent(parent, type);
             for (TaxonomyEntity taxonomyEntity : taxonomyEntities) {
-                selectView.addOption(taxonomyEntity.getTitle(), taxonomyEntity.getId());
+                selectView.addOption(taxonomyEntity.getTitle(), taxonomyEntity.getName());
             }
         }
     }

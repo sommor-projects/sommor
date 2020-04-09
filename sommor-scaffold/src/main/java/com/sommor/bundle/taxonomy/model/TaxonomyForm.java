@@ -1,9 +1,10 @@
 package com.sommor.bundle.taxonomy.model;
 
-import com.sommor.bundle.taxonomy.component.relation.TaxonomyRelationSetting;
+import com.sommor.bundle.taxonomy.component.relation.TaxonomyAttributeSetting;
 import com.sommor.bundle.taxonomy.component.select.TaxonomySelectFieldConfig;
 import com.sommor.bundle.taxonomy.component.select.TaxonomySelectField;
 import com.sommor.bundle.taxonomy.component.style.TaxonomyStyleField;
+import com.sommor.bundle.taxonomy.entity.TaxonomyEntity;
 import com.sommor.component.form.EntityForm;
 import com.sommor.component.form.field.InputField;
 import com.sommor.model.Model;
@@ -28,7 +29,7 @@ public class TaxonomyForm extends EntityForm implements OnViewRender {
 
     @TaxonomySelectField(tree = true, includeSelf = true, title = "父分类")
     @NotNull
-    private Integer parentId;
+    private String parent;
 
     @InputField(title = "标题")
     @NotBlank
@@ -44,8 +45,8 @@ public class TaxonomyForm extends EntityForm implements OnViewRender {
     @InputField(title = "分组名")
     private String group;
 
-    @ModelAware(TaxonomyRelationSetting.class)
-    private List<TaxonomyRelationSetting> relationConfigs;
+    @ModelAware(TaxonomyAttributeSetting.class)
+    private List<TaxonomyAttributeSetting> attributeSettings;
 
     @TaxonomyStyleField(title = "字段样式")
     @ConfigKey("fs")
@@ -53,9 +54,17 @@ public class TaxonomyForm extends EntityForm implements OnViewRender {
 
     @Override
     public void onViewRender(Model model, ViewRenderContext ctx) {
-        TaxonomySelectFieldConfig config = model.getField("parentId").getFieldConfig();
-        config.setParentId(this.getParentId());
-        if (this.getParentId() == null || this.getParentId() == 0) {
+        TaxonomySelectFieldConfig config = model.getField("parent").getFieldConfig();
+
+        Object target = ctx.getSourceMode().getTarget();
+        if (target instanceof TaxonomyFormParam) {
+            String parent = ((TaxonomyFormParam) target).getParent();
+            TaxonomyKey key = TaxonomyKey.of(parent);
+            config.setType(key.getTaxonomyType());
+        } else if (target instanceof TaxonomyEntity) {
+            TaxonomyKey key = TaxonomyKey.of((TaxonomyEntity) target);
+            config.setType(key.getTaxonomyType());
+        } else {
             config.setIncludeRoot(true);
         }
     }

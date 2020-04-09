@@ -5,6 +5,7 @@ import com.sommor.model.config.TargetConfigDefinition;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -23,6 +24,14 @@ public class FieldDefinition extends Extensible {
     @Getter
     @Setter
     private Field field;
+
+    @Getter
+    @Setter
+    private Class fieldType;
+
+    @Getter
+    @Setter
+    private Class declaringClass;
 
     @Getter
     @Setter
@@ -71,7 +80,7 @@ public class FieldDefinition extends Extensible {
         try {
             if (null != setter) {
                 setter.invoke(target, value);
-            } else {
+            } else if (null != field) {
                 field.set(target, value);
             }
         } catch (Throwable e) {
@@ -83,12 +92,22 @@ public class FieldDefinition extends Extensible {
         try {
             if (null != getter) {
                 return getter.invoke(target);
-            } else {
+            } else if (null != field) {
                 return field.get(target);
             }
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
+
+        return null;
+    }
+
+    public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
+        if (null != field) {
+            return field.getAnnotation(annotationClass);
+        }
+
+        return null;
     }
 
     @Override

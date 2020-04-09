@@ -41,6 +41,8 @@ public class TableViewRenderProcessor implements ViewRenderProcessor<TableViewCo
         List<?> entities = pagingResult.getData();
         if (CollectionUtils.isNotEmpty(entities)) {
             List<Model> models = entities.stream().map(p -> Model.of(p)).collect(Collectors.toList());
+            tableModel.enrich(models);
+
             int total = entities.size();
             int row = 0;
             for (Model sourceModel : models) {

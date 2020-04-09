@@ -43,11 +43,11 @@ public class WineRepository {
     private TaxonomyEntity wineryTaxonomy;
 
     public TaxonomyEntity getWineProductTaxonomy() {
-        return wineProductTaxonomy == null ? wineProductTaxonomy = taxonomyRepository.findByName("wines") : wineProductTaxonomy;
+        return wineProductTaxonomy == null ? wineProductTaxonomy = taxonomyRepository.findByKey("wines") : wineProductTaxonomy;
     }
 
     public TaxonomyEntity getWineryTaxonomy() {
-        return wineryTaxonomy == null ? wineryTaxonomy = taxonomyRepository.findByName("winery") : wineryTaxonomy;
+        return wineryTaxonomy == null ? wineryTaxonomy = taxonomyRepository.findByKey("winery") : wineryTaxonomy;
     }
 
     public ProductEntity findWineProductByWineName(String wineName) {

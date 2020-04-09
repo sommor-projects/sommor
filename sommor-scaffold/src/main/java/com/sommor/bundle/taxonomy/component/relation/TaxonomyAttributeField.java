@@ -10,9 +10,9 @@ import java.lang.annotation.*;
  */
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@TargetAnnotation(TaxonomyRelationConfig.class)
+@TargetAnnotation(TaxonomyAttributeConfig.class)
 @Documented
-public @interface TaxonomyRelationField {
+public @interface TaxonomyAttributeField {
 
     String taxonomy() default "";
 
@@ -22,6 +22,6 @@ public @interface TaxonomyRelationField {
 
     String entityNameFieldName() default "entityName";
 
-    String taxonomyIdFieldName() default "taxonomyId";
+    String taxonomyFieldName() default "taxonomy";
 
 }

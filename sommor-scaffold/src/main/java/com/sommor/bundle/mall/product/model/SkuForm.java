@@ -5,8 +5,8 @@ import com.sommor.bundle.mall.product.entity.SkuEntity;
 import com.sommor.bundle.mall.shop.entity.ShopEntity;
 import com.sommor.bundle.media.component.file.MediaFiles;
 import com.sommor.bundle.media.component.file.MediaFilesField;
-import com.sommor.bundle.taxonomy.component.relation.TaxonomyRelationField;
-import com.sommor.bundle.taxonomy.component.relation.TaxonomyRelationSelection;
+import com.sommor.bundle.taxonomy.component.relation.TaxonomyAttributeField;
+import com.sommor.bundle.taxonomy.component.relation.TaxonomyAttributeSelection;
 import com.sommor.component.currency.CurrencyEnum;
 import com.sommor.component.currency.CurrencySelectField;
 import com.sommor.component.currency.MoneyAmountField;
@@ -71,8 +71,8 @@ public class SkuForm extends EntityForm {
 
     @Getter
     @Setter
-    @TaxonomyRelationField(entityName = SkuEntity.NAME)
-    private TaxonomyRelationSelection taxonomy;
+    @TaxonomyAttributeField(entityName = SkuEntity.NAME)
+    private TaxonomyAttributeSelection taxonomy;
 
     @Getter
     @Setter

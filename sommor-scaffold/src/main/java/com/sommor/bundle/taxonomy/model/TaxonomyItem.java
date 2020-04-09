@@ -11,7 +11,11 @@ import lombok.Setter;
 public class TaxonomyItem implements Comparable<TaxonomyItem> {
     @Getter
     @Setter
-    private Integer id;
+    private String name;
+
+    @Getter
+    @Setter
+    private String key;
 
     @Getter
     @Setter
@@ -38,14 +42,15 @@ public class TaxonomyItem implements Comparable<TaxonomyItem> {
     private Integer subTaxonomyCount;
 
     public void from(TaxonomyEntity entity) {
-        this.setId(entity.getId());
+        this.setName(entity.getName());
+        this.setKey(entity.getKey());
         this.setTitle(entity.getTitle());
         this.setSubTitle(entity.getSubTitle());
         this.setPriority(entity.getPriority());
     }
 
-    public Integer getKey() {
-        return this.getId();
+    public String getKey() {
+        return this.key;
     }
 
     @Override

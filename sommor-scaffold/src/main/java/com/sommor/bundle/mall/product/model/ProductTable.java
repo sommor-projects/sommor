@@ -11,6 +11,7 @@ import lombok.Setter;
  * @since 2020/2/1
  */
 @EntityModelEnricher(entityName = "shop", entityIdFieldName = "shopId")
+@EntityModelEnricher(entityName = "shop", entityIdFieldName = "shopId")
 public class ProductTable extends EntityTable {
 
     @Setter
@@ -41,8 +42,6 @@ public class ProductTable extends EntityTable {
     @Setter
     @Getter
     private String shopSubTitle;
-
-
 
     @Setter
     @Getter

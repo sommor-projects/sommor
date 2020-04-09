@@ -26,13 +26,12 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Repeatable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author yanguanwei@qq.com
@@ -93,6 +92,8 @@ public class ModelManager {
 
         field.setAccessible(true);
         definition.setField(field);
+        definition.setFieldType(field.getType());
+        definition.setDeclaringClass(clazz);
 
         definition.setName(field.getName());
         definition.setGetter(parseFieldGetterMethod(clazz, field));
@@ -189,15 +190,54 @@ public class ModelManager {
 
         for (Annotation annotation : annotations) {
             Class<? extends Annotation> annotationClass = annotation.annotationType();
-            if (null != annotationClass) {
-                TargetAnnotation targetAnnotation = annotationClass.getAnnotation(TargetAnnotation.class);
-                if (null != targetAnnotation) {
-                    results.add(new TargetConfigDefinition(targetAnnotation, annotation));
+            TargetAnnotation targetAnnotation = annotationClass.getAnnotation(TargetAnnotation.class);
+            if (null != targetAnnotation) {
+                results.add(new TargetConfigDefinition(targetAnnotation, annotation));
+            } else {
+                List<Annotation> repeatableAnnotations = parseRepeatableAnnotations(annotation);
+                if (CollectionUtils.isNotEmpty(repeatableAnnotations)) {
+                    List<TargetConfigDefinition> definitions = parseTargetConfigDefinitions(repeatableAnnotations.toArray(new Annotation[0]));
+                    results.addAll(definitions);
                 }
             }
         }
 
         return results;
+    }
+
+    private static List<Annotation> parseRepeatableAnnotations(Annotation annotation) {
+        Class<? extends Annotation> annotationClass = annotation.annotationType();
+        if (annotationClass.getDeclaredMethods().length == 1) {
+            Method valueMethod;
+            try {
+                valueMethod = annotationClass.getDeclaredMethod("value");
+            } catch (NoSuchMethodException e) {
+                // ignore
+                return Collections.emptyList();
+            }
+
+            try {
+                Object o = valueMethod.invoke(annotation);
+                if (o.getClass().isArray()) {
+                    Object[] a = (Object[]) o;
+                    if (a[0] instanceof Annotation) {
+                        Annotation ann = (Annotation) a[0];
+                        Repeatable repeatable = ann.annotationType().getAnnotation(Repeatable.class);
+                        if (null != repeatable && repeatable.value() == annotationClass) {
+                            List<Annotation> result = new ArrayList<>();
+                            for (Object v : a) {
+                                result.add((Annotation) v);
+                            }
+                            return result;
+                        }
+                    }
+                }
+            } catch (Throwable e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return Collections.emptyList();
     }
 
     public static Model parseModel(Object target) {
@@ -262,8 +302,8 @@ public class ModelManager {
             FieldDefinition fieldDefinition = targetModelDefinition.getField(sourceFieldDefinition.getName());
             if (null != fieldDefinition) {
                 Object sourceValue = sourceFieldDefinition.getFieldValue(source);
-                sourceValue = convert(fieldDefinition.getField().getType(), sourceValue);
-                if (checkFieldType(fieldDefinition.getField().getType(), sourceValue)) {
+                sourceValue = convert(fieldDefinition.getFieldType(), sourceValue);
+                if (checkFieldType(fieldDefinition.getFieldType(), sourceValue)) {
                     fieldDefinition.setFieldValue(target, sourceValue);
                 }
             }
@@ -453,7 +493,7 @@ public class ModelManager {
     private static void parseSubModel(Model model, ReflectModelField modelField, FieldDefinition fieldDefinition) {
         ModelDefinition subModelDefinition = fieldDefinition.getSubModelDefinition();
         if (null != subModelDefinition) {
-            Object target = subModelDefinition.getModelClass() == fieldDefinition.getField().getType() ? modelField : null;
+            Object target = subModelDefinition.getModelClass() == fieldDefinition.getFieldType() ? modelField : null;
             Model subModel = parseModel(target, subModelDefinition, model);
             subModel.setName(modelField.getName());
             subModel.setParentModel(model);

@@ -1,5 +1,7 @@
 package com.sommor.model.enricher;
 
+import com.sommor.model.config.TargetAnnotation;
+
 import java.lang.annotation.*;
 
 /**
@@ -9,8 +11,8 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+@TargetAnnotation(EntityModelEnrichConfig.class)
 @Repeatable(EntityModelEnrichers.class)
-@ModelEnricher
 public @interface EntityModelEnricher {
 
     String entityName();

@@ -3,8 +3,8 @@ package com.sommor.bundle.mall.shop.model;
 import com.sommor.bundle.mall.shop.entity.ShopEntity;
 import com.sommor.bundle.media.component.file.MediaFiles;
 import com.sommor.bundle.media.component.file.MediaFilesField;
-import com.sommor.bundle.taxonomy.component.relation.TaxonomyRelationField;
-import com.sommor.bundle.taxonomy.component.relation.TaxonomyRelationSelection;
+import com.sommor.bundle.taxonomy.component.relation.TaxonomyAttributeField;
+import com.sommor.bundle.taxonomy.component.relation.TaxonomyAttributeSelection;
 import com.sommor.bundle.user.entity.UserEntity;
 import com.sommor.component.form.EntityForm;
 import com.sommor.component.form.field.InputField;
@@ -40,8 +40,8 @@ public class ShopForm extends EntityForm {
     @InputField
     private String address;
 
-    @TaxonomyRelationField(entityName = ShopEntity.NAME)
-    private TaxonomyRelationSelection taxonomy;
+    @TaxonomyAttributeField(entityName = ShopEntity.NAME)
+    private TaxonomyAttributeSelection taxonomy;
 
     @Getter @Setter
     @MediaFilesField(entity = ShopEntity.NAME, title = "Logo")

@@ -59,7 +59,7 @@ public class TaxonomyDisplayFieldProcessor implements FieldFillProcessor<Taxonom
         String entityName = config.getEntityName();
         Integer entityId = config.getEntityId();
 
-        TaxonomyEntity type = taxonomyRepository.findByName(config.getType());
+        TaxonomyEntity type = taxonomyRepository.findByKey(config.getType());
         taxonomySelectionVO.setType(parseTaxonomyItem(type));
 
         List<TaxonomyInfoVO> items = new ArrayList<>();

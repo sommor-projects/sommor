@@ -30,7 +30,7 @@ public class ConfigurableFieldInterceptor implements
     public void interceptOnFieldDefine(FieldDefinition fieldDefinition) {
         ConfigurableFieldConfig cfc = null;
 
-        ConfigKey configKey = fieldDefinition.getField().getAnnotation(ConfigKey.class);
+        ConfigKey configKey = fieldDefinition.getAnnotation(ConfigKey.class);
         if (null != configKey) {
             String key = configKey.value().isEmpty() ? fieldDefinition.getName() : configKey.value();
             cfc = new ConfigurableFieldConfig();

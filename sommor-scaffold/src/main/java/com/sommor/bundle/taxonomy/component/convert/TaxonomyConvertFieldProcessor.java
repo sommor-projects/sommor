@@ -38,7 +38,7 @@ public class TaxonomyConvertFieldProcessor implements FieldFillProcessor<Taxonom
                 if (StringUtils.isNumeric(s)) {
                     taxonomyEntity = taxonomyRepository.findById(Integer.valueOf(s));
                 } else {
-                    taxonomyEntity = taxonomyRepository.findByName((String) value);
+                    taxonomyEntity = taxonomyRepository.findByKey((String) value);
                 }
             } else if (value instanceof Integer) {
                 Integer i = (Integer) value;

@@ -1,8 +1,8 @@
 package com.sommor.bundle.mall.product.model;
 
 import com.sommor.bundle.mall.product.entity.SkuEntity;
-import com.sommor.bundle.taxonomy.component.relation.TaxonomyRelationField;
-import com.sommor.bundle.taxonomy.component.relation.TaxonomyRelationSelection;
+import com.sommor.bundle.taxonomy.component.relation.TaxonomyAttributeField;
+import com.sommor.bundle.taxonomy.component.relation.TaxonomyAttributeSelection;
 import com.sommor.component.currency.CurrencySelectField;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,7 +48,7 @@ public class ProductQuotationForm {
 
     @Getter
     @Setter
-    @TaxonomyRelationField(entityName = SkuEntity.NAME)
-    private TaxonomyRelationSelection taxonomy;
+    @TaxonomyAttributeField(entityName = SkuEntity.NAME)
+    private TaxonomyAttributeSelection taxonomy;
 
 }

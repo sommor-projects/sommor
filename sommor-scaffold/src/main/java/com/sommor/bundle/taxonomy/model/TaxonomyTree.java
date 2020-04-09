@@ -38,10 +38,10 @@ public class TaxonomyTree extends TaxonomyItem {
         } else if (StringUtils.isNotBlank(this.getSubTitle())) {
             label = this.getSubTitle();
         } else {
-            label = this.getId().toString();
+            label = this.getName();
         }
 
-        TreeOption tree = new TreeOption(label, this.getId());
+        TreeOption tree = new TreeOption(label, this.getName());
 
         if (null != children) {
             for (TaxonomyTree taxonomyTree : children) {

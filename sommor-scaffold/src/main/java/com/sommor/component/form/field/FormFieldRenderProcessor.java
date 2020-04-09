@@ -35,8 +35,7 @@ public class FormFieldRenderProcessor implements
     private FormFieldConstraints parseConstraints(FieldDefinition fieldDefinition) {
         FormFieldConstraints constraints = new FormFieldConstraints();
 
-        Field field = fieldDefinition.getField();
-        NotBlank notBlank = field.getAnnotation(NotBlank.class);
+        NotBlank notBlank = fieldDefinition.getAnnotation(NotBlank.class);
         if (null != notBlank) {
             Class[] groups = notBlank.groups();
             if (groups.length == 0) {
@@ -47,7 +46,7 @@ public class FormFieldRenderProcessor implements
             }
         }
 
-        NotNull notNull = field.getAnnotation(NotNull.class);
+        NotNull notNull = fieldDefinition.getAnnotation(NotNull.class);
         if (null != notNull) {
             Class[] groups = notNull.groups();
             if (groups.length == 0) {
@@ -58,7 +57,7 @@ public class FormFieldRenderProcessor implements
             }
         }
 
-        Size size = field.getAnnotation(Size.class);
+        Size size = fieldDefinition.getAnnotation(Size.class);
         if (null != size) {
             Class[] groups = notNull.groups();
             if (groups.length == 0) {

@@ -5,8 +5,8 @@ import com.sommor.bundle.mall.shop.entity.ShopEntity;
 import com.sommor.bundle.media.component.file.MediaFiles;
 import com.sommor.bundle.media.component.file.MediaFilesField;
 import com.sommor.bundle.qrcode.component.qrcode.QrCodeField;
-import com.sommor.bundle.taxonomy.component.relation.TaxonomyRelationField;
-import com.sommor.bundle.taxonomy.component.relation.TaxonomyRelationSelection;
+import com.sommor.bundle.taxonomy.component.relation.TaxonomyAttributeField;
+import com.sommor.bundle.taxonomy.component.relation.TaxonomyAttributeSelection;
 import com.sommor.bundle.taxonomy.component.select.TaxonomySelectField;
 import com.sommor.bundle.taxonomy.component.select.TaxonomySelectFieldConfig;
 import com.sommor.component.form.EntityForm;
@@ -43,8 +43,8 @@ public class ProductForm extends EntityForm {
     @InputField(title = "副标题")
     private String subTitle;
 
-    @TaxonomyRelationField(entityName = "product")
-    private TaxonomyRelationSelection taxonomy;
+    @TaxonomyAttributeField(entityName = "product")
+    private TaxonomyAttributeSelection taxonomy;
 
     @MediaFilesField(entity = ProductEntity.NAME, maxCount = 5, coverFieldName = "cover", title = "图片")
     private MediaFiles pictures;
@@ -56,9 +56,9 @@ public class ProductForm extends EntityForm {
     private String description;
 
     @TaxonomySelectField(type = "shop_catalog")
-    private Integer catalogId;
+    private String catalog;
 
-    public void renderCatalogId(ModelFieldViewRenderContext ctx) {
+    public void renderCatalog(ModelFieldViewRenderContext ctx) {
         TaxonomySelectFieldConfig config = ctx.getFieldConfig();
         config.setGroup("shop_catalog_" + this.getShopId());
     }

@@ -16,6 +16,10 @@ public class TaxonomyInfo {
 
     @Getter
     @Setter
+    private String key;
+
+    @Getter
+    @Setter
     private String title;
 
     @Getter
@@ -27,6 +31,7 @@ public class TaxonomyInfo {
 
     public TaxonomyInfo(TaxonomyEntity entity) {
         this.setId(entity.getId());
+        this.setKey(entity.getKey());
         this.setTitle(entity.getTitle());
         this.setName(entity.getName());
     }

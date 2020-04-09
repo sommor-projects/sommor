@@ -1,6 +1,6 @@
 package com.sommor.bundle.mall.product.model;
 
-import com.sommor.bundle.taxonomy.model.TaxonomyRelationFormParam;
+import com.sommor.bundle.taxonomy.model.EntityTaxonomyFormParam;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +8,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2019/12/26
  */
-public class SpuFormParam extends TaxonomyRelationFormParam {
+public class SpuFormParam extends EntityTaxonomyFormParam {
 
     @Getter
     @Setter

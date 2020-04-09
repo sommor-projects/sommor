@@ -21,13 +21,10 @@ public class TaxonomyDetailParam extends EntityDetailParam {
         super.onModelQuery(query);
 
         if ((this.getId() == null || this.getId() == 0) && StringUtils.isNotBlank(taxonomy)) {
-            if (StringUtils.isNumeric(taxonomy)) {
-                query.where().condition()
-                        .and("id", Integer.valueOf(taxonomy));
-            } else {
-                query.where().condition()
-                        .and("name", taxonomy);
-            }
+            TaxonomyKey taxonomyKey = TaxonomyKey.of(taxonomy);
+            query.where().condition()
+                    .and("type", taxonomyKey.getType())
+                    .and("name", taxonomyKey.getName());
         }
     }
 }

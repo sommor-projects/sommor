@@ -11,7 +11,8 @@ import lombok.Setter;
 
 public class TaxonomyFormParam extends EntityFormParam {
 
-    @Getter @Setter
-    private Integer parentId;
+    @Getter
+    @Setter
+    private String parent;
 
 }

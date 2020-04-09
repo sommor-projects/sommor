@@ -62,12 +62,7 @@ public class CurdService<Entity extends BaseEntity> extends BaseCurdService<Enti
     public PagingResult<Entity> queryByPaging(Model paramModel) {
         Query query = new Query();
         this.enrichQuery(paramModel, query);
-
-        if (query.hasWhereClause()) {
-            return curdRepository().findByPaging(query);
-        }
-
-        return null;
+        return curdRepository().findByPaging(query);
     }
 
     private void enrichQuery(Model model, Query query) {

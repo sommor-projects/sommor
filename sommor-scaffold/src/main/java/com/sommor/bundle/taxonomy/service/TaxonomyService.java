@@ -38,7 +38,8 @@ public class TaxonomyService extends CurdService<TaxonomyEntity> {
         }
 
         Query query = new Query()
-                .where("parentId", entity.getParentId())
+                .where("type", entity.getType())
+                .where("parent", entity.getParent())
                 .orderly("priority", OrderType.ASC);
 
         List<TaxonomyEntity> entities = taxonomyRepository.find(query);
@@ -71,45 +72,40 @@ public class TaxonomyService extends CurdService<TaxonomyEntity> {
         }
     }
 
-    public List<TaxonomyTree> getTaxonomyTreesByType(Integer typeId, boolean includeSelf) {
-        return this.getTaxonomyTreesByType(typeId, null, includeSelf);
-    }
-
-    public List<TaxonomyTree> getTaxonomyTreesByType(Integer typeId, String group, boolean includeSelf) {
+    public List<TaxonomyTree> getTaxonomyTreesByType(TaxonomyEntity typeEntity, String group, boolean includeSelf) {
         List<TaxonomyEntity> entities;
 
         if (StringUtils.isNotBlank(group)) {
-            entities = taxonomyRepository.findByTypeIdAndGroup(typeId, group);
+            entities = taxonomyRepository.findAllByTypeAndGroup(typeEntity.getName(), group);
         } else {
-            entities = taxonomyRepository.findByTypeId(typeId);
+            entities = taxonomyRepository.findAllByType(typeEntity.getName());
         }
 
         if (includeSelf) {
-            TaxonomyEntity root = taxonomyRepository.findById(typeId);
-            entities.add(root);
+            entities.add(typeEntity);
         }
 
-        Map<Integer, List<TaxonomyEntity>> map = mappedByParentId(entities);
-        return parseTaxonomyTrees(map, includeSelf ? 0 : typeId);
+        Map<String, List<TaxonomyEntity>> map = mappedByParentId(entities);
+        return parseTaxonomyTrees(map, includeSelf ? TaxonomyEntity.ROOT : typeEntity.getName());
     }
 
-    private Map<Integer, List<TaxonomyEntity>> mappedByParentId(List<TaxonomyEntity> entities) {
-        Map<Integer, List<TaxonomyEntity>> map = new HashMap<>();
+    private Map<String, List<TaxonomyEntity>> mappedByParentId(List<TaxonomyEntity> entities) {
+        Map<String, List<TaxonomyEntity>> map = new HashMap<>();
         for (TaxonomyEntity entity : entities) {
-            List<TaxonomyEntity> list = map.computeIfAbsent(entity.getParentId(), p -> new ArrayList<>());
+            List<TaxonomyEntity> list = map.computeIfAbsent(entity.getParent(), p -> new ArrayList<>());
             list.add(entity);
         }
         return map;
     }
 
-    private List<TaxonomyTree> parseTaxonomyTrees(Map<Integer, List<TaxonomyEntity>> map, Integer parentId) {
+    private List<TaxonomyTree> parseTaxonomyTrees(Map<String, List<TaxonomyEntity>> map, String parent) {
         List<TaxonomyTree> trees = new ArrayList<>();
 
-        List<TaxonomyEntity> entities = map.get(parentId);
+        List<TaxonomyEntity> entities = map.get(parent);
         if (null != entities) {
             for (TaxonomyEntity entity : entities) {
                 TaxonomyTree taxonomyTree = new TaxonomyTree(entity);
-                taxonomyTree.setChildren(parseTaxonomyTrees(map, entity.getId()));
+                taxonomyTree.setChildren(parseTaxonomyTrees(map, entity.getName()));
                 trees.add(taxonomyTree);
             }
             Collections.sort(trees);
@@ -122,44 +118,39 @@ public class TaxonomyService extends CurdService<TaxonomyEntity> {
     protected void onSaving(TaxonomyEntity entity, TaxonomyEntity original) {
         super.onSaving(entity, original);
 
-        List<TaxonomyEntity> paths = taxonomyRepository.findTaxonomyPaths(entity.getParentId());
+        List<TaxonomyEntity> paths = taxonomyRepository.findTaxonomyPaths(entity);
 
-        if (CollectionUtils.isEmpty(paths)) {
-            entity.setTypeId(0);
+        if (paths.size() == 1) {
+            entity.setType(TaxonomyEntity.ROOT);
         } else {
-            entity.setTypeId(paths.get(0).getId());
+            entity.setType(paths.get(0).getName());
+        }
+
+        if (StringUtils.isNotBlank(entity.getTitle())) {
+            entity.setTitle(entity.getTitle().trim());
+        }
+
+        if (StringUtils.isNotBlank(entity.getSubTitle())) {
+            entity.setSubTitle(entity.getSubTitle().trim());
         }
 
         if (StringUtils.isBlank(entity.getName())) {
             String name = SlugParser.parse(entity.getSubTitle());
-            if (entity.getParentId() > 0 && paths.size() > 0) {
-                name = paths.get(0).getName() + "-" + name;
-            }
             entity.setName(name);
         }
 
         if (null != original) {
-            // 编辑分类时，校验父分类ID不能指定为其下的某一子分类ID
-            if (entity.getParentId() != null) {
-                if (! original.getParentId().equals(entity.getParentId())) {
-                    boolean match = paths.stream().anyMatch(p->p.getId().equals(entity.getId()));
+            // 编辑分类时，校验父分类不能指定为其下的某一子分类
+            if (StringUtils.isNotBlank(entity.getParent())) {
+                if (! original.getParent().equals(entity.getParent())) {
+                    boolean match = paths.stream().anyMatch(p->p.getName().equals(entity.getName()));
                     if (match) {
                         throw new ErrorCodeException(ErrorCode.of("taxonomy.update.failed.parent.cycle"));
                     }
                 }
-
-                // 编辑分类时，校验父分类ID不能为其他类型下的分类ID
-                Integer parentId = entity.getParentId();
-                Integer typeId = original.getTypeId();
-                if (! parentId.equals(typeId)) {
-                    boolean typeMatched = paths.stream().anyMatch(p -> p.getId().equals(typeId));
-                    if (! typeMatched) {
-                        throw new ErrorCodeException(ErrorCode.of("taxonomy.type.parent.unmatched", typeId, parentId));
-                    }
-                }
             }
         } else {
-            TaxonomyEntity lowest = taxonomyRepository.findLowestPriority(entity.getParentId());
+            TaxonomyEntity lowest = taxonomyRepository.findLowestPriority(entity.getParent(), entity.getType());
             int priority = 0;
             if (null != lowest) {
                 priority = (lowest.getPriority() == null ? 0 : lowest.getPriority()) + 1;
@@ -172,14 +163,14 @@ public class TaxonomyService extends CurdService<TaxonomyEntity> {
     protected void onDelete(TaxonomyEntity entity) {
         super.onDelete(entity);
 
-        int count = taxonomyRepository.countByParentId(entity.getId());
+        int count = taxonomyRepository.countByParent(entity.getName(), entity.getType());
         if (count > 0) {
             throw new ErrorCodeException(ErrorCode.of("taxonomy.delete.failed.children", entity.getSubTitle(), entity.getTitle()));
         }
     }
 
     public FormView renderSubjectTaxonomyForm(String type) {
-        TaxonomyEntity typeEntity = taxonomyRepository.findByName(type);
+        TaxonomyEntity typeEntity = taxonomyRepository.findByType(type);
 
         if (null == typeEntity) {
             throw new ErrorCodeException(ErrorCode.of("taxonomy.subject.select.type.invalid", type));

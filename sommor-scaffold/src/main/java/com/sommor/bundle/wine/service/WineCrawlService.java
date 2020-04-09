@@ -6,7 +6,7 @@ import com.sommor.bundle.mall.product.model.ProductForm;
 import com.sommor.bundle.mall.shop.model.ShopForm;
 import com.sommor.bundle.media.component.file.MediaFile;
 import com.sommor.bundle.media.component.file.MediaFiles;
-import com.sommor.bundle.taxonomy.component.relation.TaxonomyRelationSelection;
+import com.sommor.bundle.taxonomy.component.relation.TaxonomyAttributeSelection;
 import com.sommor.bundle.taxonomy.entity.TaxonomyEntity;
 import com.sommor.bundle.taxonomy.model.Term;
 import com.sommor.bundle.taxonomy.repository.TaxonomyRepository;
@@ -135,8 +135,8 @@ public class WineCrawlService {
     private ShopEntity saveShopForm(ShopForm shopForm) {
         if (StringUtils.isNotBlank(shopForm.getSubTitle())) {
             TaxonomyEntity taxonomyEntity = wineRepository.getWineryTaxonomy();
-            TaxonomyRelationSelection selection = new TaxonomyRelationSelection();
-            selection.setTaxonomyId(taxonomyEntity.getId());
+            TaxonomyAttributeSelection selection = new TaxonomyAttributeSelection();
+            selection.setTaxonomy(taxonomyEntity.getName());
             shopForm.setTaxonomy(selection);
 
             return wineRepository.saveWineryForm(shopForm);
@@ -148,7 +148,7 @@ public class WineCrawlService {
     private ProductEntity saveProductForm(ProductForm productForm, List<TaxonomyResult> taxonomyResults) {
         ProductEntity productEntity = null;
 
-        TaxonomyRelationSelection selection = parseSpuTaxonomySelection(taxonomyResults);
+        TaxonomyAttributeSelection selection = parseSpuTaxonomySelection(taxonomyResults);
 
         if (StringUtils.isNotBlank(productForm.getSubTitle())) {
             productForm.setTaxonomy(selection);
@@ -158,44 +158,43 @@ public class WineCrawlService {
         return productEntity;
     }
 
-    private TaxonomyRelationSelection parseSpuTaxonomySelection(List<TaxonomyResult> taxonomyResults) {
+    private TaxonomyAttributeSelection parseSpuTaxonomySelection(List<TaxonomyResult> taxonomyResults) {
         TaxonomyEntity wineTaxonomyEntity = wineRepository.getWineProductTaxonomy();
 
-        TaxonomyRelationSelection selection = new TaxonomyRelationSelection();
-        selection.setTaxonomyId(wineTaxonomyEntity.getId());
+        TaxonomyAttributeSelection selection = new TaxonomyAttributeSelection();
+        selection.setTaxonomy(wineTaxonomyEntity.getName());
 
         for (TaxonomyResult taxonomyResult : taxonomyResults) {
-            TaxonomyEntity type = taxonomyRepository.findByName(taxonomyResult.getName());
-
+            TaxonomyEntity typeEntity = taxonomyRepository.findByType(taxonomyResult.getName());
             Set<Integer> selected = new HashSet<>();
-
             if (CollectionUtils.isNotEmpty(taxonomyResult.getTerms())) {
-                Integer parentId = type.getId();
+                String type = typeEntity.getName();
+                String parent = typeEntity.getName();
                 List<Integer> paths = new ArrayList<>();
                 for (Term term : taxonomyResult.getTerms()) {
-                    TaxonomyEntity taxonomyEntity = taxonomyRepository.findBySubTitle(type.getId(), term.getSubTitle());
+                    TaxonomyEntity taxonomyEntity = taxonomyRepository.findBySubTitle(type, term.getSubTitle());
                     if (null == taxonomyEntity) {
                         taxonomyEntity = new TaxonomyEntity();
                         taxonomyEntity.setTitle(term.getTitle());
                         taxonomyEntity.setSubTitle(term.getSubTitle());
-                        taxonomyEntity.setParentId(parentId);
-                        taxonomyEntity.setTypeId(type.getId());
+                        taxonomyEntity.setParent(parent);
+                        taxonomyEntity.setType(type);
                         taxonomyEntity = taxonomyService.save(taxonomyEntity);
                     }
                     paths.add(taxonomyEntity.getId());
-                    if ("wine-region".equalsIgnoreCase(type.getName())) {
-                        parentId = taxonomyEntity.getId();
+                    if ("wine-region".equalsIgnoreCase(type)) {
+                        parent = taxonomyEntity.getName();
                     }
                 }
 
-                if ("wine-region".equalsIgnoreCase(type.getName())) {
+                if ("wine-region".equalsIgnoreCase(type)) {
                     selected.add(paths.get(paths.size()-1));
                 } else {
                     selected.addAll(paths);
                 }
             }
 
-            selection.addRelation(type.getName(), selected);
+            selection.addAttribute(typeEntity.getName(), selected);
         }
 
         return selection;

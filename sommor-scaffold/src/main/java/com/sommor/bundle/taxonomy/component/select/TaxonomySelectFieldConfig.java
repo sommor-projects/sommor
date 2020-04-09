@@ -17,15 +17,11 @@ public class TaxonomySelectFieldConfig extends FormFieldConfig<SelectView> {
 
     @Getter
     @Setter
-    private Integer typeId;
-
-    @Getter
-    @Setter
     private String group;
 
     @Getter
     @Setter
-    private Integer parentId;
+    private String parent;
 
     @Getter
     @Setter

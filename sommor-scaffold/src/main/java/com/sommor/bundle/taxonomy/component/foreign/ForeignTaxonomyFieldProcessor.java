@@ -22,14 +22,21 @@ public class ForeignTaxonomyFieldProcessor implements FieldFillProcessor<Taxonom
 
     @Override
     public Object processOnFieldFill(TaxonomyForeignFieldConfig config, FieldFillContext ctx) {
-        Integer taxonomyId = config.getTaxonomyId();
+        String taxonomy = config.getTaxonomy();
+        String type = config.getType();
+
         TaxonomyEntity entity = null;
 
-        if (null != taxonomyId) {
-            if (0 == taxonomyId && ctx.getSourceModel().getTarget() instanceof TaxonomyEntity) {
-                entity = (TaxonomyEntity) ctx.getSourceModel().getTarget();
-            } else if (taxonomyId > 0) {
-                entity = taxonomyRepository.findById(taxonomyId);
+        if (StringUtils.isNotBlank(taxonomy)) {
+            if (ctx.getSourceModel().getTarget() instanceof TaxonomyEntity) {
+                TaxonomyEntity e = ctx.getSourceModel().getTarget();
+                if (e.equals(taxonomy, type)) {
+                    entity = e;
+                }
+            }
+
+            if (null == entity) {
+                entity = taxonomyRepository.findByName(taxonomy, type);
             }
         }
 

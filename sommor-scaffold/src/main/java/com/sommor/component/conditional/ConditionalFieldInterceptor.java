@@ -17,7 +17,7 @@ public class ConditionalFieldInterceptor implements FormFieldInterceptor, FieldQ
 
     @Override
     public void interceptOnFieldDefine(FieldDefinition fieldDefinition) {
-        Conditional conditional = fieldDefinition.getField().getAnnotation(Conditional.class);
+        Conditional conditional = fieldDefinition.getAnnotation(Conditional.class);
         if (null != conditional) {
             fieldDefinition.addExt(conditional);
         }

@@ -9,6 +9,7 @@ import com.sommor.bundle.mall.product.repository.ProductRepository;
 import com.sommor.component.form.FormView;
 import com.sommor.component.form.FormViewConfig;
 import com.sommor.component.form.action.Add;
+import com.sommor.curd.CurdService;
 import com.sommor.model.Model;
 import com.sommor.view.ViewEngine;
 import org.springframework.stereotype.Service;
@@ -21,19 +22,13 @@ import javax.annotation.Resource;
  * @since 2020/2/1
  */
 @Service
-public class ProductService {
+public class ProductService extends CurdService<ProductEntity> {
 
     @Resource
     private ProductRepository productRepository;
 
     @Resource
     private ProductFormService productFormService;
-
-    @Resource
-    private SkuFormService skuFormService;
-
-    @Resource
-    private SkuService skuService;
 
     public FormView renderQuotationForm(ProductQuotationFormParam param) {
         ProductEntity productEntity = productRepository.findById(param.getProductId());
@@ -48,7 +43,7 @@ public class ProductService {
         ProductQuotationFormRenderParam renderParam = new ProductQuotationFormRenderParam();
         renderParam.setShopId(param.getShopId());
         renderParam.setProductId(productEntity.getId());
-        renderParam.setTaxonomyId(productEntity.getTaxonomyId());
+        renderParam.setTaxonomy(productEntity.getTaxonomy());
 
         ProductQuotationForm form = new ProductQuotationForm();
         FormViewConfig fvc = new FormViewConfig();

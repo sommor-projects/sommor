@@ -1,6 +1,6 @@
 package com.sommor.bundle.mall.product.model;
 
-import com.sommor.bundle.taxonomy.model.TaxonomyRelationFormParam;
+import com.sommor.bundle.taxonomy.model.EntityTaxonomyFormParam;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
  * @author yanguanwei@qq.com
  * @since 2020/2/1
  */
-public class SkuFormParam extends TaxonomyRelationFormParam {
+public class SkuFormParam extends EntityTaxonomyFormParam {
 
     @Getter
     @Setter

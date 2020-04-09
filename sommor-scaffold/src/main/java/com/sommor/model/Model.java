@@ -173,15 +173,23 @@ public class Model extends Extensible {
         ModelManager.resetModelFieldValues(this.getTarget());
     }
 
+    public Model enrich(Model sourceModel) {
+        ModelManager.enrichModel(this, sourceModel);
+        return this;
+    }
+
+    public Model enrich(List<Model> sourceModels) {
+        ModelManager.enrichModel(this, sourceModels);
+        return this;
+    }
+
     public Model fill() {
         return this.fill(new Model());
     }
 
     public Model fill(Model sourceModel) {
         ModelManager.triggerOnModelFill(this, sourceModel);
-        ModelManager.enrichModel(this, sourceModel);
         ModelManager.fillModelFieldValues(this, sourceModel);
-
         return this;
     }
 
