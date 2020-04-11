@@ -16,8 +16,8 @@ import java.util.List;
 public interface UserRoleRepository extends CurdRepository<UserRoleEntity> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
-    List<UserRoleEntity> findByUserId(Integer userId);
+    List<UserRoleEntity> findByUserId(Long userId);
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
-    UserRoleEntity findByUserRole(Integer userId, String role);
+    UserRoleEntity findByUserRole(Long userId, String role);
 }

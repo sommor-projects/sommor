@@ -17,11 +17,11 @@ public class SkuQueryParam extends EntityQueryParam {
     @Setter
     @NotNull
     @Conditional
-    private Integer shopId;
+    private String shopId;
 
     @Getter
     @Setter
     @NotNull
     @Conditional
-    private Integer spuId;
+    private String spuId;
 }

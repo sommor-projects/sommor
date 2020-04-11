@@ -9,7 +9,9 @@ import com.sommor.core.component.form.FormView;
 import com.sommor.core.component.form.FormViewConfig;
 import com.sommor.core.component.form.action.Add;
 import com.sommor.core.curd.CurdService;
+import com.sommor.core.generator.IdGenerator;
 import com.sommor.core.model.Model;
+import com.sommor.core.utils.Converter;
 import com.sommor.core.view.ViewEngine;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +31,21 @@ public class ProductService extends CurdService<ProductEntity> {
     @Resource
     private ProductFormService productFormService;
 
+    @Resource
+    private IdGenerator productIdGenerator;
+
+    @Override
+    protected void onSaving(ProductEntity entity, ProductEntity originalEntity) {
+        super.onSaving(entity, originalEntity);
+
+        if (null == originalEntity) {
+            entity.setId(productIdGenerator.generateId());
+        }
+    }
+
     public FormView renderQuotationForm(ProductQuotationFormParam param) {
-        ProductEntity productEntity = productRepository.findById(param.getProductId());
+        Long productId = Converter.parseLong(param.getProductId());
+        ProductEntity productEntity = productRepository.findById(productId);
         if (null == productEntity) {
             throw new ErrorCodeException(ErrorCode.of("product.id.invalid", param.getProductId()));
         }
@@ -41,7 +56,7 @@ public class ProductService extends CurdService<ProductEntity> {
 
         ProductQuotationFormRenderParam renderParam = new ProductQuotationFormRenderParam();
         renderParam.setShopId(param.getShopId());
-        renderParam.setProductId(productEntity.getId());
+        renderParam.setProductId(param.getProductId());
         renderParam.setTaxonomy(productEntity.getTaxonomy());
 
         ProductQuotationForm form = new ProductQuotationForm();
@@ -61,7 +76,7 @@ public class ProductService extends CurdService<ProductEntity> {
 
         SkuForm skuForm = new SkuForm();
         skuForm.setTitle(form.getTitle());
-        skuForm.setProductId(productEntity.getId());
+        skuForm.setProductId(Converter.toString(productEntity.getId()));
         skuForm.setCurrency(form.getCurrency());
         skuForm.setPrice(form.getAmount());
 

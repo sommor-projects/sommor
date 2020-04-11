@@ -12,6 +12,6 @@ public class SpuFormParam extends EntityTaxonomyFormParam {
 
     @Getter
     @Setter
-    private Integer shopId;
+    private String shopId;
 
 }

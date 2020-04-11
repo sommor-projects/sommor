@@ -21,7 +21,7 @@ import java.util.List;
 public interface CurdRepository<Entity extends BaseEntity> {
 
     @SelectProvider(type = SqlProvider.class, method = "findById")
-    Entity findById(Integer id);
+    Entity findById(Long id);
 
     @SelectProvider(type = SqlProvider.class, method = "findFirst")
     Entity findFirst(Query query);
@@ -32,7 +32,7 @@ public interface CurdRepository<Entity extends BaseEntity> {
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     List<Entity> findByIds(Array id);
 
-    default List<Entity> findByIds(Collection<Integer> id) {
+    default List<Entity> findByIds(Collection<Long> id) {
         return findByIds(new Array(id));
     }
 
@@ -85,39 +85,31 @@ public interface CurdRepository<Entity extends BaseEntity> {
 
     @InsertProvider(type = SqlProvider.class, method = "insert")
     @Options(useGeneratedKeys=true, keyColumn = "id", keyProperty = "id")
-    Integer insert(Entity entity);
+    int insertByAutoIncrement(Entity entity);
+
+    @InsertProvider(type = SqlProvider.class, method = "insert")
+    int insert(Entity entity);
 
     default void add(Entity entity) {
         EntityDefinition ed = SqlProvider.parseEntityDefinition(this.getClass());
-        EntityFieldDefinition primaryField = ed.getPrimaryField();
-        Object id = insert(entity);
-        try {
-            primaryField.getSetter().invoke(entity, id);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
+        if (ed.isAutoIncrement()) {
+            insertByAutoIncrement(entity);
+        } else {
+            insert(entity);
         }
     }
 
     @UpdateProvider(type = SqlProvider.class, method = "update")
-    Integer update(Entity entity);
-
-    default void save(Entity entity) {
-        Integer id = entity.getId();
-        if (null == id || id == 0) {
-            insert(entity);
-        } else {
-            update(entity);
-        }
-    }
+    int update(Entity entity);
 
     @DeleteProvider(type = SqlProvider.class, method = "deleteById")
-    Integer deleteById(Object id);
+    int deleteById(Object id);
 
 
     @DeleteProvider(type = SqlProvider.class, method = "deleteBy")
-    Integer deleteByIds(Array id);
+    int deleteByIds(Array id);
 
-    default Integer deleteByIds(Collection<Integer> id) {
+    default int deleteByIds(Collection<Long> id) {
         return this.deleteByIds(new Array(id));
     }
 }

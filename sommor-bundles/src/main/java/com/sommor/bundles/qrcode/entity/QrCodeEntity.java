@@ -22,8 +22,8 @@ public class QrCodeEntity extends TimedEntity {
     private String subject;
 
     @Column
-    private Integer subjectId;
+    private Long subjectId;
 
     @Column
-    private Integer userId;
+    private Long userId;
 }

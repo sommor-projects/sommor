@@ -29,17 +29,17 @@ public class SkuForm extends EntityForm {
     @Getter
     @Setter
     @EntitySelectField(title = "店铺", entityName = ShopEntity.NAME)
-    private Integer shopId;
+    private String shopId;
 
     @Getter
     @Setter
     @NotNull
     @EntitySelectField(title = "商品", entityName = ProductEntity.NAME)
-    private Integer productId;
+    private String productId;
 
     @Getter
     @Setter
-    private Integer distributedSkuId;
+    private String distributedSkuId;
 
     @Getter
     @Setter

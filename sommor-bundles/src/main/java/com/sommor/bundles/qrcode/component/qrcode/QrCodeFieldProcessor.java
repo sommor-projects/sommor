@@ -6,6 +6,7 @@ import com.sommor.bundles.qrcode.model.QrCodeForm;
 import com.sommor.core.component.form.FieldSaveContext;
 import com.sommor.core.component.form.extension.FormFieldSavedProcessor;
 import com.sommor.core.component.form.extension.FormFieldSavingProcessor;
+import com.sommor.core.utils.Converter;
 import com.sommor.extensibility.config.Implement;
 import com.sommor.core.model.fill.FieldFillProcessor;
 import com.sommor.mybatis.entity.BaseEntity;
@@ -46,7 +47,7 @@ public class QrCodeFieldProcessor implements
         if (StringUtils.isNotBlank(qrCode)) {;
             QrCodeForm qrCodeForm = new QrCodeForm();
             qrCodeForm.setSubject(baseEntity.definition().getSubjectName());
-            qrCodeForm.setSubjectId(baseEntity.getId());
+            qrCodeForm.setSubjectId(Converter.toString(baseEntity.getId()));
             qrCodeForm.setCode(qrCode);
             qrCodeFormService.saveEntityForm(qrCodeForm);
         }

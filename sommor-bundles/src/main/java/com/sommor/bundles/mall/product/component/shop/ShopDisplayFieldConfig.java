@@ -12,5 +12,5 @@ public class ShopDisplayFieldConfig extends TargetConfig {
 
     @Getter
     @Setter
-    private Integer shopId;
+    private Long shopId;
 }

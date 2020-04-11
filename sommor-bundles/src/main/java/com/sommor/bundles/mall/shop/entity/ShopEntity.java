@@ -11,7 +11,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2019/12/2
  */
-@Table(value = "shops", entityName = ShopEntity.NAME)
+@Table(value = "shops", entityName = ShopEntity.NAME, autoIncrement = false)
 @Setter
 @Getter
 public class ShopEntity extends ConfigurableEntity {
@@ -19,13 +19,19 @@ public class ShopEntity extends ConfigurableEntity {
     public static final String NAME = "shop";
 
     @Column
-    private Integer userId;
+    private Long userId;
 
     @Column
     private String title;
 
     @Column
     private String subTitle;
+
+    @Column
+    private String taxonomy;
+
+    @Column
+    private String attributes;
 
     @Column
     private String logo;
@@ -45,8 +51,6 @@ public class ShopEntity extends ConfigurableEntity {
     @Column
     private Integer divisionId;
 
-    @Column
-    private Integer taxonomyId;
 
     @Column
     private String address;

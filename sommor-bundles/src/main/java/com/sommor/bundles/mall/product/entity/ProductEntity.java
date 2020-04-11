@@ -13,7 +13,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-@Table(value = "products", entityName = ProductEntity.NAME)
+@Table(value = "products", entityName = ProductEntity.NAME, autoIncrement = false)
 public class ProductEntity extends ConfigurableEntity {
 
     public static final String NAME = "product";
@@ -25,10 +25,10 @@ public class ProductEntity extends ConfigurableEntity {
     private Integer productType;
 
     @Column
-    private Integer shopId;
+    private Long shopId;
 
     @Column
-    private Integer spuId;
+    private Long spuId;
 
     @Column
     private String catalog;
@@ -44,6 +44,9 @@ public class ProductEntity extends ConfigurableEntity {
 
     @Column
     private String taxonomy;
+
+    @Column
+    private String attributes;
 
     @Column
     private String cover;

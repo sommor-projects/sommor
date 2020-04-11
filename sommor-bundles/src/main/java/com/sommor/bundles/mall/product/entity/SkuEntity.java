@@ -10,7 +10,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2019/12/20
  */
-@Table(value = "product_sku", entityName = SkuEntity.NAME)
+@Table(value = "product_sku", entityName = SkuEntity.NAME, autoIncrement = false)
 public class SkuEntity extends ConfigurableEntity {
 
     public static final String NAME = "sku";
@@ -18,12 +18,12 @@ public class SkuEntity extends ConfigurableEntity {
     @Getter
     @Setter
     @Column
-    private Integer shopId;
+    private Long shopId;
 
     @Getter
     @Setter
     @Column
-    private Integer productId;
+    private Long productId;
 
     @Getter
     @Setter
@@ -33,12 +33,12 @@ public class SkuEntity extends ConfigurableEntity {
     @Getter
     @Setter
     @Column
-    private Integer taxonomyId;
+    private String taxonomy;
 
     @Getter
     @Setter
     @Column
-    private Integer distributedSkuId;
+    private Long distributedSkuId;
 
     @Getter
     @Setter

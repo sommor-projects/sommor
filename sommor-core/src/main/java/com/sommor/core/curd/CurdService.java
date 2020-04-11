@@ -91,11 +91,21 @@ public class CurdService<Entity extends BaseEntity> extends BaseCurdService<Enti
         }
     }
 
+    public Entity update(Entity entity) {
+        Entity originalEntity = onGetOriginalEntity(entity);
+        return this.save(entity, originalEntity, false);
+    }
+
     public Entity save(Entity entity) {
-        return this.save(entity, null);
+        Entity originalEntity = onGetOriginalEntity(entity);
+        return this.save(entity, originalEntity);
     }
 
     public Entity save(Entity entity, Entity originalEntity) {
+        return this.save(entity, originalEntity, null == originalEntity);
+    }
+
+    private Entity save(Entity entity, Entity originalEntity, boolean insert) {
         this.onValidate(entity, originalEntity);
 
         this.onSaving(entity, originalEntity);
@@ -105,7 +115,11 @@ public class CurdService<Entity extends BaseEntity> extends BaseCurdService<Enti
             entityLifecycle.onSaving(originalEntity);
         }
 
-        curdRepository().save(entity);
+        if (insert) {
+            curdRepository().add(entity);
+        } else {
+            curdRepository().update(entity);
+        }
 
         if (null != entityLifecycle) {
             entityLifecycle.onSaved(originalEntity);
@@ -114,6 +128,20 @@ public class CurdService<Entity extends BaseEntity> extends BaseCurdService<Enti
         this.onSaved(entity, originalEntity);
 
         return entity;
+    }
+
+    public Entity onGetOriginalEntity(Entity entity) {
+        Long id = entity.getId();
+        if (null != id && id > 0) {
+            Entity originalEntity = curdRepository().findById(id);
+            if (null == originalEntity) {
+                throw new ErrorCodeException(ErrorCode.of("entity.update.id.invalid", entity.getClass().getSimpleName(), id));
+            }
+
+            return originalEntity;
+        }
+
+        return null;
     }
 
     protected void onValidate(Entity entity, Entity originalEntity) {
@@ -125,9 +153,9 @@ public class CurdService<Entity extends BaseEntity> extends BaseCurdService<Enti
     protected void onSaved(Entity entity, Entity originalEntity) {
     }
 
-    public List<Entity> deleteBatch(List<Integer> ids) {
+    public List<Entity> deleteBatch(List<Long> ids) {
         List<Entity> list = new ArrayList<>();
-        for (Integer id : ids) {
+        for (Long id : ids) {
             Entity entity = this.delete(id);
             list.add(entity);
         }
@@ -136,7 +164,7 @@ public class CurdService<Entity extends BaseEntity> extends BaseCurdService<Enti
     }
 
     @SuppressWarnings("unchecked")
-    public Entity delete(Integer id) {
+    public Entity delete(Long id) {
         Entity entity = curdRepository().findById(id);
         if (null == entity) {
             throw new ErrorCodeException(ErrorCode.of("entity.delete.id.invalid", id));

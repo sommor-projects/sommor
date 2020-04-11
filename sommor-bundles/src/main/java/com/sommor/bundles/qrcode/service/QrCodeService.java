@@ -90,4 +90,20 @@ public class QrCodeService extends CurdService<QrCodeEntity> {
 
         return false;
     }
+
+    @Override
+    public QrCodeEntity onGetOriginalEntity(QrCodeEntity entity) {
+        QrCodeEntity original = super.onGetOriginalEntity(entity);
+        if (null == original) {
+            String code = entity.getCode();
+            if (StringUtils.isNotBlank(code)) {
+                original = queryByCode(code);
+                if (null != original) {
+                    entity.setId(original.getId());
+                }
+            }
+        }
+
+        return original;
+    }
 }

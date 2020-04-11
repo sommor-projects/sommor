@@ -21,7 +21,7 @@ public class ShopDisplayFieldProcessor implements FieldFillProcessor<ShopDisplay
 
     @Override
     public Object processOnFieldFill(ShopDisplayFieldConfig config, FieldFillContext ctx) {
-        Integer shopId = config.getShopId();
+        Long shopId = config.getShopId();
         if (null != shopId && shopId > 0) {
             ShopEntity shopEntity = shopRepository.findById(shopId);
             ShopInfoVO shopInfoVO = new ShopInfoVO();

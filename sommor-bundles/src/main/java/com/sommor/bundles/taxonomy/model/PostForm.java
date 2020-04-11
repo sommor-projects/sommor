@@ -42,7 +42,7 @@ public class PostForm extends EntityForm implements OnModelFill {
 
     @EntitySelectField(title = "发布者", entityName = UserEntity.NAME)
     @NotNull
-    private Integer userId;
+    private String userId;
 
     @TaxonomyAttributeField(entityName = PostEntity.NAME)
     private TaxonomyAttributeSelection taxonomy;
@@ -54,7 +54,7 @@ public class PostForm extends EntityForm implements OnModelFill {
     @Override
     public void onModelFill(Model model, Model sourceModel) {
         if (null == this.getUserId()) {
-            this.setUserId(AuthenticationHolder.getAuthUser().getUserId());
+            this.setUserId(AuthenticationHolder.getAuthUser().getUserId().toString());
         }
     }
 }

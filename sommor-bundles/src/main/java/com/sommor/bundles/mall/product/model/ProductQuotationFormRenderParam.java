@@ -11,9 +11,9 @@ import lombok.Setter;
 @Setter
 public class ProductQuotationFormRenderParam {
 
-    private Integer shopId;
+    private String shopId;
 
-    private Integer productId;
+    private String productId;
 
     private String taxonomy;
 

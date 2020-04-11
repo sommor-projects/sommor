@@ -4,6 +4,7 @@ import com.sommor.core.api.response.ApiResponse;
 import com.sommor.bundles.user.config.Authority;
 import com.sommor.bundles.user.entity.UserRoleEntity;
 import com.sommor.bundles.user.service.UserRoleService;
+import com.sommor.core.utils.Converter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -33,8 +34,8 @@ public class UserRoleController {
 
     @ApiOperation(value = "删除用户角色")
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.POST)
-    public ApiResponse<UserRoleEntity> delete(@PathVariable("id") Integer id) {
-        UserRoleEntity userRoleEntity = userRoleService.delete(id);
+    public ApiResponse<UserRoleEntity> delete(@PathVariable("id") String id) {
+        UserRoleEntity userRoleEntity = userRoleService.delete(Converter.parseLong(id));
         return ApiResponse.success(userRoleEntity);
     }
 }

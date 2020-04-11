@@ -4,6 +4,7 @@ import com.sommor.core.api.response.ApiResponse;
 import com.sommor.bundles.taxonomy.model.*;
 import com.sommor.bundles.taxonomy.service.TaxonomyService;
 import com.sommor.core.component.form.FormView;
+import com.sommor.core.utils.Converter;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class TaxonomyController {
     @ApiOperation(value = "更新分类的排序")
     @RequestMapping(value = "/update-priority", method = RequestMethod.POST)
     public ApiResponse updatePriority(@Validated @RequestBody TaxonomyPriorityForm taxonomyPriorityForm) {
-        taxonomyService.updateTaxonomyPriority(taxonomyPriorityForm.getId(), taxonomyPriorityForm.getDirection());
+        taxonomyService.updateTaxonomyPriority(Converter.parseLong(taxonomyPriorityForm.getId()), taxonomyPriorityForm.getDirection());
         return ApiResponse.success();
     }
 

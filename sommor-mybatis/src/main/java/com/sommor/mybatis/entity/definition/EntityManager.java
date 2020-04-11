@@ -43,6 +43,7 @@ public class EntityManager {
                         }
                         ed.setTableName(tableName);
                         ed.setPrimaryKey(table.primaryKey());
+                        ed.setAutoIncrement(table.autoIncrement());
                         ed.setSubjectName(table.entityName().isEmpty() ? null : table.entityName());
                     }
 

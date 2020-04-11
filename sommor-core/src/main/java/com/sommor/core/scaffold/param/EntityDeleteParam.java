@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 public class EntityDeleteParam {
 
-    private Integer id;
+    private String id;
 
-    private List<Integer> ids;
+    private List<String> ids;
 }

@@ -16,16 +16,16 @@ import java.util.List;
 @Mapper
 public interface MediaFileSubjectRelationRepository extends CurdRepository<MediaFileSubjectRelationEntity> {
 
-    default List<MediaFileSubjectRelationEntity> findBySubject(String subject, Integer subjectId) {
+    default List<MediaFileSubjectRelationEntity> findBySubject(String subject, Long subjectId) {
         return this.findBySubject(subject, "default", subjectId);
     }
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
-    List<MediaFileSubjectRelationEntity> findBySubject(String subject, String subjectGroup, Integer subjectId);
+    List<MediaFileSubjectRelationEntity> findBySubject(String subject, String subjectGroup, Long subjectId);
 
     @DeleteProvider(type = SqlProvider.class, method = "deleteBy")
-    void deleteByMediaFileId(Integer mediaFileId);
+    void deleteByMediaFileId(Long mediaFileId);
 
     @DeleteProvider(type = SqlProvider.class, method = "updateBy")
-    void updatePriorityById(Integer id, Integer priority);
+    void updatePriorityById(Long id, Integer priority);
 }

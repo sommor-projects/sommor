@@ -60,7 +60,7 @@ public class AuthenticateService {
         return loginUser;
     }
 
-    private Set<String> getRoles(Integer userId) {
+    private Set<String> getRoles(Long userId) {
         List<String> roles = userRoleService.getUserRoles(userId);
         Set<String> set = new HashSet<>(roles);
         for (String role : set) {
@@ -102,8 +102,7 @@ public class AuthenticateService {
         entity.setExpireTime(nowTime + UserSettings.userLoginExpireTime);
         entity.setSessionKey(sessionKey);
 
-        userAuthRepository.insert(entity);
-        entity.setId(entity.getId());
+        userAuthRepository.add(entity);
 
         Authentication authentication = new Authentication();
         enrichAuthentication(authentication, entity);

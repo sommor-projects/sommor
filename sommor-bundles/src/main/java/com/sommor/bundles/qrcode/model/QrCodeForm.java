@@ -20,5 +20,5 @@ public class QrCodeForm extends EntityForm {
 
     @Getter
     @Setter
-    private Integer subjectId;
+    private String subjectId;
 }

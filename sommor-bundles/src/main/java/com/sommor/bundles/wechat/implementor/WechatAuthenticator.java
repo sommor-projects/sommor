@@ -54,7 +54,7 @@ public class WechatAuthenticator implements Authenticator<WechatLoginParam> {
             wechatUserEntity.setUnionid(wechatSession.getUnionid());
             wechatUserEntity.setUserId(userEntity.getId());
 
-            wechatUserRepository.insert(wechatUserEntity);
+            wechatUserRepository.add(wechatUserEntity);
         }
 
 

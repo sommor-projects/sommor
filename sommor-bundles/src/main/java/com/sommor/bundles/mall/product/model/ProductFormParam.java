@@ -12,13 +12,13 @@ public class ProductFormParam extends EntityTaxonomyFormParam {
 
     @Getter
     @Setter
-    private Integer shopId;
+    private String shopId;
 
     @Getter
     @Setter
-    private Integer spuId;
+    private String spuId;
 
     @Getter
     @Setter
-    private Integer catalogId;
+    private String catalog;
 }

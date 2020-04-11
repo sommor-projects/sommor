@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.sommor.core.context.Extensible;
 import com.sommor.core.context.RequestContext;
 import com.sommor.core.context.SubContext;
+import com.sommor.core.utils.Converter;
 import com.sommor.extensibility.ExtensionExecutor;
 import com.sommor.core.model.define.FieldConfigDefineProcessor;
 import com.sommor.core.model.define.FieldDefineInterceptor;
@@ -509,8 +510,14 @@ public class ModelManager {
 
     public static Object convert(Class targetType, Object value) {
         if (null != value) {
-            if (targetType == String.class && value.getClass() == Integer.class) {
-                return String.valueOf(value);
+            if (targetType == String.class) {
+                if (value.getClass() == Integer.class || value.getClass() == Long.class) {
+                    return Converter.toString(value);
+                }
+            } else if (targetType == Long.class && value.getClass() != Long.class) {
+                return Converter.parseLong(value);
+            } else if (targetType == Integer.class && value.getClass() != Integer.class) {
+                return Converter.parseInt(value);
             }
         }
 

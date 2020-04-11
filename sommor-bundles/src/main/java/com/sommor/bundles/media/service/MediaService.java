@@ -3,6 +3,7 @@ package com.sommor.bundles.media.service;
 import com.sommor.core.api.error.ErrorCode;
 import com.sommor.core.api.error.ErrorCodeException;
 import com.sommor.core.curd.CurdService;
+import com.sommor.core.utils.Converter;
 import com.sommor.extensibility.ExtensionExecutor;
 import com.sommor.bundles.media.entity.MediaFileEntity;
 import com.sommor.bundles.media.entity.MediaFileSubjectRelationEntity;
@@ -50,11 +51,11 @@ public class MediaService extends CurdService<MediaFileEntity> {
             entity = new MediaFileEntity();
             entity.setMimeType(uploadedFile.getMimeType());
             entity.setUri(uploadedFile.getUri());
-            mediaFileRepository.save(entity);
+            this.save(entity);
         }
 
         MediaFile mediaFile = new MediaFile();
-        mediaFile.setId(entity.getId());
+        mediaFile.setId(Converter.toString(entity.getId()));
         mediaFile.setUri(entity.getUri());
 
         String url = this.parseUrl(entity.getUri());
@@ -68,18 +69,18 @@ public class MediaService extends CurdService<MediaFileEntity> {
         return mediaFile;
     }
 
-    public void saveSubject(String url, String subject, Integer subjectId) {
+    public void saveSubject(String url, String subject, Long subjectId) {
         MediaFileEntity entity = mediaFileRepository.findByUri(url);
         if (null == entity) {
             throw new ErrorCodeException(ErrorCode.of("media.url.invalid", url));
         }
 
         MediaFileSubjectRelationEntity subjectEntity = new MediaFileSubjectRelationEntity();
-        subjectEntity.setMediaFileId(entity.getId());
+        subjectEntity.setMediaFileId(Converter.parseLong(entity.getId()));
         subjectEntity.setSubject(subject);
         subjectEntity.setSubjectId(subjectId);
 
-        mediaFileSubjectRelationRepository.save(subjectEntity);
+        mediaFileSubjectRelationRepository.add(subjectEntity);
     }
 
     public void deleteUrl(String url) {

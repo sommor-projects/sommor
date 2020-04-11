@@ -1,6 +1,7 @@
 package com.sommor.core.model.enricher;
 
 import com.sommor.core.curd.CurdManager;
+import com.sommor.core.utils.Converter;
 import com.sommor.extensibility.config.Implement;
 import com.sommor.core.model.Model;
 import com.sommor.mybatis.entity.BaseEntity;
@@ -26,8 +27,8 @@ public class EntityModelEnrichProcessor implements ModelEnrichProcessor<EntityMo
         String entityName = config.getEntityName();
         String entityIdFieldName = config.getEntityIdFieldName();
 
-        Set<Integer> entityIds = ctx.getSourceModels().stream()
-                .map(p->(Integer) p.getFieldValue(entityIdFieldName))
+        Set<Long> entityIds = ctx.getSourceModels().stream()
+                .map(p->(Converter.parseLong(p.getFieldValue(entityIdFieldName))))
                 .filter(Objects::nonNull)
                 .filter(p -> p > 0)
                 .collect(Collectors.toSet());
@@ -37,7 +38,7 @@ public class EntityModelEnrichProcessor implements ModelEnrichProcessor<EntityMo
 
 
         if (CollectionUtils.isNotEmpty(entities)) {
-            Map<Integer, Model> entityModelMap = new HashMap<>();
+            Map<Long, Model> entityModelMap = new HashMap<>();
             for (BaseEntity entity : entities) {
                 Model entityModel = Model.of(entity);
                 entityModelMap.put(entity.getId(), entityModel);
@@ -45,7 +46,7 @@ public class EntityModelEnrichProcessor implements ModelEnrichProcessor<EntityMo
 
             String[] entityFieldNames = config.getEntityFieldNames();
             for (Model model : sourceModels) {
-                Integer entityId = model.getFieldValue(entityIdFieldName);
+                Long entityId = model.getFieldValue(entityIdFieldName);
                 if (null != entityId) {
                     Model entityModel = entityModelMap.get(entityId);
                     if (null != entityModel) {

@@ -25,12 +25,12 @@ public class ProductQuotationForm {
     @Getter
     @Setter
     @NotNull
-    private Integer productId;
+    private String productId;
 
     @Getter
     @Setter
     @NotNull
-    private Integer shopId;
+    private String shopId;
 
     @Getter
     @Setter

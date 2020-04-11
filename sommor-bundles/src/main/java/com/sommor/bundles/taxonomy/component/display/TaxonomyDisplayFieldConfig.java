@@ -16,7 +16,7 @@ public class TaxonomyDisplayFieldConfig extends TargetConfig {
 
     @Setter
     @Getter
-    private Integer entityId;
+    private Long entityId;
 
     @Setter
     @Getter

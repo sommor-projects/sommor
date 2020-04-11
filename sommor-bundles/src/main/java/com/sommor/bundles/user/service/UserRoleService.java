@@ -19,7 +19,7 @@ public class UserRoleService {
     @Resource
     private UserRoleRepository userRoleRepository;
 
-    public List<String> getUserRoles(Integer userId) {
+    public List<String> getUserRoles(Long userId) {
         List<UserRoleEntity> userRoleEntities = userRoleRepository.findByUserId(userId);
         List<String> roles = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(userRoleEntities)) {
@@ -41,7 +41,7 @@ public class UserRoleService {
         return userRoleEntity;
     }
 
-    public UserRoleEntity delete(Integer id) {
+    public UserRoleEntity delete(Long id) {
         UserRoleEntity entity = userRoleRepository.findById(id);
         userRoleRepository.deleteById(id);
         return entity;

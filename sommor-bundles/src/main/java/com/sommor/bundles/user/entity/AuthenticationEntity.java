@@ -15,7 +15,7 @@ public class AuthenticationEntity extends BaseEntity {
 
     @Getter @Setter
     @Column
-    private Integer userId;
+    private Long userId;
 
     @Getter @Setter
     @Column

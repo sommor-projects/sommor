@@ -7,7 +7,6 @@ import com.sommor.mybatis.entity.definition.EntityManager;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 /**
@@ -19,15 +18,15 @@ import java.util.Objects;
 public class BaseEntity {
 
     @Column
-    private Integer id;
+    private Long id;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BaseEntity that = (BaseEntity) o;
-        Integer id = this.getId();
-        Integer thatId = that.getId();
+        Long id = this.getId();
+        Long thatId = that.getId();
         if (null == id || id == 0 || thatId == null || thatId == 0) {
             return false;
         }
@@ -35,13 +34,9 @@ public class BaseEntity {
         return Objects.equals(id, thatId);
     }
 
-    public boolean isNew() {
-        return id == null || id == 0;
-    }
-
     @Override
     public int hashCode() {
-        Integer id = getId();
+        Long id = getId();
         if (null != id && id > 0) {
             return Objects.hash(getId());
         }

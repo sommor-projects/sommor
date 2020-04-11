@@ -13,6 +13,6 @@ public class EntityTable {
     @Getter
     @Setter
     @TextField(title = "ID")
-    private Integer id;
+    private String id;
 
 }

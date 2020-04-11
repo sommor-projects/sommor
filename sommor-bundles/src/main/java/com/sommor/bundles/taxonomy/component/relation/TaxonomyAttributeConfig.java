@@ -17,7 +17,7 @@ public class TaxonomyAttributeConfig extends FieldsetConfig<FieldsetView> {
 
     @Getter
     @Setter
-    private Integer entityId;
+    private Long entityId;
 
     @Getter
     @Setter
@@ -25,5 +25,13 @@ public class TaxonomyAttributeConfig extends FieldsetConfig<FieldsetView> {
 
     @Getter
     @Setter
+    private String attributes;
+
+    @Getter
+    @Setter
     private String taxonomyFieldName;
+
+    @Getter
+    @Setter
+    private String attributesFieldName;
 }

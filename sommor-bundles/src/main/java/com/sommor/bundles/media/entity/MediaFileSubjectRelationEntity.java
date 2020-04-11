@@ -16,13 +16,13 @@ import lombok.Setter;
 public class MediaFileSubjectRelationEntity extends BaseEntity {
 
     @Column
-    private Integer mediaFileId;
+    private Long mediaFileId;
 
     @Column
     private String subject;
 
     @Column
-    private Integer subjectId;
+    private Long subjectId;
 
     @Column
     private String subjectGroup;

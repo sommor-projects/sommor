@@ -1,5 +1,6 @@
 package com.sommor.bundles.taxonomy.entity;
 
+import com.google.common.base.Objects;
 import com.sommor.core.component.configurable.ConfigurableEntity;
 import com.sommor.mybatis.entity.config.Column;
 import com.sommor.mybatis.entity.config.Table;
@@ -63,6 +64,21 @@ public class TaxonomyEntity extends ConfigurableEntity implements Comparable<Tax
 
     public boolean equals(String name, String type) {
         return this.getName().equals(name) && this.getType().equals(type);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TaxonomyEntity)) return false;
+        if (!super.equals(o)) return false;
+        TaxonomyEntity that = (TaxonomyEntity) o;
+        return Objects.equal(name, that.name) &&
+                Objects.equal(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), name, type);
     }
 
     @Override

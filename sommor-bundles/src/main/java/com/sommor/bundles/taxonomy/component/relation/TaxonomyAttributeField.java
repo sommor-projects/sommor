@@ -24,4 +24,6 @@ public @interface TaxonomyAttributeField {
 
     String taxonomyFieldName() default "taxonomy";
 
+    String attributesFieldName() default "attributes";
+
 }

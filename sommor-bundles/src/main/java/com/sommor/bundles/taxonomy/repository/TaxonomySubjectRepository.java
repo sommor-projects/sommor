@@ -17,11 +17,11 @@ import java.util.List;
 public interface TaxonomySubjectRepository extends CurdRepository<SubjectTaxonomyRelationEntity> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
-    List<SubjectTaxonomyRelationEntity> findBySubject(String subject, Integer subjectId);
+    List<SubjectTaxonomyRelationEntity> findBySubject(String subject, Long subjectId);
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
-    List<SubjectTaxonomyRelationEntity> findBySubjectAndType(String subject, Integer subjectId, Integer typeId);
+    List<SubjectTaxonomyRelationEntity> findBySubjectAndType(String subject, Long subjectId, Long typeId);
 
     @DeleteProvider(type = SqlProvider.class, method = "deleteBy")
-    void deleteBySubject(String subject, Integer subjectId);
+    void deleteBySubject(String subject, Long subjectId);
 }

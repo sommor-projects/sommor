@@ -15,7 +15,7 @@ import lombok.Setter;
 public class ShopDetail extends EntityDetail {
 
     @TextField
-    private Integer userId;
+    private String userId;
 
     @TextField
     private String title;
@@ -39,7 +39,7 @@ public class ShopDetail extends EntityDetail {
     private Integer divisionId;
 
     @TextField
-    private Integer taxonomy;
+    private String taxonomy;
 
     @TextField
     private String address;

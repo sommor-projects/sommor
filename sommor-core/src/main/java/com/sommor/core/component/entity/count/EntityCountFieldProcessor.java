@@ -22,7 +22,7 @@ public class EntityCountFieldProcessor implements FieldFillProcessor<EntityCount
             entityIdFieldName = config.getEntityName() + "Id";
         }
 
-        Integer id = ctx.getSourceModel().getFieldValue(entityIdFieldName);
+        Long id = ctx.getSourceModel().getFieldValue(entityIdFieldName);
         CurdRepository repository = CurdManager.getCurdRepository(config.getEntityName());
         Query query = new Query().where(entityIdFieldName, id);
         Integer count = repository.count(query);

@@ -28,13 +28,13 @@ public class TaxonomyDisplayFieldProcessor implements FieldFillProcessor<Taxonom
     @Resource
     private TaxonomySubjectRepository taxonomySubjectRepository;
 
-    private void addTaxonomyItem(List<TaxonomyInfoVO> items, Integer id) {
+    private void addTaxonomyItem(List<TaxonomyInfoVO> items, Long id) {
         TaxonomyInfoVO taxonomyInfoVO = parseTaxonomyItem(id);
         if (null != taxonomyInfoVO) {
             items.add(taxonomyInfoVO);
         }
     }
-    private TaxonomyInfoVO parseTaxonomyItem(Integer id) {
+    private TaxonomyInfoVO parseTaxonomyItem(Long id) {
         if (null != id && id > 0) {
             TaxonomyEntity entity = taxonomyRepository.findById(id);
             return parseTaxonomyItem(entity);
@@ -57,7 +57,7 @@ public class TaxonomyDisplayFieldProcessor implements FieldFillProcessor<Taxonom
         TaxonomySelectionVO taxonomySelectionVO = new TaxonomySelectionVO();
 
         String entityName = config.getEntityName();
-        Integer entityId = config.getEntityId();
+        Long entityId = config.getEntityId();
 
         TaxonomyEntity type = taxonomyRepository.findByKey(config.getType());
         taxonomySelectionVO.setType(parseTaxonomyItem(type));

@@ -52,7 +52,7 @@ public class FormService<Entity extends BaseEntity, EntityForm, EntityFormParam>
     public FormView renderEntityForm(EntityFormParam param) {
         Model paramModel = Model.of(param);
 
-        Entity entity = (Entity) curdService().queryFirst(paramModel);
+        Entity entity = curdService().queryFirst(paramModel);
 
         FormAction formAction;
         Model sourceModel;
@@ -66,7 +66,14 @@ public class FormService<Entity extends BaseEntity, EntityForm, EntityFormParam>
         }
 
         EntityForm form = newForm();
+
+        this.onEntityFormRender(form, param, entity);
+
         return renderForm(form, sourceModel, formAction);
+    }
+
+    protected void onEntityFormRender(EntityForm form, EntityFormParam formParam, Entity entity) {
+
     }
 
     private EntityForm newForm() {
@@ -105,7 +112,7 @@ public class FormService<Entity extends BaseEntity, EntityForm, EntityFormParam>
         this.onFormValidate(model);
 
         Entity entity = model.to(this.getEntityClass());
-        Entity originalEntity = onGetOriginalEntity(model, entity);
+        Entity originalEntity = curdService().onGetOriginalEntity(entity);
 
         DataSourceTransactionManager dataSourceTransactionManager = ApplicationContextHolder.getBean(DataSourceTransactionManager.class);
         TransactionDefinition transactionDefinition = ApplicationContextHolder.getBean(TransactionDefinition.class);
@@ -137,20 +144,6 @@ public class FormService<Entity extends BaseEntity, EntityForm, EntityFormParam>
                 );
             }
         }
-    }
-
-    protected Entity onGetOriginalEntity(Model model, Entity entity) {
-        Integer id = entity.getId();
-        if (null != id && id > 0) {
-            Entity originalEntity = curdRepository().findById(id);
-            if (null == originalEntity) {
-                throw new ErrorCodeException(ErrorCode.of("entity.update.id.invalid", entity.getClass().getSimpleName(), id));
-            }
-
-            return originalEntity;
-        }
-
-        return null;
     }
 
     protected void onFormSaving(Model model, Entity entity, Entity originalEntity) {

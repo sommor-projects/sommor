@@ -19,26 +19,26 @@ public class SubjectTaxonomyRelationEntity extends BaseEntity {
     private String subject;
 
     @Column
-    private Integer subjectId;
+    private Long subjectId;
 
     @Column
-    private Integer typeId;
+    private Long typeId;
 
     @Column
-    private Integer taxonomyId;
+    private Long taxonomyId;
 
     @Column
-    private Integer taxonomyId1;
+    private Long taxonomyId1;
 
     @Column
-    private Integer taxonomyId2;
+    private Long taxonomyId2;
 
     @Column
-    private Integer taxonomyId3;
+    private Long taxonomyId3;
 
     @Column
-    private Integer taxonomyId4;
+    private Long taxonomyId4;
 
     @Column
-    private Integer taxonomyId5;
+    private Long taxonomyId5;
 }

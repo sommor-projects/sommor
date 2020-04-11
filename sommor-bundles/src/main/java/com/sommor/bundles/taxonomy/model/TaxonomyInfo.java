@@ -1,6 +1,7 @@
 package com.sommor.bundles.taxonomy.model;
 
 import com.sommor.bundles.taxonomy.entity.TaxonomyEntity;
+import com.sommor.core.utils.Converter;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +13,7 @@ public class TaxonomyInfo {
 
     @Getter
     @Setter
-    private Integer id;
+    private String id;
 
     @Getter
     @Setter
@@ -30,7 +31,7 @@ public class TaxonomyInfo {
     }
 
     public TaxonomyInfo(TaxonomyEntity entity) {
-        this.setId(entity.getId());
+        this.setId(Converter.toString(entity.getId()));
         this.setKey(entity.getKey());
         this.setTitle(entity.getTitle());
         this.setName(entity.getName());

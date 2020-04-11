@@ -21,4 +21,6 @@ public @interface Table {
     String entityName() default "";
 
     String primaryKey() default "id";
+
+    boolean autoIncrement() default true;
 }

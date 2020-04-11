@@ -17,6 +17,7 @@ import com.sommor.bundles.wine.model.TaxonomyResult;
 import com.sommor.bundles.wine.model.WineCrawlResult;
 import com.sommor.bundles.wine.model.WineSearchRequest;
 import com.sommor.core.model.Model;
+import com.sommor.core.utils.Converter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -72,7 +73,7 @@ public class WineCrawlService {
     }
 
     private void parseJiuKaChaResult(JiuKaChaWineResult wineResult, WineCrawlResult crawlResult) {
-        Integer shopId = null;
+        Long shopId = null;
 
         Term winery = wineResult.getWinery();
         if (null != winery && (StringUtils.isNotBlank(winery.getSubTitle()))) {
@@ -112,7 +113,7 @@ public class WineCrawlService {
                     mediaFiles.add(mediaFile);
                 }
 
-                productForm.setShopId(shopId);
+                productForm.setShopId(Converter.toString(shopId));
             }
         }
 
@@ -126,7 +127,7 @@ public class WineCrawlService {
 
         ProductForm productForm = crawlResult.getProductForm();
         if (null != shopEntity) {
-            productForm.setShopId(shopEntity.getId());
+            productForm.setShopId(Converter.toString(shopEntity.getId()));
         }
 
         return saveProductForm(productForm, crawlResult.getSpuTaxonomyResults());
@@ -166,11 +167,11 @@ public class WineCrawlService {
 
         for (TaxonomyResult taxonomyResult : taxonomyResults) {
             TaxonomyEntity typeEntity = taxonomyRepository.findByType(taxonomyResult.getName());
-            Set<Integer> selected = new HashSet<>();
+            Set<Long> selected = new HashSet<>();
             if (CollectionUtils.isNotEmpty(taxonomyResult.getTerms())) {
                 String type = typeEntity.getName();
                 String parent = typeEntity.getName();
-                List<Integer> paths = new ArrayList<>();
+                List<Long> paths = new ArrayList<>();
                 for (Term term : taxonomyResult.getTerms()) {
                     TaxonomyEntity taxonomyEntity = taxonomyRepository.findBySubTitle(type, term.getSubTitle());
                     if (null == taxonomyEntity) {

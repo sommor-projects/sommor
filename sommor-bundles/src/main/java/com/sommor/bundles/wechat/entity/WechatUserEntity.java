@@ -16,7 +16,7 @@ public class WechatUserEntity extends BaseEntity {
     @Getter
     @Setter
     @Column
-    private Integer userId;
+    private Long userId;
 
     @Getter
     @Setter

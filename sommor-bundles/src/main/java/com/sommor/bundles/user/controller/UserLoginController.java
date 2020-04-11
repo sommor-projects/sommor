@@ -7,6 +7,7 @@ import com.sommor.bundles.user.config.Authority;
 import com.sommor.bundles.user.model.*;
 import com.sommor.bundles.user.service.AuthenticateService;
 import com.sommor.bundles.user.service.UserService;
+import com.sommor.core.generator.IdGenerator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author yanguanwei@qq.com
@@ -32,6 +37,35 @@ public class UserLoginController {
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private IdGenerator userIdGenerator;
+
+    @ApiOperation(value = "用户ID生成")
+    @RequestMapping(value = "/id", method = RequestMethod.GET)
+    public ApiResponse<Set<String>> idGenerate(Integer count) throws InterruptedException {
+        AtomicInteger i = new AtomicInteger(0);
+        Set<String> list = new ConcurrentSkipListSet<>();
+
+        int threadCount = 10;
+        CountDownLatch latch = new CountDownLatch(threadCount);
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+        for (int j=0; j<threadCount; j++) {
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    while (i.getAndAdd(1) < count) {
+                        long id = userIdGenerator.generateId();
+                        list.add(Long.toBinaryString(id) + " : " + String.valueOf(id));
+                    }
+                    latch.countDown();
+                }
+            });
+        }
+
+        latch.await();
+        return ApiResponse.success(new TreeSet<>(list));
+    }
 
     @ApiOperation(value = "用户账号登录")
     @RequestMapping(value = "/login/account", method = RequestMethod.POST)

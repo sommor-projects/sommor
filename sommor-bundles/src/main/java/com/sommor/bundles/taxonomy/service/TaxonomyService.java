@@ -30,7 +30,7 @@ public class TaxonomyService extends CurdService<TaxonomyEntity> {
     @Resource
     private TaxonomyRepository taxonomyRepository;
 
-    public void updateTaxonomyPriority(Integer id, String direction) {
+    public void updateTaxonomyPriority(Long id, String direction) {
         TaxonomyEntity entity = taxonomyRepository.findById(id);
         if (null == entity) {
             throw new ErrorCodeException(ErrorCode.of("taxonomy.update.failed.absence", id));

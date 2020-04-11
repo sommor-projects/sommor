@@ -113,5 +113,5 @@ public interface TaxonomyRepository extends CurdRepository<TaxonomyEntity> {
     int countByParent(String parent, String type);
 
     @UpdateProvider(type = SqlProvider.class, method = "updateBy")
-    int updatePriorityById(Integer id, Integer priority);
+    int updatePriorityById(Long id, Integer priority);
 }

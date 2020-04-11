@@ -1,7 +1,8 @@
 package com.sommor.bundles.mall.product.service;
 
-import com.sommor.bundles.mall.product.repository.ProductRepository;
-import com.sommor.bundles.mall.product.repository.SkuRepository;
+import com.sommor.bundles.mall.product.entity.SkuEntity;
+import com.sommor.core.curd.CurdService;
+import com.sommor.core.generator.IdGenerator;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -11,27 +12,18 @@ import javax.annotation.Resource;
  * @since 2020/2/1
  */
 @Service
-public class SkuService {
+public class SkuService extends CurdService<SkuEntity> {
 
     @Resource
-    private ProductRepository productRepository;
+    private IdGenerator skuIdGenerator;
 
-    @Resource
-    private SkuRepository skuRepository;
+    @Override
+    protected void onSaving(SkuEntity entity, SkuEntity originalEntity) {
+        super.onSaving(entity, originalEntity);
 
-    //protected void onInitFormRender(Form form, Model sourceModel) {
-       /* Object source = sourceModel.getTarget();
-
-        if (source instanceof SkuFormParam) {
-            SkuFormParam skuFormParam = (SkuFormParam) source;
-
-            ProductEntity productEntity = sourceModel.getExt(ProductEntity.class);
-            if (null == productEntity) {
-                throw new ErrorCodeException(ErrorCode.of("sku.form.product.absent", skuFormParam.getProductId()));
-            }
-
-            skuFormParam.setTaxonomyId(productEntity.getTaxonomyId());
-        }*/
-    //}
+        if (null == originalEntity) {
+            entity.setId(skuIdGenerator.generateId());
+        }
+    }
 
 }

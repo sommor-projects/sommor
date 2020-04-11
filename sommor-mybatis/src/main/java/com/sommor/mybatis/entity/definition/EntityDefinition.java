@@ -31,6 +31,10 @@ public class EntityDefinition {
 
     @Getter
     @Setter
+    private boolean autoIncrement;
+
+    @Getter
+    @Setter
     private EntityFieldDefinition primaryField;
 
     @Getter

@@ -25,7 +25,7 @@ public class ShopForm extends EntityForm {
 
     @EntitySelectField(title = "卖家", entityName = UserEntity.NAME)
     @NotNull
-    private Integer userId;
+    private String userId;
 
     @InputField(title = "名称")
     @NotBlank

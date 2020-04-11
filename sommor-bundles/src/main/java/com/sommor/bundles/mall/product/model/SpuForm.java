@@ -27,7 +27,7 @@ public class SpuForm extends EntityForm {
 
     @EntitySelectField(title = "所属店铺", entityName = ShopEntity.NAME)
     @NotNull
-    private Integer shopId;
+    private String shopId;
 
     @InputField(title = "标题")
     @NotBlank

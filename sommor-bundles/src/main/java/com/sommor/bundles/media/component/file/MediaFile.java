@@ -11,11 +11,11 @@ public class MediaFile {
 
     @Setter
     @Getter
-    private Integer id;
+    private String id;
 
     @Setter
     @Getter
-    private Integer mediaSubjectRelationId;
+    private String mediaSubjectRelationId;
 
     @Setter
     @Getter

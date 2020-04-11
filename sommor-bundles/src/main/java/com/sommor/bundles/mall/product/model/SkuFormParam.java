@@ -14,14 +14,14 @@ public class SkuFormParam extends EntityTaxonomyFormParam {
 
     @Getter
     @Setter
-    private Integer shopId;
+    private String shopId;
 
     @Getter
     @Setter
     @NotNull
-    private Integer productId;
+    private String productId;
 
     @Getter
     @Setter
-    private Integer distributedSkuId;
+    private String distributedSkuId;
 }

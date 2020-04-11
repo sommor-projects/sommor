@@ -58,4 +58,12 @@ public class EntityFieldDefinition {
     public void setSetter(Method setter) {
         this.setter = setter;
     }
+
+    @Override
+    public String toString() {
+        return "EntityFieldDefinition{entity='"+field.getDeclaringClass().getSimpleName()+"', " +
+                "fieldName='" + fieldName + '\'' +
+                ", columnName='" + columnName + '\'' +
+                '}';
+    }
 }

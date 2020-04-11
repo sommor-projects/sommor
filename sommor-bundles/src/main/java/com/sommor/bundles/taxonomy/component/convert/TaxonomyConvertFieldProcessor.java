@@ -2,6 +2,7 @@ package com.sommor.bundles.taxonomy.component.convert;
 
 import com.sommor.bundles.taxonomy.entity.TaxonomyEntity;
 import com.sommor.bundles.taxonomy.repository.TaxonomyRepository;
+import com.sommor.core.utils.Converter;
 import com.sommor.extensibility.config.Implement;
 import com.sommor.core.model.ModelField;
 import com.sommor.core.model.fill.FieldFillContext;
@@ -36,12 +37,12 @@ public class TaxonomyConvertFieldProcessor implements FieldFillProcessor<Taxonom
             if (value instanceof String) {
                 String s = (String) value;
                 if (StringUtils.isNumeric(s)) {
-                    taxonomyEntity = taxonomyRepository.findById(Integer.valueOf(s));
+                    taxonomyEntity = taxonomyRepository.findById(Converter.parseLong(s));
                 } else {
                     taxonomyEntity = taxonomyRepository.findByKey((String) value);
                 }
-            } else if (value instanceof Integer) {
-                Integer i = (Integer) value;
+            } else if (value instanceof Long) {
+                Long i = (Long) value;
                 taxonomyEntity = taxonomyRepository.findById(i);
             }
         }

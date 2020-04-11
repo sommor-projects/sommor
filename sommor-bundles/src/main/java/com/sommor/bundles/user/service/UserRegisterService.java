@@ -18,14 +18,15 @@ public class UserRegisterService {
     @Resource
     private UserRepository userRepository;
 
+    @Resource
+    private UserService userService;
+
     public UserEntity register(UserRegisterParam userRegisterParam) {
         UserEntity userEntity = new UserEntity();
 
         initUserEntity(userEntity);
         initUserEntityFromParam(userEntity, userRegisterParam);
-
-        Integer id = userRepository.insert(userEntity);
-        userEntity.setId(id);
+        userService.save(userEntity);
 
         return userEntity;
     }

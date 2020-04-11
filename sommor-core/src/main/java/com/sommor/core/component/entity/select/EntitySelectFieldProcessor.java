@@ -6,6 +6,7 @@ import com.sommor.core.component.form.extension.FormFieldValidateProcessor;
 import com.sommor.core.component.form.field.Option;
 import com.sommor.core.curd.CurdManager;
 import com.sommor.core.curd.query.FieldContext;
+import com.sommor.core.utils.Converter;
 import com.sommor.extensibility.ExtensionExecutor;
 import com.sommor.extensibility.config.Implement;
 import com.sommor.mybatis.entity.BaseEntity;
@@ -20,13 +21,13 @@ import com.sommor.core.view.extension.ViewRenderProcessor;
  * @since 2019/12/26
  */
 @Implement
-public class SubjectSelectFieldProcessor implements
+public class EntitySelectFieldProcessor implements
         ViewRenderProcessor<EntitySelectFieldConfig>,
         FormFieldValidateProcessor<EntitySelectFieldConfig> {
 
     @Override
     public void processOnFormValidate(EntitySelectFieldConfig config, FieldContext ctx) {
-        Integer id = ctx.getFieldValue();
+        Long id = Converter.parseLong(ctx.getFieldValue());
         if (null != id && id > 0) {
             String entityName = config.getEntityName();
             CurdRepository repository = CurdManager.getCurdRepository(entityName);
@@ -46,7 +47,7 @@ public class SubjectSelectFieldProcessor implements
         String entityName = config.getEntityName();
         view.setEntityName(entityName);
 
-        Integer id = config.getValue();
+        Long id = Converter.parseLong(config.getValue());
         if (null != id && id > 0) {
             EntityDefinition ed = EntityManager.getDefinitionBySubject(entityName);
 

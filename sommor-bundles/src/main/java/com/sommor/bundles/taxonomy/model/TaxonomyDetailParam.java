@@ -20,7 +20,7 @@ public class TaxonomyDetailParam extends EntityDetailParam {
     public void onModelQuery(Query query) {
         super.onModelQuery(query);
 
-        if ((this.getId() == null || this.getId() == 0) && StringUtils.isNotBlank(taxonomy)) {
+        if ((this.getId() == null || "0".equals(this.getId())) && StringUtils.isNotBlank(taxonomy)) {
             TaxonomyKey taxonomyKey = TaxonomyKey.of(taxonomy);
             query.where().condition()
                     .and("type", taxonomyKey.getType())

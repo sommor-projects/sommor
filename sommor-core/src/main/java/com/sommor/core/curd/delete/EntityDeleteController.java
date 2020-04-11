@@ -3,6 +3,7 @@ package com.sommor.core.curd.delete;
 import com.sommor.core.api.response.ApiResponse;
 import com.sommor.core.utils.ClassAnnotatedTypeParser;
 import com.sommor.core.curd.CurdManager;
+import com.sommor.core.utils.Converter;
 import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.core.scaffold.param.EntityDeleteParam;
 import io.swagger.annotations.ApiOperation;
@@ -29,8 +30,8 @@ public class EntityDeleteController<Entity extends BaseEntity> {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @SuppressWarnings("unchecked")
     public ApiResponse<Entity> delete(@RequestBody EntityDeleteParam param) {
-        Integer id = param.getId();
-        Entity entity = (Entity) CurdManager.getCurdService(this.entityClass).delete(id);
+        String id = param.getId();
+        Entity entity = (Entity) CurdManager.getCurdService(this.entityClass).delete(Converter.parseLong(id));
         return ApiResponse.success(entity);
     }
 

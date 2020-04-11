@@ -20,7 +20,7 @@ public class UserRoleEntity extends BaseEntity {
 
     @Column
     @UserIdExist
-    private Integer userId;
+    private Long userId;
 
     @Column
     @NotBlank

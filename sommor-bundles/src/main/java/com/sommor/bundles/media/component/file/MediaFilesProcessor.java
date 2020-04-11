@@ -8,6 +8,7 @@ import com.sommor.bundles.media.service.MediaService;
 import com.sommor.core.component.form.FieldSaveContext;
 import com.sommor.core.component.form.extension.FormFieldSavedProcessor;
 import com.sommor.core.component.form.extension.FormFieldSavingProcessor;
+import com.sommor.core.utils.Converter;
 import com.sommor.extensibility.config.Implement;
 import com.sommor.core.model.Model;
 import com.sommor.core.model.ModelField;
@@ -72,7 +73,7 @@ public class MediaFilesProcessor implements
         int maxCount = config.getMaxCount();
         MediaFiles mediaFiles = new MediaFiles();
 
-        Integer entityId = config.getEntityId();
+        Long entityId = config.getEntityId();
 
         if (entityId != null && entityId > 0) {
             String entityName = config.getEntityName();
@@ -80,9 +81,9 @@ public class MediaFilesProcessor implements
 
             List<MediaFileSubjectRelationEntity> subjectEntities = mediaFileSubjectRelationRepository.findBySubject(entityName, subjectGroup, entityId);
             if (CollectionUtils.isNotEmpty(subjectEntities)) {
-                List<Integer> ids = subjectEntities.stream().map(p -> p.getMediaFileId()).collect(Collectors.toList());
+                List<Long> ids = subjectEntities.stream().map(p -> p.getMediaFileId()).collect(Collectors.toList());
                 List<MediaFileEntity> fileEntities = mediaFileRepository.findByIds(new Array(ids));
-                Map<Integer, MediaFileEntity> map = fileEntities.stream().collect(Collectors.toMap(p -> p.getId(), p -> p));
+                Map<Long, MediaFileEntity> map = fileEntities.stream().collect(Collectors.toMap(p -> p.getId(), p -> p));
                 for (int i=0; i<maxCount && i<subjectEntities.size(); i++) {
                     MediaFileSubjectRelationEntity subjectEntity = subjectEntities.get(i);
                     MediaFileEntity mediaFileEntity = map.get(subjectEntity.getMediaFileId());
@@ -99,8 +100,8 @@ public class MediaFilesProcessor implements
     private MediaFile convert(MediaFileEntity mediaFileEntity, MediaFileSubjectRelationEntity subjectEntity) {
         MediaFile mediaFile = new MediaFile();
 
-        mediaFile.setId(mediaFileEntity.getId());
-        mediaFile.setMediaSubjectRelationId(subjectEntity.getId());
+        mediaFile.setId(Converter.toString(mediaFileEntity.getId()));
+        mediaFile.setMediaSubjectRelationId(Converter.toString(subjectEntity.getId()));
 
         mediaFile.setUri(mediaFileEntity.getUri());
 
@@ -143,11 +144,11 @@ public class MediaFilesProcessor implements
         BaseEntity entity = ctx.getEntity();
         String subjectName = entity.definition().getSubjectName();
 
-        Map<Integer, MediaFile> map = null == mediaFiles ? Collections.emptyMap() : mediaFiles.stream()
+        Map<Long, MediaFile> map = null == mediaFiles ? Collections.emptyMap() : mediaFiles.stream()
                 .filter(p -> null != p.getMediaSubjectRelationId())
-                .collect(Collectors.toMap(p -> p.getMediaSubjectRelationId(), p -> p));
+                .collect(Collectors.toMap(p -> Converter.parseLong(p.getMediaSubjectRelationId()), p -> p));
 
-        Integer subjectId = entity.getId();
+        Long subjectId = entity.getId();
         String subjectGroup = ctx.getModelField().getName();
 
         List<MediaFileSubjectRelationEntity> subjectEntities = mediaFileSubjectRelationRepository.findBySubject(subjectName, subjectGroup, subjectId);
@@ -167,12 +168,12 @@ public class MediaFilesProcessor implements
                     relationEntity.setSubject(subjectName);
                     relationEntity.setSubjectGroup(subjectGroup);
                     relationEntity.setSubjectId(subjectId);
-                    relationEntity.setMediaFileId(mediaFile.getId());
+                    relationEntity.setMediaFileId(Converter.parseLong(mediaFile.getId()));
                     relationEntity.setTitle(mediaFile.getTitle());
                     relationEntity.setPriority(i);
-                    mediaFileSubjectRelationRepository.insert(relationEntity);
+                    mediaFileSubjectRelationRepository.add(relationEntity);
                 } else {
-                    mediaFileSubjectRelationRepository.updatePriorityById(mediaFile.getMediaSubjectRelationId(), i);
+                    mediaFileSubjectRelationRepository.updatePriorityById(Converter.parseLong(mediaFile.getMediaSubjectRelationId()), i);
                 }
                 i++;
             }
@@ -182,14 +183,14 @@ public class MediaFilesProcessor implements
     private void saveMediaFiles(MediaFiles mediaFiles) {
         if (CollectionUtils.isNotEmpty(mediaFiles)) {
             for (MediaFile mediaFile : mediaFiles) {
-                if (null == mediaFile.getId() || mediaFile.getId() == 0) {
+                if (null == mediaFile.getId()) {
                     MediaFileEntity entity = mediaFileRepository.findByUri(mediaFile.getUri());
                     if (null == entity) {
                         entity = new MediaFileEntity();
                         entity.setUri(mediaFile.getUri());
                         mediaService.save(entity);
                     }
-                    mediaFile.setId(entity.getId());
+                    mediaFile.setId(Converter.toString(entity.getId()));
                 }
             }
         }

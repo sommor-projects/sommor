@@ -13,13 +13,13 @@ import java.util.Set;
 @Setter
 public class AuthUser {
 
-    private Integer authId;
+    private Long authId;
 
     private String token;
 
     private Integer expireTime;
 
-    private Integer userId;
+    private Long userId;
 
     private Set<String> roles;
 

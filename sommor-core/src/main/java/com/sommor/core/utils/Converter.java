@@ -17,6 +17,35 @@ import java.time.format.DateTimeFormatter;
  */
 public class Converter {
 
+    public static String toString(Object value) {
+        if (null == value) {
+            return null;
+        }
+
+        return value.toString();
+    }
+
+    public static Long parseLong(Object value) {
+        if (null == value) {
+            return null;
+        }
+
+        if (value instanceof Integer) {
+            return ((Integer) value).longValue();
+        }
+
+        if (value instanceof Long) {
+            return (Long) value;
+        }
+
+        String s = value.toString();
+        if (StringUtils.isBlank(s)) {
+            return null;
+        }
+
+        return Long.parseLong(s);
+    }
+
     public static Integer parseInt(Object value) {
         if (null == value) {
             return null;

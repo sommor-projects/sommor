@@ -31,4 +31,11 @@ public class SkuFormService extends FormService<
             skuForm.getTaxonomy();
         }
     }
+
+    @Override
+    protected void onEntityFormRender(SkuForm skuForm, SkuFormParam skuFormParam, SkuEntity entity) {
+        super.onEntityFormRender(skuForm, skuFormParam, entity);
+
+
+    }
 }

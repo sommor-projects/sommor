@@ -5,6 +5,7 @@ import com.sommor.bundles.user.entity.UserEntity;
 import com.sommor.core.model.target.EntityDetail;
 import com.sommor.core.model.Model;
 import com.sommor.core.model.fill.OnModelFill;
+import com.sommor.core.utils.Converter;
 import com.sommor.core.view.field.text.TextField;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +18,7 @@ public class UserProfile extends EntityDetail implements OnModelFill {
 
     @Setter @Getter
     @TextField
-    private Integer userId;
+    private Long userId;
 
 
     @Setter @Getter
@@ -43,6 +44,6 @@ public class UserProfile extends EntityDetail implements OnModelFill {
 
     @Override
     public void onModelFill(Model model, Model sourceModel) {
-        this.setUserId(this.getId());
+        this.setUserId(Converter.parseLong(this.getId()));
     }
 }

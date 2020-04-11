@@ -35,27 +35,11 @@ public class QrCodeFormService extends FormService<QrCodeEntity, QrCodeForm, Ent
                 BaseEntity subjectEntity = subjectRepository.findById(entity.getSubjectId());
                 if (null != subjectEntity) {
                     if (qrCodeService.enrichEntityQrCode(subjectEntity)) {
-                        subjectRepository.save(subjectEntity);
+                        subjectRepository.update(subjectEntity);
                     }
                 }
             }
 
         }
-    }
-
-    @Override
-    protected QrCodeEntity onGetOriginalEntity(Model model, QrCodeEntity entity) {
-        QrCodeEntity original = super.onGetOriginalEntity(model, entity);
-        if (null == original) {
-            String code = entity.getCode();
-            if (StringUtils.isNotBlank(code)) {
-                original = qrCodeService.queryByCode(code);
-                if (null != original) {
-                    entity.setId(original.getId());
-                }
-            }
-        }
-
-        return original;
     }
 }

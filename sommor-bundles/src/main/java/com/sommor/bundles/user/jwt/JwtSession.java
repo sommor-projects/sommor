@@ -9,12 +9,12 @@ import lombok.Getter;
 public class JwtSession {
 
     @Getter
-    private int id;
+    private long id;
 
     @Getter
     private long expiredTime;
 
-    public JwtSession(int id, long expiredTime) {
+    public JwtSession(long id, long expiredTime) {
         this.id = id;
         this.expiredTime = expiredTime;
     }
