@@ -24,7 +24,6 @@ public class TableController<Entity extends BaseEntity, Table, QueryParam> {
         this.tableService = tableService;
     }
 
-
     @ApiOperation(value = "列表")
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @SuppressWarnings("unchecked")

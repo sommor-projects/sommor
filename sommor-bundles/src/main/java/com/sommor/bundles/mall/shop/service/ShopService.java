@@ -1,6 +1,7 @@
 package com.sommor.bundles.mall.shop.service;
 
 import com.sommor.bundles.mall.shop.entity.ShopEntity;
+import com.sommor.bundles.mall.shop.repository.ShopIndexRepository;
 import com.sommor.core.curd.CurdService;
 import com.sommor.core.generator.IdGenerator;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,9 @@ public class ShopService extends CurdService<ShopEntity> {
 
     @Resource
     private IdGenerator shopIdGenerator;
+
+    @Resource
+    private ShopIndexRepository shopIndexRepository;
 
     @Override
     protected void onSaving(ShopEntity entity, ShopEntity originalEntity) {
