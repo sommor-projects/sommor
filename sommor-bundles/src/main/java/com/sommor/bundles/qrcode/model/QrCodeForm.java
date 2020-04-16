@@ -1,6 +1,6 @@
 package com.sommor.bundles.qrcode.model;
 
-import com.sommor.core.model.target.EntityForm;
+import com.sommor.core.model.EntityForm;
 import lombok.Getter;
 import lombok.Setter;
 

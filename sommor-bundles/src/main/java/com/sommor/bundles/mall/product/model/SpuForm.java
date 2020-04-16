@@ -9,7 +9,7 @@ import com.sommor.bundles.qrcode.component.qrcode.QrCodeField;
 import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeField;
 import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeSelection;
 import com.sommor.core.component.form.field.InputField;
-import com.sommor.core.model.target.EntityForm;
+import com.sommor.core.model.EntityForm;
 import com.sommor.core.component.entity.select.EntitySelectField;
 import lombok.Getter;
 import lombok.Setter;

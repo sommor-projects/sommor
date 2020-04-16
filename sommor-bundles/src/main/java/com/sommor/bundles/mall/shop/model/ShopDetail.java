@@ -1,7 +1,7 @@
 package com.sommor.bundles.mall.shop.model;
 
 import com.sommor.mybatis.sql.field.type.Location;
-import com.sommor.core.model.target.EntityDetail;
+import com.sommor.core.model.EntityDetail;
 import com.sommor.core.view.field.text.TextField;
 import lombok.Getter;
 import lombok.Setter;

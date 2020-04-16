@@ -3,7 +3,7 @@ package com.sommor.bundles.taxonomy.model;
 import com.sommor.bundles.taxonomy.component.key.TaxonomyKeyField;
 import com.sommor.bundles.taxonomy.component.path.TaxonomyPathField;
 import com.sommor.bundles.taxonomy.component.foreign.ForeignTaxonomyField;
-import com.sommor.core.model.target.EntityDetail;
+import com.sommor.core.model.EntityDetail;
 import com.sommor.core.view.field.text.TextField;
 import lombok.Getter;
 import lombok.Setter;

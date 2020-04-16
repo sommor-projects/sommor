@@ -2,7 +2,7 @@ package com.sommor.bundles.user.model;
 
 import com.sommor.bundles.media.component.file.MediaFilesField;
 import com.sommor.bundles.user.entity.UserEntity;
-import com.sommor.core.model.target.EntityDetail;
+import com.sommor.core.model.EntityDetail;
 import com.sommor.core.model.Model;
 import com.sommor.core.model.fill.OnModelFill;
 import com.sommor.core.utils.Converter;

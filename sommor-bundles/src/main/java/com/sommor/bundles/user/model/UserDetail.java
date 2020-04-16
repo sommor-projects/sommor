@@ -1,6 +1,6 @@
 package com.sommor.bundles.user.model;
 
-import com.sommor.core.model.target.EntityDetail;
+import com.sommor.core.model.EntityDetail;
 import lombok.Getter;
 import lombok.Setter;
 
