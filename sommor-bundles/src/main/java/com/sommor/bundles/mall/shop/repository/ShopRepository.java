@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.SelectProvider;
  * @since 2019/12/2
  */
 @Mapper
-public interface ShopRepository extends CurdRepository<ShopEntity> {
+public interface ShopRepository extends CurdRepository<ShopEntity, Long> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     ShopEntity findBySubTitle(String subTitle);

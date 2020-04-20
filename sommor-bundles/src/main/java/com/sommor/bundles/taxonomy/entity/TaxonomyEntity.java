@@ -13,7 +13,7 @@ import lombok.Setter;
  */
 @Table("taxonomies")
 @Getter @Setter
-public class TaxonomyEntity extends ConfigurableEntity implements Comparable<TaxonomyEntity> {
+public class TaxonomyEntity extends ConfigurableEntity<Long> implements Comparable<TaxonomyEntity> {
 
     public static final String ROOT = "_";
 

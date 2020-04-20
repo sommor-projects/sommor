@@ -13,7 +13,7 @@ import lombok.Setter;
 @Table(value = "taxonomy_subject_relations", entityName = "taxonomy_subject")
 @Getter
 @Setter
-public class SubjectTaxonomyRelationEntity extends BaseEntity {
+public class SubjectTaxonomyRelationEntity extends BaseEntity<Long> {
 
     @Column
     private String subject;

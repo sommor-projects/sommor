@@ -13,7 +13,7 @@ import java.util.List;
  * @since 2019-11-14
  */
 @Mapper
-public interface UserRoleRepository extends CurdRepository<UserRoleEntity> {
+public interface UserRoleRepository extends CurdRepository<UserRoleEntity, Long> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     List<UserRoleEntity> findByUserId(Long userId);

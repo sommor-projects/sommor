@@ -33,13 +33,11 @@ public class EntityModelEnrichProcessor implements ModelEnrichProcessor<EntityMo
                 .filter(p -> p > 0)
                 .collect(Collectors.toSet());
 
-        List<BaseEntity> entities = CurdManager.getCurdRepository(entityName)
-                .findByIds(entityIds);
-
+        List<BaseEntity<?>> entities = CurdManager.getCurdRepository(entityName).findByIds(entityIds);
 
         if (CollectionUtils.isNotEmpty(entities)) {
-            Map<Long, Model> entityModelMap = new HashMap<>();
-            for (BaseEntity entity : entities) {
+            Map<Object, Model> entityModelMap = new HashMap<>();
+            for (BaseEntity<?> entity : entities) {
                 Model entityModel = Model.of(entity);
                 entityModelMap.put(entity.getId(), entityModel);
             }

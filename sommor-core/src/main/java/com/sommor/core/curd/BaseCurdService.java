@@ -13,17 +13,17 @@ import javax.annotation.Resource;
  * @author yanguanwei@qq.com
  * @since 2020/2/16
  */
-public class BaseCurdService<Entity extends BaseEntity> {
+public class BaseCurdService<Entity> {
 
     @Resource
     private CurdManager curdManager;
 
-    private CurdRepository<Entity> curdRepository;
+    private CurdRepository curdRepository;
 
     private CurdService curdService;
 
     @Getter
-    private Class<Entity> entityClass;
+    private Class entityClass;
 
     public BaseCurdService() {
         Class[] classes = ClassAnnotatedTypeParser.parse(this.getClass());
@@ -35,7 +35,7 @@ public class BaseCurdService<Entity extends BaseEntity> {
     }
 
     @SuppressWarnings("unchecked")
-    protected CurdRepository<Entity> curdRepository() {
+    protected CurdRepository curdRepository() {
         if (null == curdRepository) {
             if (null == entityClass) {
                 throw new ErrorCodeException(ErrorCode.of("curd.service.entity.unknown", this.getClass().getName()));
@@ -50,7 +50,7 @@ public class BaseCurdService<Entity extends BaseEntity> {
         return curdRepository;
     }
 
-    protected CurdService<Entity> curdService() {
+    protected CurdService curdService() {
         if (null == curdService) {
             if (null == entityClass) {
                 throw new ErrorCodeException(ErrorCode.of("curd.service.entity.empty", this.getClass().getName()));

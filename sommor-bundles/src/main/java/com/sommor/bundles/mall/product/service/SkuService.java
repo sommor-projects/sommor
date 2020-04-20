@@ -12,7 +12,7 @@ import javax.annotation.Resource;
  * @since 2020/2/1
  */
 @Service
-public class SkuService extends CurdService<SkuEntity> {
+public class SkuService extends CurdService<SkuEntity, Long> {
 
     @Resource
     private IdGenerator skuIdGenerator;

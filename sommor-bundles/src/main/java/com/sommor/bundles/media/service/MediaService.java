@@ -21,7 +21,7 @@ import java.io.InputStream;
  * @since 2019/12/2
  */
 @Service
-public class MediaService extends CurdService<MediaFileEntity> {
+public class MediaService extends CurdService<MediaFileEntity, Long> {
 
     private MediaFileProcessor mediaFileProcessor = ExtensionExecutor.proxyOf(MediaFileProcessor.class);
 
@@ -69,7 +69,7 @@ public class MediaService extends CurdService<MediaFileEntity> {
         return mediaFile;
     }
 
-    public void saveSubject(String url, String subject, Long subjectId) {
+    public void saveSubject(String url, String subject, String subjectId) {
         MediaFileEntity entity = mediaFileRepository.findByUri(url);
         if (null == entity) {
             throw new ErrorCodeException(ErrorCode.of("media.url.invalid", url));

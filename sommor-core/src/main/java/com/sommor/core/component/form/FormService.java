@@ -1,7 +1,5 @@
 package com.sommor.core.component.form;
 
-import com.sommor.core.api.error.ErrorCode;
-import com.sommor.core.api.error.ErrorCodeException;
 import com.sommor.core.component.form.action.Add;
 import com.sommor.core.component.form.action.Edit;
 import com.sommor.core.component.form.action.FormAction;
@@ -52,7 +50,7 @@ public class FormService<Entity extends BaseEntity, EntityForm, EntityFormParam>
     public FormView renderEntityForm(EntityFormParam param) {
         Model paramModel = Model.of(param);
 
-        Entity entity = curdService().queryFirst(paramModel);
+        Entity entity = (Entity) curdService().queryFirst(paramModel);
 
         FormAction formAction;
         Model sourceModel;
@@ -86,7 +84,7 @@ public class FormService<Entity extends BaseEntity, EntityForm, EntityFormParam>
 
     private Entity newEntity() {
         try {
-            return this.getEntityClass().newInstance();
+            return (Entity) this.getEntityClass().newInstance();
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -111,8 +109,8 @@ public class FormService<Entity extends BaseEntity, EntityForm, EntityFormParam>
         Model model = Model.of(target, RequestContext.get());
         this.onFormValidate(model);
 
-        Entity entity = model.to(this.getEntityClass());
-        Entity originalEntity = curdService().onGetOriginalEntity(entity);
+        Entity entity = (Entity) model.to(this.getEntityClass());
+        Entity originalEntity = (Entity) curdService().onGetOriginalEntity(entity);
 
         DataSourceTransactionManager dataSourceTransactionManager = ApplicationContextHolder.getBean(DataSourceTransactionManager.class);
         TransactionDefinition transactionDefinition = ApplicationContextHolder.getBean(TransactionDefinition.class);

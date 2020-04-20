@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * @author yanguanwei@qq.com
  * @since 2020/2/22
  */
-public class DetailController<Entity extends BaseEntity, Detail, DetailParam> {
+public class DetailController<Entity extends BaseEntity<?>, Detail, DetailParam> {
 
     private DetailService<Entity, Detail, DetailParam> detailService;
 

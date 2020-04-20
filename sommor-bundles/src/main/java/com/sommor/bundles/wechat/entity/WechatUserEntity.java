@@ -11,7 +11,7 @@ import lombok.Setter;
  * @since 2019/2/5
  */
 @Table("wechat_users")
-public class WechatUserEntity extends BaseEntity {
+public class WechatUserEntity extends BaseEntity<Long> {
 
     @Getter
     @Setter

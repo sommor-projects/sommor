@@ -8,10 +8,10 @@ import com.sommor.mybatis.entity.BaseEntity;
  */
 public interface EntityLifecycle {
 
-    default void onSaving(BaseEntity original) {
+    default void onSaving(Object original) {
     }
 
-    default void onSaved(BaseEntity original) {
+    default void onSaved(Object original) {
     }
 
 }

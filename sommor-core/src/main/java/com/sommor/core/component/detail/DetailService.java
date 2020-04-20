@@ -11,7 +11,7 @@ import com.sommor.mybatis.entity.BaseEntity;
  * @author yanguanwei@qq.com
  * @since 2020/2/22
  */
-public class DetailService<Entity extends BaseEntity, Detail, DetailParam> extends BaseCurdService<Entity> {
+public class DetailService<Entity extends BaseEntity<?>, Detail, DetailParam> extends BaseCurdService<Entity> {
 
     private Class<Detail> detailClass;
 
@@ -29,7 +29,7 @@ public class DetailService<Entity extends BaseEntity, Detail, DetailParam> exten
     public Detail renderDetail(DetailParam detailParam) {
         Entity entity;
 
-        entity = curdService().queryFirst(detailParam);
+        entity = (Entity) curdService().queryFirst(detailParam);
         if (null == entity) {
             throw new ErrorCodeException(ErrorCode.of("entity.detail.absence"));
         }

@@ -12,7 +12,7 @@ import lombok.Setter;
  * @since 2019/1/13
  */
 @Table(value = "users", entityName = UserEntity.NAME, autoIncrement = false)
-public class UserEntity extends ConfigurableEntity {
+public class UserEntity extends ConfigurableEntity<Long> {
     public static final String NAME = "user";
 
     public static final Integer GENDER_MALE = 0;

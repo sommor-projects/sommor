@@ -23,7 +23,7 @@ import javax.annotation.Resource;
  * @since 2020/2/1
  */
 @Service
-public class ProductService extends CurdService<ProductEntity> {
+public class ProductService extends CurdService<ProductEntity, Long> {
 
     @Resource
     private ProductRepository productRepository;

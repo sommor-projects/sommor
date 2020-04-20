@@ -16,7 +16,7 @@ public class MediaFilesFieldConfig extends FormFieldConfig<MediaFilesView> {
 
     @Getter
     @Setter
-    private Long entityId;
+    private String entityId;
 
     @Getter
     @Setter

@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.SelectProvider;
  * @since 2019/2/3
  */
 @Mapper
-public interface UserRepository extends CurdRepository<UserEntity> {
+public interface UserRepository extends CurdRepository<UserEntity, Long> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     UserEntity findByMobilePhone(String mobilePhone);

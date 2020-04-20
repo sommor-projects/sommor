@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.SelectProvider;
  * @since 2020/1/29
  */
 @Mapper
-public interface QrCodeRepository extends CurdRepository<QrCodeEntity> {
+public interface QrCodeRepository extends CurdRepository<QrCodeEntity, Long> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     QrCodeEntity findByCode(String code);

@@ -13,7 +13,7 @@ import lombok.Setter;
 @Table("media_files")
 @Getter
 @Setter
-public class MediaFileEntity extends TimedEntity {
+public class MediaFileEntity extends TimedEntity<Long> {
 
     @Column
     private String uri;

@@ -27,7 +27,7 @@ import java.util.UUID;
  * @since 2020/1/29
  */
 @Service
-public class QrCodeService extends CurdService<QrCodeEntity> {
+public class QrCodeService extends CurdService<QrCodeEntity, Long> {
 
     public static final String QR_CODE_KEY = "qrCode";
 
@@ -73,7 +73,7 @@ public class QrCodeService extends CurdService<QrCodeEntity> {
 
     public String getEntityQrCode(BaseEntity entity) {
         if (entity.hasField(QR_CODE_KEY)) {
-            return entity.getFieldValue(QR_CODE_KEY);
+            return (String) entity.getFieldValue(QR_CODE_KEY);
         }
 
         return null;
@@ -81,7 +81,7 @@ public class QrCodeService extends CurdService<QrCodeEntity> {
 
     public boolean enrichEntityQrCode(BaseEntity entity) {
         if (entity.hasField(QR_CODE_KEY)) {
-            String qrCode = entity.getFieldValue(QR_CODE_KEY);
+            String qrCode = (String) entity.getFieldValue(QR_CODE_KEY);
             if (StringUtils.isBlank(qrCode)) {
                 entity.setFieldValue(QR_CODE_KEY, this.generateQrCode());
                 return true;

@@ -19,7 +19,7 @@ import java.util.List;
  * @author yanguanwei@qq.com
  * @since 2020/3/2
  */
-abstract public class EntitySelectController<Entity extends BaseEntity, EntityQueryParam> implements EntitySelectOptionParser<Entity> {
+abstract public class EntitySelectController<Entity extends BaseEntity<?>, EntityQueryParam> implements EntitySelectOptionParser<Entity> {
 
     private Class entityClass;
 

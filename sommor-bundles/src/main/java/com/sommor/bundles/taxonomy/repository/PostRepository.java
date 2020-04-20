@@ -9,5 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2019/11/25
  */
 @Mapper
-public interface PostRepository extends CurdRepository<PostEntity> {
+public interface PostRepository extends CurdRepository<PostEntity, Long> {
 }

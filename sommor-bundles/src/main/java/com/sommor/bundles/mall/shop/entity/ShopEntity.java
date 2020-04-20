@@ -14,7 +14,7 @@ import lombok.Setter;
 @Table(value = "shops", entityName = ShopEntity.NAME, autoIncrement = false)
 @Setter
 @Getter
-public class ShopEntity extends ConfigurableEntity {
+public class ShopEntity extends ConfigurableEntity<Long> {
 
     public static final String NAME = "shop";
 

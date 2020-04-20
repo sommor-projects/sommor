@@ -14,14 +14,14 @@ import java.util.List;
  * @since 2019/12/2
  */
 @Mapper
-public interface MediaFileSubjectRelationRepository extends CurdRepository<MediaFileSubjectRelationEntity> {
+public interface MediaFileSubjectRelationRepository extends CurdRepository<MediaFileSubjectRelationEntity, Long> {
 
-    default List<MediaFileSubjectRelationEntity> findBySubject(String subject, Long subjectId) {
+    default List<MediaFileSubjectRelationEntity> findBySubject(String subject, String subjectId) {
         return this.findBySubject(subject, "default", subjectId);
     }
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
-    List<MediaFileSubjectRelationEntity> findBySubject(String subject, String subjectGroup, Long subjectId);
+    List<MediaFileSubjectRelationEntity> findBySubject(String subject, String subjectGroup, String subjectId);
 
     @DeleteProvider(type = SqlProvider.class, method = "deleteBy")
     void deleteByMediaFileId(Long mediaFileId);

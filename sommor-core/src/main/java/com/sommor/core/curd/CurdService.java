@@ -27,7 +27,7 @@ import java.util.List;
  * @author yanguanwei@qq.com
  * @since 2019/11/27
  */
-public class CurdService<Entity extends BaseEntity> extends BaseCurdService<Entity> implements ApplicationListener<ContextRefreshedEvent> {
+public class CurdService<Entity extends BaseEntity<ID>, ID> extends BaseCurdService<Entity> implements ApplicationListener<ContextRefreshedEvent> {
 
     public CurdService() {
         super();
@@ -48,7 +48,7 @@ public class CurdService<Entity extends BaseEntity> extends BaseCurdService<Enti
         this.enrichQuery(paramModel, query);
 
         if (query.hasWhereClause()) {
-            return curdRepository().findFirst(query);
+            return (Entity) curdRepository().findFirst(query);
         }
 
         return null;
@@ -131,9 +131,9 @@ public class CurdService<Entity extends BaseEntity> extends BaseCurdService<Enti
     }
 
     public Entity onGetOriginalEntity(Entity entity) {
-        Long id = entity.getId();
-        if (null != id && id > 0) {
-            Entity originalEntity = curdRepository().findById(id);
+        ID id = entity.getId();
+        if (BaseEntity.isIdEmpty(id)) {
+            Entity originalEntity = (Entity) curdRepository().findById(id);
             if (null == originalEntity) {
                 throw new ErrorCodeException(ErrorCode.of("entity.update.id.invalid", entity.getClass().getSimpleName(), id));
             }
@@ -153,9 +153,9 @@ public class CurdService<Entity extends BaseEntity> extends BaseCurdService<Enti
     protected void onSaved(Entity entity, Entity originalEntity) {
     }
 
-    public List<Entity> deleteBatch(List<Long> ids) {
+    public List<Entity> deleteBatch(List<ID> ids) {
         List<Entity> list = new ArrayList<>();
-        for (Long id : ids) {
+        for (ID id : ids) {
             Entity entity = this.delete(id);
             list.add(entity);
         }
@@ -164,8 +164,8 @@ public class CurdService<Entity extends BaseEntity> extends BaseCurdService<Enti
     }
 
     @SuppressWarnings("unchecked")
-    public Entity delete(Long id) {
-        Entity entity = curdRepository().findById(id);
+    public Entity delete(ID id) {
+        Entity entity = (Entity) curdRepository().findById(id);
         if (null == entity) {
             throw new ErrorCodeException(ErrorCode.of("entity.delete.id.invalid", id));
         }

@@ -11,7 +11,7 @@ import lombok.Setter;
  * @since 2019/12/20
  */
 @Table(value = "product_sku", entityName = SkuEntity.NAME, autoIncrement = false)
-public class SkuEntity extends ConfigurableEntity {
+public class SkuEntity extends ConfigurableEntity<Long> {
 
     public static final String NAME = "sku";
 

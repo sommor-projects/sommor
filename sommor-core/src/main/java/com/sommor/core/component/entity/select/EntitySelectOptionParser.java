@@ -9,7 +9,7 @@ import com.sommor.mybatis.entity.BaseEntity;
  * @since 2020/3/2
  */
 @Extension(name = "解析实体搜索时的选项")
-public interface EntitySelectOptionParser<Entity extends BaseEntity> {
+public interface EntitySelectOptionParser<Entity> {
 
     Option parseEntitySelectOption(Entity entity);
 

@@ -18,10 +18,10 @@ import java.util.List;
  * @author yanguanwei@qq.com
  * @since 2019/10/25
  */
-public interface CurdRepository<Entity extends BaseEntity> {
+public interface CurdRepository<Entity, ID> {
 
     @SelectProvider(type = SqlProvider.class, method = "findById")
-    Entity findById(Long id);
+    Entity findById(ID id);
 
     @SelectProvider(type = SqlProvider.class, method = "findFirst")
     Entity findFirst(Query query);
@@ -32,7 +32,7 @@ public interface CurdRepository<Entity extends BaseEntity> {
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     List<Entity> findByIds(Array id);
 
-    default List<Entity> findByIds(Collection<Long> id) {
+    default List<Entity> findByIds(Collection<ID> id) {
         return findByIds(new Array(id));
     }
 
@@ -103,13 +103,13 @@ public interface CurdRepository<Entity extends BaseEntity> {
     int update(Entity entity);
 
     @DeleteProvider(type = SqlProvider.class, method = "deleteById")
-    int deleteById(Object id);
+    int deleteById(ID id);
 
 
     @DeleteProvider(type = SqlProvider.class, method = "deleteBy")
     int deleteByIds(Array id);
 
-    default int deleteByIds(Collection<Long> id) {
+    default int deleteByIds(Collection<ID> id) {
         return this.deleteByIds(new Array(id));
     }
 }

@@ -13,7 +13,7 @@ import lombok.Setter;
 @Table("qr_codes")
 @Getter
 @Setter
-public class QrCodeEntity extends TimedEntity {
+public class QrCodeEntity extends TimedEntity<Long> {
 
     @Column
     private String code;

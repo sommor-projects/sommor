@@ -13,7 +13,7 @@ import lombok.Setter;
 @Table("media_file_subject_relations")
 @Getter
 @Setter
-public class MediaFileSubjectRelationEntity extends BaseEntity {
+public class MediaFileSubjectRelationEntity extends BaseEntity<Long> {
 
     @Column
     private Long mediaFileId;
@@ -22,7 +22,7 @@ public class MediaFileSubjectRelationEntity extends BaseEntity {
     private String subject;
 
     @Column
-    private Long subjectId;
+    private String subjectId;
 
     @Column
     private String subjectGroup;

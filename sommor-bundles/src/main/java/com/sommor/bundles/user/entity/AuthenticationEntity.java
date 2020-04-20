@@ -11,7 +11,7 @@ import lombok.Setter;
  * @since 2019/2/3
  */
 @Table("authentications")
-public class AuthenticationEntity extends BaseEntity {
+public class AuthenticationEntity extends BaseEntity<Long> {
 
     @Getter @Setter
     @Column

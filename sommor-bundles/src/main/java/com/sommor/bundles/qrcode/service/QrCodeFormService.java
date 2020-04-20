@@ -32,7 +32,7 @@ public class QrCodeFormService extends FormService<QrCodeEntity, QrCodeForm, Ent
 
             if (StringUtils.isNotBlank(entity.getSubject())) {
                 CurdRepository subjectRepository = CurdManager.getCurdRepository(entity.getSubject());
-                BaseEntity subjectEntity = subjectRepository.findById(entity.getSubjectId());
+                BaseEntity subjectEntity = (BaseEntity) subjectRepository.findById(entity.getSubjectId());
                 if (null != subjectEntity) {
                     if (qrCodeService.enrichEntityQrCode(subjectEntity)) {
                         subjectRepository.update(subjectEntity);

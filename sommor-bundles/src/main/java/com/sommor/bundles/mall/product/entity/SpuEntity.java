@@ -13,7 +13,7 @@ import lombok.Setter;
 @Table(value = "product_spu", entityName = SpuEntity.NAME)
 @Getter
 @Setter
-public class SpuEntity extends ConfigurableEntity {
+public class SpuEntity extends ConfigurableEntity<Long> {
 
     public static final String NAME = "spu";
 

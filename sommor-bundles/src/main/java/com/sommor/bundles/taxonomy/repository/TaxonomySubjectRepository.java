@@ -14,7 +14,7 @@ import java.util.List;
  * @since 2019/12/3
  */
 @Mapper
-public interface TaxonomySubjectRepository extends CurdRepository<SubjectTaxonomyRelationEntity> {
+public interface TaxonomySubjectRepository extends CurdRepository<SubjectTaxonomyRelationEntity, Long> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     List<SubjectTaxonomyRelationEntity> findBySubject(String subject, Long subjectId);

@@ -15,19 +15,19 @@ import java.util.Objects;
  */
 @Getter
 @Setter
-public class BaseEntity {
+public class BaseEntity<ID> {
 
     @Column
-    private Long id;
+    private ID id;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BaseEntity that = (BaseEntity) o;
-        Long id = this.getId();
-        Long thatId = that.getId();
-        if (null == id || id == 0 || thatId == null || thatId == 0) {
+        Object id = this.getId();
+        Object thatId = that.getId();
+        if (isIdEmpty(id) || isIdEmpty(thatId)) {
             return false;
         }
 
@@ -36,8 +36,8 @@ public class BaseEntity {
 
     @Override
     public int hashCode() {
-        Long id = getId();
-        if (null != id && id > 0) {
+        ID id = getId();
+        if (! isIdEmpty(id)) {
             return Objects.hash(getId());
         }
         return super.hashCode();
@@ -77,6 +77,18 @@ public class BaseEntity {
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean isIdEmpty(Object id) {
+        if (null == id) {
+            return true;
+        }
+
+        if (id.getClass() == Long.class) {
+            return ((Long) id) == 0L;
+        }
+
+        return false;
     }
 
     public EntityDefinition definition() {

@@ -9,6 +9,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2019/2/3
  */
 @Mapper
-public interface UserAuthRepository extends CurdRepository<AuthenticationEntity> {
+public interface UserAuthRepository extends CurdRepository<AuthenticationEntity, Long> {
 
 }

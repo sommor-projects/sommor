@@ -11,7 +11,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2019/11/27
  */
-public class ConfigurableEntity extends TimedEntity {
+public class ConfigurableEntity<ID> extends TimedEntity<ID> {
 
     @Column
     @Setter
@@ -39,7 +39,7 @@ public class ConfigurableEntity extends TimedEntity {
     }
 
     @Override
-    public void onSaving(BaseEntity original) {
+    public void onSaving(Object original) {
         super.onSaving(original);
 
         if (null != original) {

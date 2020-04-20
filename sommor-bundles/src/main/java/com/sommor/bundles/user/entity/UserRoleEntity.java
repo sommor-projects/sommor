@@ -16,7 +16,7 @@ import javax.validation.constraints.NotBlank;
 @Table("user_roles")
 @Setter
 @Getter
-public class UserRoleEntity extends BaseEntity {
+public class UserRoleEntity extends BaseEntity<Long> {
 
     @Column
     @UserIdExist

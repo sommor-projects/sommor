@@ -13,7 +13,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class TimedEntity extends BaseEntity implements EntityLifecycle {
+public class TimedEntity<ID> extends BaseEntity<ID> implements EntityLifecycle {
 
     @Column
     private Integer updateTime;
@@ -22,7 +22,7 @@ public class TimedEntity extends BaseEntity implements EntityLifecycle {
     private Integer createTime;
 
     @Override
-    public void onSaving(BaseEntity original) {
+    public void onSaving(Object original) {
         int now = DateTimeUtil.now();
         this.setUpdateTime(now);
         if (original == null) {

@@ -12,7 +12,7 @@ import org.apache.ibatis.annotations.SelectProvider;
  * @since 2019/12/2
  */
 @Mapper
-public interface SkuRepository extends CurdRepository<SkuEntity> {
+public interface SkuRepository extends CurdRepository<SkuEntity, Long> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     SpuEntity findBySubTitle(String subTitle);

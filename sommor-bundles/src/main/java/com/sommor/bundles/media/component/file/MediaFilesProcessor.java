@@ -73,9 +73,9 @@ public class MediaFilesProcessor implements
         int maxCount = config.getMaxCount();
         MediaFiles mediaFiles = new MediaFiles();
 
-        Long entityId = config.getEntityId();
+        String entityId = config.getEntityId();
 
-        if (entityId != null && entityId > 0) {
+        if (entityId != null) {
             String entityName = config.getEntityName();
             String subjectGroup = modelField.getName();
 
@@ -144,11 +144,11 @@ public class MediaFilesProcessor implements
         BaseEntity entity = ctx.getEntity();
         String subjectName = entity.definition().getSubjectName();
 
-        Map<Long, MediaFile> map = null == mediaFiles ? Collections.emptyMap() : mediaFiles.stream()
+        Map<Object, MediaFile> map = null == mediaFiles ? Collections.emptyMap() : mediaFiles.stream()
                 .filter(p -> null != p.getMediaSubjectRelationId())
                 .collect(Collectors.toMap(p -> Converter.parseLong(p.getMediaSubjectRelationId()), p -> p));
 
-        Long subjectId = entity.getId();
+        String subjectId = entity.getId().toString();
         String subjectGroup = ctx.getModelField().getName();
 
         List<MediaFileSubjectRelationEntity> subjectEntities = mediaFileSubjectRelationRepository.findBySubject(subjectName, subjectGroup, subjectId);

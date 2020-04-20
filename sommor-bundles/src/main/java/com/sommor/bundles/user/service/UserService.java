@@ -14,7 +14,7 @@ import javax.annotation.Resource;
  * @since 2019-11-15
  */
 @Service
-public class UserService extends CurdService<UserEntity> {
+public class UserService extends CurdService<UserEntity, Long> {
 
     @Resource
     private UserRepository userRepository;

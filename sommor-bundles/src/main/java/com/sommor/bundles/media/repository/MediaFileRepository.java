@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.SelectProvider;
  * @since 2019/12/2
  */
 @Mapper
-public interface MediaFileRepository extends CurdRepository<MediaFileEntity> {
+public interface MediaFileRepository extends CurdRepository<MediaFileEntity, Long> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     MediaFileEntity findByUri(String uri);

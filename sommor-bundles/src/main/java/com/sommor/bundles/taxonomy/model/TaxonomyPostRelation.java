@@ -10,7 +10,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class TaxonomyPostRelation extends BaseEntity {
+public class TaxonomyPostRelation extends BaseEntity<Long> {
 
     private String name;
 

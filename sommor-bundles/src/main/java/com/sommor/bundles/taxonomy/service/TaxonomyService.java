@@ -25,7 +25,7 @@ import java.util.*;
  * @since 2019-11-14
  */
 @Service
-public class TaxonomyService extends CurdService<TaxonomyEntity> {
+public class TaxonomyService extends CurdService<TaxonomyEntity, Long> {
 
     @Resource
     private TaxonomyRepository taxonomyRepository;

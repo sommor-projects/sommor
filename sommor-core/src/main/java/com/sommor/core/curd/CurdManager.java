@@ -1,7 +1,6 @@
 package com.sommor.core.curd;
 
 import com.sommor.core.utils.ClassAnnotatedTypeParser;
-import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.mybatis.entity.definition.EntityDefinition;
 import com.sommor.mybatis.entity.definition.EntityManager;
 import com.sommor.mybatis.repository.CurdRepository;
@@ -42,16 +41,16 @@ public class CurdManager implements BeanPostProcessor {
         return classes[0];
     }
 
-    public static <Entity extends BaseEntity> CurdRepository<Entity> getCurdRepository(Class<Entity> entityClass) {
+    public static CurdRepository getCurdRepository(Class entityClass) {
         return entityRepositoryMap.get(entityClass);
     }
 
-    public static <Entity extends BaseEntity> CurdRepository<Entity> getCurdRepository(String subject) {
+    public static CurdRepository getCurdRepository(String subject) {
         EntityDefinition entityDefinition = EntityManager.getDefinitionBySubject(subject);
         return null == entityDefinition ? null : entityRepositoryMap.get(entityDefinition.getEntityClass());
     }
 
-    public static <Entity extends BaseEntity> CurdService getCurdService(Class<Entity> entityClass) {
+    public static CurdService getCurdService(Class entityClass) {
         return entityServiceMap.get(entityClass);
     }
 }

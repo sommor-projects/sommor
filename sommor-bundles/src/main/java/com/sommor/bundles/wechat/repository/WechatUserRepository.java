@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.SelectProvider;
  * @author yanguanwei@qq.com
  * @since 2019/10/28
  */
-public interface WechatUserRepository extends CurdRepository<WechatUserEntity> {
+public interface WechatUserRepository extends CurdRepository<WechatUserEntity, Long> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
     WechatUserEntity findByOpenid(String openid);

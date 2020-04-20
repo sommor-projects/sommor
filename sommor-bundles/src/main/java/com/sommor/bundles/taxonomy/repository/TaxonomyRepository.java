@@ -20,7 +20,7 @@ import java.util.List;
  * @since 2019/11/7
  */
 @Mapper
-public interface TaxonomyRepository extends CurdRepository<TaxonomyEntity> {
+public interface TaxonomyRepository extends CurdRepository<TaxonomyEntity, Long> {
 
     default List<TaxonomyEntity> findRootTaxonomies() {
         Query query = new Query()

@@ -12,7 +12,7 @@ import lombok.Setter;
  */
 @Table(value = "posts", entityName = PostEntity.NAME)
 @Getter @Setter
-public class PostEntity extends ConfigurableEntity {
+public class PostEntity extends ConfigurableEntity<Long> {
 
     public static final String NAME = "post";
 
