@@ -2,7 +2,7 @@ package com.sommor.bundles.qrcode.service;
 
 import com.sommor.bundles.qrcode.entity.QrCodeEntity;
 import com.sommor.bundles.qrcode.model.QrCodeForm;
-import com.sommor.core.component.form.FormService;
+import com.sommor.core.component.form.EntityFormService;
 import com.sommor.core.curd.CurdManager;
 import com.sommor.core.model.Model;
 import com.sommor.mybatis.entity.BaseEntity;
@@ -18,7 +18,7 @@ import javax.annotation.Resource;
  * @since 2020/2/29
  */
 @Service
-public class QrCodeFormService extends FormService<QrCodeEntity, QrCodeForm, EntityFormParam> {
+public class QrCodeFormService extends EntityFormService<QrCodeEntity, QrCodeForm, EntityFormParam> {
 
     @Resource
     private QrCodeService qrCodeService;

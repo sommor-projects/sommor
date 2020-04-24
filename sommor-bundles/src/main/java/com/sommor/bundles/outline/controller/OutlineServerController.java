@@ -4,8 +4,12 @@ import com.sommor.bundles.outline.api.request.AccessKeyDeleteParam;
 import com.sommor.bundles.outline.api.request.ServerRenameParam;
 import com.sommor.bundles.outline.api.response.AccessKey;
 import com.sommor.bundles.outline.api.OutlineServer;
-import com.sommor.bundles.outline.api.response.ListAccessKeysResponse;
-import com.sommor.bundles.outline.api.response.ServerInfo;
+import com.sommor.bundles.outline.entity.OutlineAccessKeyEntity;
+import com.sommor.bundles.outline.entity.OutlineServerEntity;
+import com.sommor.bundles.outline.model.OutlineAccessKeyCreateParam;
+import com.sommor.bundles.outline.model.OutlineServerRenameParam;
+import com.sommor.bundles.outline.model.OutlineServerSyncParam;
+import com.sommor.bundles.outline.service.OutlineServerService;
 import com.sommor.core.api.response.ApiResponse;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -26,30 +31,33 @@ public class OutlineServerController {
 
     private OutlineServer outlineServer = new OutlineServer("https://47.240.36.86:12375/sNoll--1uJqvWLr3h9dy5Q");
 
-    @ApiOperation(value = "accessKey list")
+    @Resource
+    private OutlineServerService outlineServerService;
+
+    @ApiOperation(value = "accessKey列表")
     @RequestMapping(value = "/access-keys", method = RequestMethod.GET)
-    public ApiResponse<List<AccessKey>> accessKeys() {
-        List<AccessKey> response = outlineServer.listAccessKeys();
-        return ApiResponse.success(response == null ? null : response);
+    public ApiResponse<List<OutlineAccessKeyEntity>> accessKeys(String serverId) {
+        List<OutlineAccessKeyEntity> entities = outlineServerService.findAccessKeys(serverId);
+        return ApiResponse.success(entities);
     }
 
-    @ApiOperation(value = "server info")
-    @RequestMapping(value = "/info", method = RequestMethod.GET)
-    public ApiResponse<ServerInfo> info() {
-        ServerInfo serverInfo = outlineServer.info();
-        return ApiResponse.success(serverInfo);
+    @ApiOperation(value = "同步Outline Server")
+    @RequestMapping(value = "/sync", method = RequestMethod.POST)
+    public ApiResponse<OutlineServerEntity> addOutlineServer(OutlineServerSyncParam param) {
+        OutlineServerEntity entity = outlineServerService.syncOutlineServer(param);
+        return ApiResponse.success(entity);
     }
 
-    @ApiOperation(value = "rename server")
+    @ApiOperation(value = "Outline Server改名")
     @RequestMapping(value = "/rename", method = RequestMethod.POST)
-    public ApiResponse serverRename(@Validated ServerRenameParam param) {
-        outlineServer.rename(param);
-        return ApiResponse.success();
+    public ApiResponse<OutlineServerEntity> serverRename(@Validated OutlineServerRenameParam param) {
+        OutlineServerEntity entity = outlineServerService.renameServer(param);
+        return ApiResponse.success(entity);
     }
 
-    @ApiOperation(value = "create access key")
+    @ApiOperation(value = "创建Access Key")
     @RequestMapping(value = "/access-keys", method = RequestMethod.POST)
-    public ApiResponse<AccessKey> createAccessKey() {
+    public ApiResponse<AccessKey> createAccessKey(OutlineAccessKeyCreateParam param) {
         AccessKey accessKey = outlineServer.createAccessKey();
         return ApiResponse.success(accessKey);
     }

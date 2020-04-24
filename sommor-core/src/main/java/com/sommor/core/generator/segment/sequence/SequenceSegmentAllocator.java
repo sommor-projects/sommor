@@ -11,7 +11,7 @@ import javax.annotation.Resource;
  */
 public class SequenceSegmentAllocator implements SegmentAllocator {
 
-    private static final int DB_INDEX_LENGTH = 2;
+    private static final int DB_INDEX_LENGTH = 0;
 
     private static final int PREFIX_LENGTH = 1;
 
@@ -51,8 +51,10 @@ public class SequenceSegmentAllocator implements SegmentAllocator {
 
         int bitLength = this.sequenceId.getLength();
 
-        value = (value << DB_INDEX_LENGTH) | sequenceCache.getDbIndex();
-        bitLength += DB_INDEX_LENGTH;
+        if (DB_INDEX_LENGTH > 0) {
+            value = (value << DB_INDEX_LENGTH) | sequenceCache.getDbIndex();
+            bitLength += DB_INDEX_LENGTH;
+        }
 
         value = (prefixValue << bitLength) | value;
         bitLength += calculateBitLength(prefixValue);

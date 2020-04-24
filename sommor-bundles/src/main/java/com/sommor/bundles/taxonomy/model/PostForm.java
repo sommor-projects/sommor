@@ -2,8 +2,8 @@ package com.sommor.bundles.taxonomy.model;
 
 import com.sommor.bundles.media.component.file.MediaFiles;
 import com.sommor.bundles.media.component.file.MediaFilesField;
-import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeField;
-import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeSelection;
+import com.sommor.bundles.taxonomy.component.attribute.AttributeSelectionField;
+import com.sommor.bundles.taxonomy.component.attribute.AttributeSelection;
 import com.sommor.bundles.taxonomy.entity.PostEntity;
 import com.sommor.bundles.user.auth.AuthenticationHolder;
 import com.sommor.bundles.user.entity.UserEntity;
@@ -44,8 +44,8 @@ public class PostForm extends EntityForm implements OnModelFill {
     @NotNull
     private String userId;
 
-    @TaxonomyAttributeField(entityName = PostEntity.NAME)
-    private TaxonomyAttributeSelection taxonomy;
+    @AttributeSelectionField(entityName = PostEntity.NAME)
+    private AttributeSelection taxonomy;
 
     @InputField(title = "描述", style = "textarea")
     @NotBlank

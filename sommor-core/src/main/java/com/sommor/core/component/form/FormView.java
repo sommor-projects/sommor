@@ -27,4 +27,9 @@ public class FormView extends ModelView {
     public FormView() {
         super("form");
     }
+
+    public void addForm(FormView formView) {
+        this.getFields().putAll(formView.getFields());
+        this.getData().putAll(formView.getData());
+    }
 }

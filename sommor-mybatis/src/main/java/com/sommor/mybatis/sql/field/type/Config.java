@@ -33,6 +33,10 @@ public class Config {
         return get(key, String.class);
     }
 
+    public Long getLong(String key) {
+        return get(key, Long.class);
+    }
+
     public <V> V get(String key, Class<V> type) {
         return json.getObject(key, type);
     }

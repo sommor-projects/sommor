@@ -210,7 +210,7 @@ public class Model extends Extensible {
             throw new RuntimeException(e);
         }
 
-        ModelManager.setModelFieldValues(target, this.getTarget());
+        ModelManager.setModelFieldValues(target, this);
         return target;
     }
 

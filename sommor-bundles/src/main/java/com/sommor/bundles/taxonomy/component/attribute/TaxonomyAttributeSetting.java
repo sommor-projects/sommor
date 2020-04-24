@@ -1,4 +1,4 @@
-package com.sommor.bundles.taxonomy.component.relation;
+package com.sommor.bundles.taxonomy.component.attribute;
 
 import com.sommor.bundles.taxonomy.component.select.TaxonomySelectField;
 import com.sommor.bundles.taxonomy.entity.TaxonomyEntity;

@@ -1,4 +1,4 @@
-package com.sommor.bundles.taxonomy.component.relation;
+package com.sommor.bundles.taxonomy.component.attribute;
 
 import com.sommor.core.model.config.TargetAnnotation;
 
@@ -10,9 +10,9 @@ import java.lang.annotation.*;
  */
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@TargetAnnotation(TaxonomyAttributeConfig.class)
+@TargetAnnotation(AttributeSelectionConfig.class)
 @Documented
-public @interface TaxonomyAttributeField {
+public @interface AttributeSelectionField {
 
     String taxonomy() default "";
 

@@ -72,6 +72,6 @@ public class WineRepository {
     }
 
     public ShopEntity saveWineryForm(ShopForm shopForm) {
-        return shopFormService.saveEntityForm(shopForm);
+        return shopFormService.saveForm(shopForm);
     }
 }

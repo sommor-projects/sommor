@@ -20,7 +20,7 @@ import java.util.List;
 public class GeneratorController {
 
     private static final String[] ID_NAMES = {
-            "userId", "shopId", "productId", "skuId", "testId"
+            "userId", "shopId", "productId", "skuId", "orderId"
     };
 
     @ApiOperation(value = "ID生成器")

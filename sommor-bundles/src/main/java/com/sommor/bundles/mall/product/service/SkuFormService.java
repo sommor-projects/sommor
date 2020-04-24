@@ -4,9 +4,8 @@ import com.sommor.bundles.mall.product.entity.ProductEntity;
 import com.sommor.bundles.mall.product.entity.SkuEntity;
 import com.sommor.bundles.mall.product.model.SkuForm;
 import com.sommor.bundles.mall.product.model.SkuFormParam;
-import com.sommor.core.component.form.FormService;
+import com.sommor.core.component.form.EntityFormService;
 import com.sommor.core.model.Model;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Service;
  * @since 2020/3/1
  */
 @Service
-public class SkuFormService extends FormService<
+public class SkuFormService extends EntityFormService<
         SkuEntity,
         SkuForm,
         SkuFormParam> {
@@ -25,11 +24,6 @@ public class SkuFormService extends FormService<
 
         ProductEntity productEntity = model.getExt(ProductEntity.class);
         entity.setProductType(productEntity.getProductType());
-
-        SkuForm skuForm = model.getTarget();
-        if (StringUtils.isBlank(skuForm.getTitle())) {
-            skuForm.getTaxonomy();
-        }
     }
 
     @Override

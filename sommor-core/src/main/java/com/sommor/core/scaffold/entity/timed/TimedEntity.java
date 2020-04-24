@@ -26,7 +26,9 @@ public class TimedEntity<ID> extends BaseEntity<ID> implements EntityLifecycle {
         int now = DateTimeUtil.now();
         this.setUpdateTime(now);
         if (original == null) {
-            this.setCreateTime(now);
+            if (null == this.getCreateTime()) {
+                this.setCreateTime(now);
+            }
         }
     }
 }

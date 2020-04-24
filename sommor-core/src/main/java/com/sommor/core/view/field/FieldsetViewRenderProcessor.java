@@ -25,7 +25,7 @@ public class FieldsetViewRenderProcessor implements ViewRenderProcessor<Fieldset
         String fullName = fieldsetView.getName();
         String pathName = fieldsetConfig.getPathName();
         if (StringUtils.isNotBlank(pathName)) {
-            fullName = pathName + "." + fullName;
+            fullName = pathName + (StringUtils.isNotBlank(fullName) ? ("." + fullName) : "");
         }
         fieldsetView.setFullName(fullName);
 

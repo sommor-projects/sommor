@@ -6,7 +6,7 @@ import com.sommor.bundles.mall.product.model.ProductForm;
 import com.sommor.bundles.mall.shop.model.ShopForm;
 import com.sommor.bundles.media.component.file.MediaFile;
 import com.sommor.bundles.media.component.file.MediaFiles;
-import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeSelection;
+import com.sommor.bundles.taxonomy.component.attribute.AttributeSelection;
 import com.sommor.bundles.taxonomy.entity.TaxonomyEntity;
 import com.sommor.bundles.taxonomy.model.Term;
 import com.sommor.bundles.taxonomy.repository.TaxonomyRepository;
@@ -113,7 +113,7 @@ public class WineCrawlService {
                     mediaFiles.add(mediaFile);
                 }
 
-                productForm.setShopId(Converter.toString(shopId));
+                productForm.setShopId(shopId);
             }
         }
 
@@ -127,7 +127,7 @@ public class WineCrawlService {
 
         ProductForm productForm = crawlResult.getProductForm();
         if (null != shopEntity) {
-            productForm.setShopId(Converter.toString(shopEntity.getId()));
+            productForm.setShopId(shopEntity.getId());
         }
 
         return saveProductForm(productForm, crawlResult.getSpuTaxonomyResults());
@@ -136,7 +136,7 @@ public class WineCrawlService {
     private ShopEntity saveShopForm(ShopForm shopForm) {
         if (StringUtils.isNotBlank(shopForm.getSubTitle())) {
             TaxonomyEntity taxonomyEntity = wineRepository.getWineryTaxonomy();
-            TaxonomyAttributeSelection selection = new TaxonomyAttributeSelection();
+            AttributeSelection selection = new AttributeSelection();
             selection.setTaxonomy(taxonomyEntity.getName());
             shopForm.setTaxonomy(selection);
 
@@ -149,7 +149,7 @@ public class WineCrawlService {
     private ProductEntity saveProductForm(ProductForm productForm, List<TaxonomyResult> taxonomyResults) {
         ProductEntity productEntity = null;
 
-        TaxonomyAttributeSelection selection = parseSpuTaxonomySelection(taxonomyResults);
+        AttributeSelection selection = parseSpuTaxonomySelection(taxonomyResults);
 
         if (StringUtils.isNotBlank(productForm.getSubTitle())) {
             productForm.setTaxonomy(selection);
@@ -159,10 +159,10 @@ public class WineCrawlService {
         return productEntity;
     }
 
-    private TaxonomyAttributeSelection parseSpuTaxonomySelection(List<TaxonomyResult> taxonomyResults) {
+    private AttributeSelection parseSpuTaxonomySelection(List<TaxonomyResult> taxonomyResults) {
         TaxonomyEntity wineTaxonomyEntity = wineRepository.getWineProductTaxonomy();
 
-        TaxonomyAttributeSelection selection = new TaxonomyAttributeSelection();
+        AttributeSelection selection = new AttributeSelection();
         selection.setTaxonomy(wineTaxonomyEntity.getName());
 
         for (TaxonomyResult taxonomyResult : taxonomyResults) {

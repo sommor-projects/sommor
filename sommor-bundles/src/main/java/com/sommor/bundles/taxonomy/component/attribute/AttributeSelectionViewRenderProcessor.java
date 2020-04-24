@@ -1,8 +1,7 @@
-package com.sommor.bundles.taxonomy.component.relation;
+package com.sommor.bundles.taxonomy.component.attribute;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Lists;
 import com.sommor.core.api.error.ErrorCode;
 import com.sommor.core.api.error.ErrorCodeException;
 import com.sommor.bundles.taxonomy.component.select.TaxonomySelectFieldConfig;
@@ -11,7 +10,6 @@ import com.sommor.bundles.taxonomy.entity.TaxonomyEntity;
 import com.sommor.bundles.taxonomy.repository.TaxonomyRepository;
 import com.sommor.bundles.taxonomy.repository.TaxonomySubjectRepository;
 import com.sommor.core.component.form.FieldSaveContext;
-import com.sommor.core.component.form.extension.FormFieldSavedProcessor;
 import com.sommor.core.component.form.extension.FormFieldSavingProcessor;
 import com.sommor.core.component.form.extension.FormFieldValidateProcessor;
 import com.sommor.core.component.form.field.SelectView;
@@ -38,11 +36,11 @@ import java.util.stream.Collectors;
  * @since 2020/2/14
  */
 @Implement
-public class TaxonomyAttributeViewRenderProcessor implements
-        ViewRenderProcessor<TaxonomyAttributeConfig>,
-        FieldFillProcessor<TaxonomyAttributeConfig>,
-        FormFieldValidateProcessor<TaxonomyAttributeConfig>,
-        FormFieldSavingProcessor<TaxonomyAttributeConfig> {
+public class AttributeSelectionViewRenderProcessor implements
+        ViewRenderProcessor<AttributeSelectionConfig>,
+        FieldFillProcessor<AttributeSelectionConfig>,
+        FormFieldValidateProcessor<AttributeSelectionConfig>,
+        FormFieldSavingProcessor<AttributeSelectionConfig> {
 
     private static final String TAXONOMY_ATTRIBUTE_FORM_KEY = "TAXONOMY_ATTRIBUTE_FORM_KEY";
 
@@ -53,7 +51,7 @@ public class TaxonomyAttributeViewRenderProcessor implements
     private TaxonomySubjectRepository taxonomySubjectRepository;
 
     @Override
-    public void processOnViewRender(TaxonomyAttributeConfig vc, ViewRenderContext ctx) {
+    public void processOnViewRender(AttributeSelectionConfig vc, ViewRenderContext ctx) {
         ViewTree viewTree = vc.getViewTree();
 
         String taxonomy = vc.getTaxonomy();
@@ -109,7 +107,7 @@ public class TaxonomyAttributeViewRenderProcessor implements
     }
 
     @Override
-    public Object processOnFieldFill(TaxonomyAttributeConfig config, FieldFillContext ctx) {
+    public Object processOnFieldFill(AttributeSelectionConfig config, FieldFillContext ctx) {
         TaxonomyEntity taxonomyEntity = null;
         String taxonomy = config.getTaxonomy();
 
@@ -122,7 +120,7 @@ public class TaxonomyAttributeViewRenderProcessor implements
         }
 
 
-        TaxonomyAttributeSelection selection = new TaxonomyAttributeSelection();
+        AttributeSelection selection = new AttributeSelection();
         selection.setTaxonomy(taxonomyEntity.getName());
 
         if (StringUtils.isNotBlank(config.getAttributes())) {
@@ -164,19 +162,19 @@ public class TaxonomyAttributeViewRenderProcessor implements
     }
 
     @Override
-    public void processOnFormValidate(TaxonomyAttributeConfig config, FieldContext ctx) {
-        TaxonomyAttributeSelection taxonomyAttributeSelection = ctx.getFieldValue();
-        if (null == taxonomyAttributeSelection) {
+    public void processOnFormValidate(AttributeSelectionConfig config, FieldContext ctx) {
+        AttributeSelection attributeSelection = ctx.getFieldValue();
+        if (null == attributeSelection) {
             throw new ErrorCodeException(ErrorCode.of("entity.taxonomy.attribute.selection.required"));
         }
 
-        if (StringUtils.isBlank(taxonomyAttributeSelection.getTaxonomy())) {
+        if (StringUtils.isBlank(attributeSelection.getTaxonomy())) {
             throw new ErrorCodeException(ErrorCode.of("entity.taxonomy.required"));
         }
 
         String subject = config.getEntityName();
-        List<TaxonomyAttributeSetting> taxonomyAttributeSettings = parseTaxonomyAttributeSettings(taxonomyAttributeSelection.getTaxonomy(), subject);
-        Map<TaxonomyEntity, List<TaxonomyEntity>> selections = parseSubjectTaxonomySelections(taxonomyAttributeSelection);
+        List<TaxonomyAttributeSetting> taxonomyAttributeSettings = parseTaxonomyAttributeSettings(attributeSelection.getTaxonomy(), subject);
+        Map<TaxonomyEntity, List<TaxonomyEntity>> selections = parseSubjectTaxonomySelections(attributeSelection);
 
         for (TaxonomyAttributeSetting setting : taxonomyAttributeSettings) {
             TaxonomyEntity type = taxonomyRepository.findByType(setting.getType());
@@ -189,15 +187,15 @@ public class TaxonomyAttributeViewRenderProcessor implements
             }
         }
 
-        ctx.addExt(taxonomyAttributeSelection);
+        ctx.addExt(attributeSelection);
         ctx.addExt(TAXONOMY_ATTRIBUTE_FORM_KEY, selections);
     }
 
-    private Map<TaxonomyEntity, List<TaxonomyEntity>> parseSubjectTaxonomySelections(TaxonomyAttributeSelection taxonomyAttributeSelection) {
+    private Map<TaxonomyEntity, List<TaxonomyEntity>> parseSubjectTaxonomySelections(AttributeSelection attributeSelection) {
         Map<TaxonomyEntity, List<TaxonomyEntity>> map = new HashMap<>();
 
-        if (MapUtils.isNotEmpty(taxonomyAttributeSelection.getAttributes())) {
-            for (Map.Entry<String, Object> entry : taxonomyAttributeSelection.getAttributes().entrySet()) {
+        if (MapUtils.isNotEmpty(attributeSelection.getAttributes())) {
+            for (Map.Entry<String, Object> entry : attributeSelection.getAttributes().entrySet()) {
                 String type = entry.getKey();
                 TaxonomyEntity typeEntity = taxonomyRepository.findByType(type);
                 Set<String> selected = parseSelectedTaxonomies(entry.getValue());
@@ -226,11 +224,11 @@ public class TaxonomyAttributeViewRenderProcessor implements
     }
 
     @Override
-    public void processOnFormSaving(TaxonomyAttributeConfig config, FieldSaveContext ctx) {
+    public void processOnFormSaving(AttributeSelectionConfig config, FieldSaveContext ctx) {
         BaseEntity entity = ctx.getEntity();
-        TaxonomyAttributeSelection taxonomyAttributeSelection = ctx.getFieldValue();
-        entity.setFieldValue(config.getTaxonomyFieldName(), taxonomyAttributeSelection.getTaxonomy());
-        entity.setFieldValue(config.getAttributesFieldName(), JSON.toJSONString(taxonomyAttributeSelection.getAttributes()));
+        AttributeSelection attributeSelection = ctx.getFieldValue();
+        entity.setFieldValue(config.getTaxonomyFieldName(), attributeSelection.getTaxonomy());
+        entity.setFieldValue(config.getAttributesFieldName(), JSON.toJSONString(attributeSelection.getAttributes()));
     }
 
 //    @Override

@@ -1,6 +1,6 @@
 package com.sommor.bundles.taxonomy.model;
 
-import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeSetting;
+import com.sommor.bundles.taxonomy.component.attribute.TaxonomyAttributeSetting;
 import com.sommor.bundles.taxonomy.component.select.TaxonomySelectFieldConfig;
 import com.sommor.bundles.taxonomy.component.select.TaxonomySelectField;
 import com.sommor.bundles.taxonomy.component.style.TaxonomyStyleField;

@@ -13,11 +13,10 @@ import lombok.Setter;
 public class EntityDetailParam implements OnModelQuery {
 
     @Getter @Setter
-    private String id;
+    private Long id;
 
     @Override
     public void onModelQuery(Query query) {
-        Long id = Converter.parseLong(this.id);
         if (null != id && id > 0) {
             query.where("id", id);
         }

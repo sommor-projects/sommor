@@ -6,8 +6,8 @@ import com.sommor.bundles.mall.shop.entity.ShopEntity;
 import com.sommor.bundles.media.component.file.MediaFiles;
 import com.sommor.bundles.media.component.file.MediaFilesField;
 import com.sommor.bundles.qrcode.component.qrcode.QrCodeField;
-import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeField;
-import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeSelection;
+import com.sommor.bundles.taxonomy.component.attribute.AttributeSelectionField;
+import com.sommor.bundles.taxonomy.component.attribute.AttributeSelection;
 import com.sommor.core.component.form.field.InputField;
 import com.sommor.core.model.EntityForm;
 import com.sommor.core.component.entity.select.EntitySelectField;
@@ -36,8 +36,8 @@ public class SpuForm extends EntityForm {
     @InputField(title = "副标题")
     private String subTitle;
 
-    @TaxonomyAttributeField(entityName = SkuEntity.NAME)
-    private TaxonomyAttributeSelection taxonomy;
+    @AttributeSelectionField(entityName = SkuEntity.NAME)
+    private AttributeSelection taxonomy;
 
     @MediaFilesField(entity = SpuEntity.NAME, maxCount = 5, coverFieldName = "cover", title = "图片")
     private MediaFiles pictures;

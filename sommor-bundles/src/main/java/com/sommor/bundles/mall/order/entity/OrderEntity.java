@@ -1,6 +1,7 @@
 package com.sommor.bundles.mall.order.entity;
 
 import com.sommor.core.component.configurable.ConfigurableEntity;
+import com.sommor.mybatis.entity.config.Column;
 import com.sommor.mybatis.entity.config.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,20 +15,69 @@ import lombok.Setter;
 @Table(value = "orders", entityName = "order", autoIncrement = false)
 public class OrderEntity extends ConfigurableEntity<Long> {
 
-    private Long userId;
-    private Long sellerId;
-    private Long shopId;
-    private Long productId;
-    private Long skuId;
-    private Integer buyQuantity;
-    private String productTitle;
-    private String productTaxonomy;
-    private String productAttributes;
-    private Integer status;
-    private Integer payStatus;
-    private Integer shippingStatus;
-    private Integer createTime;
-    private Integer payTime;
-    private Integer updateTime;
+    public static final Integer PAY_STATUS_UNPAID = 0;
+    public static final Integer PAY_STATUS_PAID = 1;
+    public static final Integer PAY_STATUS_REFUND = 2;
 
+    public static final Integer SHIPPING_STATUS_UNSHIPPED = 0;
+    public static final Integer SHIPPING_STATUS_SHIPPED = 1;
+
+    public static final Integer STATUS_CREATE = 0;
+    public static final Integer STATUS_CANCEL = 1;
+    public static final Integer STATUS_SUCCESS = 2;
+    public static final Integer STATUS_CLOSED = 3;
+
+    @Column
+    private Long userId;
+
+    @Column
+    private Long sellerId;
+
+    @Column
+    private Long shopId;
+
+    @Column
+    private Long productId;
+
+    @Column
+    private Long skuId;
+
+    @Column
+    private Integer buyQuantity;
+
+    @Column
+    private Long amount;
+
+    @Column
+    private String currency;
+
+    @Column
+    private String amountDetails;
+
+    @Column
+    private String productTitle;
+
+    @Column
+    private String productTaxonomy;
+
+    @Column
+    private String productAttributes;
+
+    @Column
+    private String skuAttributes;
+
+    @Column
+    private Integer status;
+
+    @Column
+    private Integer payStatus;
+
+    @Column
+    private Integer shippingStatus;
+
+    @Column
+    private Integer payTime;
+
+    @Column
+    private Integer shipTime;
 }

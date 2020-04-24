@@ -1,4 +1,4 @@
-package com.sommor.bundles.taxonomy.component.relation;
+package com.sommor.bundles.taxonomy.component.attribute;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,7 @@ import java.util.Map;
  * @author yanguanwei@qq.com
  * @since 2019/12/17
  */
-public class TaxonomyAttributeSelection {
+public class AttributeSelection {
 
     /**
      * 主体内容表中taxonomy字段对应的值

@@ -1,8 +1,8 @@
 package com.sommor.bundles.mall.product.model;
 
 import com.sommor.bundles.mall.product.entity.SkuEntity;
-import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeField;
-import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeSelection;
+import com.sommor.bundles.taxonomy.component.attribute.AttributeSelectionField;
+import com.sommor.bundles.taxonomy.component.attribute.AttributeSelection;
 import com.sommor.core.component.currency.CurrencySelectField;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,12 +25,12 @@ public class ProductQuotationForm {
     @Getter
     @Setter
     @NotNull
-    private String productId;
+    private Long productId;
 
     @Getter
     @Setter
     @NotNull
-    private String shopId;
+    private Long shopId;
 
     @Getter
     @Setter
@@ -48,7 +48,7 @@ public class ProductQuotationForm {
 
     @Getter
     @Setter
-    @TaxonomyAttributeField(entityName = SkuEntity.NAME)
-    private TaxonomyAttributeSelection taxonomy;
+    @AttributeSelectionField(entityName = SkuEntity.NAME)
+    private AttributeSelection taxonomy;
 
 }

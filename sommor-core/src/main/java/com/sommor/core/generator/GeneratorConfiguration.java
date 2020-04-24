@@ -21,23 +21,8 @@ import java.util.List;
 public class GeneratorConfiguration {
 
     @Bean
-    public SequenceSegmentAllocator testIdSequenceSegmentAllocator() {
-        // |prefix<-1->|dbIndex<-2->|sequence<-21->|random<-1->|
-        SequenceId sequenceId = new SequenceId("testId", 5, 0, 10);
-        return new SequenceSegmentAllocator(sequenceId);
-    }
-
-    @Bean
-    public IdGenerator testIdGenerator(SequenceSegmentAllocator testIdSequenceSegmentAllocator) {
-        return new IdGenerator(Lists.newArrayList(
-                testIdSequenceSegmentAllocator,
-                new RandomSegmentAllocator(1)
-        ));
-    }
-
-    @Bean
     public SequenceCacheManager sequenceCacheManager(DataSource dataSource) {
-        return new SequenceCacheManager(getSequenceRepositories(dataSource, 4));
+        return new SequenceCacheManager(getSequenceRepositories(dataSource, 1));
     }
 
     private List<SequenceRepository> getSequenceRepositories(DataSource dataSource, int dbSize) {

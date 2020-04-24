@@ -49,12 +49,12 @@ public class QrCodeFieldProcessor implements
             qrCodeForm.setSubject(baseEntity.definition().getSubjectName());
             qrCodeForm.setSubjectId(Converter.toString(baseEntity.getId()));
             qrCodeForm.setCode(qrCode);
-            qrCodeFormService.saveEntityForm(qrCodeForm);
+            qrCodeFormService.saveForm(qrCodeForm);
         }
     }
 
     @Override
-    public void processOnFormSaving(QrCodeFieldConfig qrCodeFieldConfig, com.sommor.core.component.form.FieldSaveContext ctx) {
+    public void processOnFormSaving(QrCodeFieldConfig qrCodeFieldConfig, FieldSaveContext ctx) {
         qrCodeService.enrichEntityQrCode(ctx.getEntity());
     }
 }

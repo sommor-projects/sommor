@@ -38,6 +38,11 @@ public class SkuEntity extends ConfigurableEntity<Long> {
     @Getter
     @Setter
     @Column
+    private String attributes;
+
+    @Getter
+    @Setter
+    @Column
     private Long distributedSkuId;
 
     @Getter
@@ -48,15 +53,16 @@ public class SkuEntity extends ConfigurableEntity<Long> {
     @Getter
     @Setter
     @Column
-    private Integer price;
+    private Long price;
 
     @Getter
     @Setter
     @Column
-    private Integer costPrice;
+    private Long costPrice;
 
     @Getter
     @Setter
+    @Column
     private String currency;
 
     @Getter

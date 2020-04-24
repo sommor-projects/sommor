@@ -292,6 +292,24 @@ public class ModelManager {
         }
     }
 
+    public static void setModelFieldValues(Object target, Model sourceModel) {
+        if (null == target || sourceModel == null) {
+            return;
+        }
+
+        ModelDefinition targetModelDefinition = getModelDefinition(target.getClass());
+        for (FieldDefinition fieldDefinition : targetModelDefinition.getFields()) {
+            ModelField sourceModelField = sourceModel.getField(fieldDefinition.getName());
+            if (null != sourceModelField) {
+                Object sourceValue = sourceModelField.getValue();
+                sourceValue = convert(fieldDefinition.getFieldType(), sourceValue);
+                if (checkFieldType(fieldDefinition.getFieldType(), sourceValue)) {
+                    fieldDefinition.setFieldValue(target, sourceValue);
+                }
+            }
+        }
+    }
+
     public static void setModelFieldValues(Object target, Object source) {
         if (null == target || source == null) {
             return;

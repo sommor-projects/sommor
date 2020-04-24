@@ -4,7 +4,6 @@ import com.sommor.core.api.error.ErrorCode;
 import com.sommor.core.api.error.ErrorCodeException;
 import com.sommor.bundles.mall.product.entity.ProductEntity;
 import com.sommor.bundles.mall.product.model.*;
-import com.sommor.bundles.mall.product.repository.ProductRepository;
 import com.sommor.core.component.form.FormView;
 import com.sommor.core.component.form.FormViewConfig;
 import com.sommor.core.component.form.action.Add;
@@ -26,7 +25,7 @@ import javax.annotation.Resource;
 public class ProductService extends CurdService<ProductEntity, Long> {
 
     @Resource
-    private ProductRepository productRepository;
+    private ProductService productService;
 
     @Resource
     private ProductFormService productFormService;
@@ -45,7 +44,7 @@ public class ProductService extends CurdService<ProductEntity, Long> {
 
     public FormView renderQuotationForm(ProductQuotationFormParam param) {
         Long productId = Converter.parseLong(param.getProductId());
-        ProductEntity productEntity = productRepository.findById(productId);
+        ProductEntity productEntity = productService.findById(productId);
         if (null == productEntity) {
             throw new ErrorCodeException(ErrorCode.of("product.id.invalid", param.getProductId()));
         }
@@ -72,7 +71,7 @@ public class ProductService extends CurdService<ProductEntity, Long> {
         ProductForm productForm = new ProductForm();
         productForm.setSpuId(form.getProductId());
         productForm.setShopId(form.getShopId());
-        ProductEntity productEntity = productFormService.saveEntityForm(productForm);
+        ProductEntity productEntity = productFormService.saveForm(productForm);
 
         SkuForm skuForm = new SkuForm();
         skuForm.setTitle(form.getTitle());

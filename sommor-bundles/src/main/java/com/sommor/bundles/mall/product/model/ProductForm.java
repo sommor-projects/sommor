@@ -5,8 +5,8 @@ import com.sommor.bundles.mall.shop.entity.ShopEntity;
 import com.sommor.bundles.media.component.file.MediaFiles;
 import com.sommor.bundles.media.component.file.MediaFilesField;
 import com.sommor.bundles.qrcode.component.qrcode.QrCodeField;
-import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeField;
-import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeSelection;
+import com.sommor.bundles.taxonomy.component.attribute.AttributeSelectionField;
+import com.sommor.bundles.taxonomy.component.attribute.AttributeSelection;
 import com.sommor.bundles.taxonomy.component.select.TaxonomySelectField;
 import com.sommor.bundles.taxonomy.component.select.TaxonomySelectFieldConfig;
 import com.sommor.core.component.form.EntityForm;
@@ -25,16 +25,17 @@ import javax.validation.constraints.NotNull;
  */
 @Setter
 @Getter
-public class ProductForm extends EntityForm {
+public class ProductForm {
 
-    @NotNull
+    private Long productId;
+
     private Integer productType;
 
-    private String spuId;
+    private Long spuId;
 
     @EntitySelectField(title = "所属店铺", entityName = ShopEntity.NAME)
     @NotNull
-    private String shopId;
+    private Long shopId;
 
     @InputField(title = "标题")
     @NotBlank
@@ -43,8 +44,8 @@ public class ProductForm extends EntityForm {
     @InputField(title = "副标题")
     private String subTitle;
 
-    @TaxonomyAttributeField(entityName = "product")
-    private TaxonomyAttributeSelection taxonomy;
+    @AttributeSelectionField(entityName = "product")
+    private AttributeSelection taxonomy;
 
     @MediaFilesField(entity = ProductEntity.NAME, maxCount = 5, coverFieldName = "cover", title = "图片")
     private MediaFiles pictures;

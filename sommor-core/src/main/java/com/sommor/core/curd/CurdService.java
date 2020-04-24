@@ -33,10 +33,14 @@ public class CurdService<Entity extends BaseEntity<ID>, ID> extends BaseCurdServ
         super();
     }
 
-    private static ExtensionExecutor<com.sommor.core.curd.query.FieldQueryProcessor> fieldQueryProcessor = ExtensionExecutor.of(FieldQueryProcessor.class);
-    private static ExtensionExecutor<com.sommor.core.curd.query.FieldQueryInterceptor> fieldQueryInterceptor = ExtensionExecutor.of(FieldQueryInterceptor.class);
+    private static ExtensionExecutor<FieldQueryProcessor> fieldQueryProcessor = ExtensionExecutor.of(FieldQueryProcessor.class);
+    private static ExtensionExecutor<FieldQueryInterceptor> fieldQueryInterceptor = ExtensionExecutor.of(FieldQueryInterceptor.class);
 
     private static ExtensionExecutor<EntityDeleteInterceptor> entityDeleteInterceptor = ExtensionExecutor.of(EntityDeleteInterceptor.class);
+
+    public Entity findById(ID id) {
+        return (Entity) curdRepository().findById(id);
+    }
 
     public Entity queryFirst(Object param) {
         Model paramModel = Model.of(param);

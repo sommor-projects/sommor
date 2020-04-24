@@ -5,8 +5,8 @@ import com.sommor.bundles.mall.product.entity.SkuEntity;
 import com.sommor.bundles.mall.shop.entity.ShopEntity;
 import com.sommor.bundles.media.component.file.MediaFiles;
 import com.sommor.bundles.media.component.file.MediaFilesField;
-import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeField;
-import com.sommor.bundles.taxonomy.component.relation.TaxonomyAttributeSelection;
+import com.sommor.bundles.taxonomy.component.attribute.AttributeSelectionField;
+import com.sommor.bundles.taxonomy.component.attribute.AttributeSelection;
 import com.sommor.core.component.currency.CurrencyEnum;
 import com.sommor.core.component.currency.CurrencySelectField;
 import com.sommor.core.component.currency.MoneyAmountField;
@@ -24,7 +24,11 @@ import javax.validation.constraints.NotNull;
  * @since 2020/2/1
  */
 @EntityModelEnricher(entityName = ProductEntity.NAME)
-public class SkuForm extends EntityForm {
+public class SkuForm  {
+
+    @Getter
+    @Setter
+    private Long skuId;
 
     @Getter
     @Setter
@@ -71,8 +75,8 @@ public class SkuForm extends EntityForm {
 
     @Getter
     @Setter
-    @TaxonomyAttributeField(entityName = SkuEntity.NAME)
-    private TaxonomyAttributeSelection taxonomy;
+    @AttributeSelectionField(entityName = SkuEntity.NAME)
+    private AttributeSelection taxonomy;
 
     @Getter
     @Setter

@@ -1,4 +1,4 @@
-package com.sommor.bundles.taxonomy.component.relation;
+package com.sommor.bundles.taxonomy.component.attribute;
 
 import com.sommor.core.view.field.FieldsetConfig;
 import com.sommor.core.view.field.FieldsetView;
@@ -9,7 +9,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2020/2/14
  */
-public class TaxonomyAttributeConfig extends FieldsetConfig<FieldsetView> {
+public class AttributeSelectionConfig extends FieldsetConfig<FieldsetView> {
 
     @Getter
     @Setter
