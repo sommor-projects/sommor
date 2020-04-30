@@ -28,7 +28,7 @@ public class OrderEntity extends ConfigurableEntity<Long> {
     public static final Integer STATUS_CLOSED = 3;
 
     @Column
-    private Long userId;
+    private Long buyerId;
 
     @Column
     private Long sellerId;

@@ -33,6 +33,10 @@ public class TaxonomyKey {
     }
 
     public static TaxonomyKey of(String key) {
+        return of(key, TaxonomyEntity.ROOT);
+    }
+
+    public static TaxonomyKey of(String key, String defaultType) {
         String type;
         String name;
 
@@ -42,7 +46,7 @@ public class TaxonomyKey {
             name = key.substring(i + 1);
         } else {
             name = key;
-            type = TaxonomyEntity.ROOT;
+            type = key.equals(defaultType) ? TaxonomyEntity.ROOT : defaultType;
         }
 
         return new TaxonomyKey(type, name);

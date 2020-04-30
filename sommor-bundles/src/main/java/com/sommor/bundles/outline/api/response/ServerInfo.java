@@ -3,6 +3,8 @@ package com.sommor.bundles.outline.api.response;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * @author yanguanwei@qq.com
  * @since 2020/4/16
@@ -15,4 +17,5 @@ public class ServerInfo {
     private Boolean metricsEnabled;
     private Long createdTimestampMs;
     private Integer portForNewAccessKeys;
+    private List<AccessKey> accessKeys;
 }

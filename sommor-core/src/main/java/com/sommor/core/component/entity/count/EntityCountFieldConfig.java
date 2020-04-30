@@ -12,9 +12,9 @@ public class EntityCountFieldConfig extends TargetConfig {
 
     @Getter
     @Setter
-    String entityName;
+    String foreignEntity;
 
     @Getter
     @Setter
-    String entityIdFieldName;
+    String foreignIdName;
 }

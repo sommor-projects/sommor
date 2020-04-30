@@ -1,4 +1,4 @@
-package com.sommor.core.scaffold.spring;
+package com.sommor.core.spring;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;

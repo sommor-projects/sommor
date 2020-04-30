@@ -94,7 +94,9 @@ public class Condition {
             }
 
             if (null != expression.getColumnPrefix()) {
-                builder.append(expression.getColumnPrefix())
+                builder.append("`")
+                        .append(expression.getColumnPrefix())
+                        .append("`")
                         .append(".");
             }
 

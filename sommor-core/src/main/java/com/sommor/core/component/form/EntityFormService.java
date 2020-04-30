@@ -13,8 +13,9 @@ import com.sommor.core.model.Model;
 import com.sommor.core.model.ModelField;
 import com.sommor.core.model.ModelManager;
 import com.sommor.mybatis.entity.BaseEntity;
-import com.sommor.core.scaffold.spring.ApplicationContextHolder;
+import com.sommor.core.spring.ApplicationContextHolder;
 import com.sommor.core.view.ViewEngine;
+import lombok.Setter;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -27,6 +28,7 @@ public class EntityFormService<Entity extends BaseEntity, EntityForm, EntityForm
         extends BaseCurdService<Entity>
         implements FormService<Entity, EntityForm, EntityFormParam> {
 
+    @Setter
     private Class<EntityForm> formClass;
 
     private static final ExtensionExecutor<FormFieldValidateProcessor> formFieldValidateProcessor = ExtensionExecutor.of(FormFieldValidateProcessor.class);
@@ -38,7 +40,6 @@ public class EntityFormService<Entity extends BaseEntity, EntityForm, EntityForm
 
     public EntityFormService() {
         super();
-
         Class[] classes = ClassAnnotatedTypeParser.parse(this.getClass());
         this.formClass = classes[1];
     }
@@ -48,12 +49,16 @@ public class EntityFormService<Entity extends BaseEntity, EntityForm, EntityForm
         this.formClass = formClass;
     }
 
-    public FormView renderForm(EntityFormParam param) {
-        return this.renderForm(param, null);
+    public FormView renderForm(EntityFormParam param, EntityForm form) {
+        return renderForm(param, null, form);
+    }
+
+    public FormView renderForm(EntityFormParam param, String formName) {
+        return renderForm(param, formName, (EntityForm) null);
     }
 
     @SuppressWarnings("unchecked")
-    public FormView renderForm(EntityFormParam param, String formName) {
+    public FormView renderForm(EntityFormParam param, String formName, EntityForm form) {
         Model paramModel = Model.of(param);
 
         Entity entity = (Entity) curdService().queryFirst(paramModel);
@@ -69,7 +74,9 @@ public class EntityFormService<Entity extends BaseEntity, EntityForm, EntityForm
             sourceModel = paramModel;
         }
 
-        EntityForm form = newForm();
+        if (null == form) {
+            form = newForm();
+        }
 
         this.onEntityFormRender(form, param, entity);
 
@@ -77,7 +84,6 @@ public class EntityFormService<Entity extends BaseEntity, EntityForm, EntityForm
     }
 
     protected void onEntityFormRender(EntityForm form, EntityFormParam formParam, Entity entity) {
-
     }
 
     private EntityForm newForm() {
@@ -107,12 +113,17 @@ public class EntityFormService<Entity extends BaseEntity, EntityForm, EntityForm
         fvc.setFormAction(formAction);
         fvc.setModel(model);
 
-        return ViewEngine.render(fvc, sourceModel);
+        FormView formView = ViewEngine.render(fvc, sourceModel);
+        formView.setName(model.getName());
+
+        return formView;
     }
 
     @SuppressWarnings("unchecked")
     public Entity saveForm(EntityForm target) {
         Model model = Model.of(target, RequestContext.get());
+        model.enrich();
+
         this.onFormValidate(model);
 
         Entity entity = (Entity) model.to(this.getEntityClass());

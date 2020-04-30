@@ -31,7 +31,7 @@ public class DetailService<Entity extends BaseEntity<?>, Detail, DetailParam> ex
 
         entity = (Entity) curdService().queryFirst(detailParam);
         if (null == entity) {
-            throw new ErrorCodeException(ErrorCode.of("entity.detail.absence"));
+            throw new ErrorCodeException(ErrorCode.of("entity.detail.absence", this.detailClass.getSimpleName()));
         }
 
         Detail detail;

@@ -8,6 +8,7 @@ import com.sommor.core.view.model.ViewTree;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -33,7 +34,7 @@ public class FieldsetViewRenderProcessor implements ViewRenderProcessor<Fieldset
     }
 
     private Map<String, Object> parseFormFields(ViewTree viewTree) {
-        Map<String, Object> fields = new HashMap<>();
+        Map<String, Object> fields = new LinkedHashMap<>();
         for (View view : viewTree.getViews()) {
             if (view instanceof ViewTree) {
                 fields.put(view.getName(), parseFormFields((ViewTree) view));

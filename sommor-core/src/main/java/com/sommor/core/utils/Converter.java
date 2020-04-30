@@ -63,16 +63,6 @@ public class Converter {
         return Integer.parseInt(s);
     }
 
-    public static String convertDateTime(Integer time) {
-        if (null == time) {
-            return null;
-        }
-
-        DateTimeFormatter ftf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime ldt = LocalDateTime.ofInstant(Instant.ofEpochSecond(time), ZoneId.systemDefault());
-        return ftf.format(ldt);
-    }
-
     public static byte[] convertBytes(InputStream is) {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         BufferedInputStream in = null;

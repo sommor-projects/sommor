@@ -1,8 +1,13 @@
 package com.sommor.bundles.mall.order.model;
 
+import com.sommor.bundles.user.entity.UserEntity;
+import com.sommor.core.component.entity.select.EntitySelectField;
 import com.sommor.core.component.form.EntityForm;
+import com.sommor.core.component.form.field.SwitchField;
 import lombok.Getter;
 import lombok.Setter;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * @author yanguanwei@qq.com
@@ -10,14 +15,12 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class AdminOrderForm {
+public class AdminOrderForm extends OrderForm {
 
-    private Long userId;
+    @NotNull
+    @EntitySelectField(entityName = UserEntity.NAME, title = "买家")
+    private Long buyerId;
 
-    private Long skuId;
-
-    private Integer buyQuantity;
-
+    @SwitchField(title = "是否已付款")
     private Boolean paid;
-
 }

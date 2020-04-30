@@ -10,9 +10,8 @@ import com.sommor.bundles.taxonomy.component.attribute.AttributeSelection;
 import com.sommor.core.component.currency.CurrencyEnum;
 import com.sommor.core.component.currency.CurrencySelectField;
 import com.sommor.core.component.currency.MoneyAmountField;
-import com.sommor.core.component.form.EntityForm;
 import com.sommor.core.component.form.field.InputField;
-import com.sommor.core.model.enricher.EntityModelEnricher;
+import com.sommor.core.model.enricher.EntityReference;
 import com.sommor.core.component.entity.select.EntitySelectField;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,67 +22,47 @@ import javax.validation.constraints.NotNull;
  * @author yanguanwei@qq.com
  * @since 2020/2/1
  */
-@EntityModelEnricher(entityName = ProductEntity.NAME)
+@Getter
+@Setter
+@EntityReference(entityName = ProductEntity.NAME, fieldBy = "productId")
 public class SkuForm  {
 
-    @Getter
-    @Setter
-    private Long skuId;
+    private Long id;
 
-    @Getter
-    @Setter
     @EntitySelectField(title = "店铺", entityName = ShopEntity.NAME)
-    private String shopId;
+    private Long shopId;
 
-    @Getter
-    @Setter
     @NotNull
     @EntitySelectField(title = "商品", entityName = ProductEntity.NAME)
-    private String productId;
+    private Long productId;
 
-    @Getter
-    @Setter
-    private String distributedSkuId;
+    private Integer productType;
 
-    @Getter
-    @Setter
+    private Long distributedSkuId;
+
     @InputField(title = "标题")
     private String title;
 
-    @Getter
-    @Setter
     @NotNull
     @MoneyAmountField(title = "售价（元）")
     private String price;
 
-    @Getter
-    @Setter
     @NotNull
     @MoneyAmountField(title = "成本价（元）")
     private String costPrice;
 
-    @Getter
-    @Setter
     @CurrencySelectField
     private String currency = CurrencyEnum.CNY.getName();
 
-    @Getter
-    @Setter
     @NotNull
     @InputField(title = "库存数")
     private Integer inventory;
 
-    @Getter
-    @Setter
     @AttributeSelectionField(entityName = SkuEntity.NAME)
     private AttributeSelection taxonomy;
 
-    @Getter
-    @Setter
     @MediaFilesField(entity = SkuEntity.NAME, maxCount = 5, coverFieldName = "cover", title = "图片")
     private MediaFiles pictures;
 
-    @Getter
-    @Setter
     private Integer warningInventory;
 }

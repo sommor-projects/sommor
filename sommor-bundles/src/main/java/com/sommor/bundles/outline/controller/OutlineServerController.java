@@ -1,9 +1,8 @@
 package com.sommor.bundles.outline.controller;
 
 import com.sommor.bundles.outline.api.request.AccessKeyDeleteParam;
-import com.sommor.bundles.outline.api.request.ServerRenameParam;
 import com.sommor.bundles.outline.api.response.AccessKey;
-import com.sommor.bundles.outline.api.OutlineServer;
+import com.sommor.bundles.outline.api.OutlineServerApi;
 import com.sommor.bundles.outline.entity.OutlineAccessKeyEntity;
 import com.sommor.bundles.outline.entity.OutlineServerEntity;
 import com.sommor.bundles.outline.model.OutlineAccessKeyCreateParam;
@@ -29,7 +28,7 @@ import java.util.Map;
 @RequestMapping(value = "/api/outline/server")
 public class OutlineServerController {
 
-    private OutlineServer outlineServer = new OutlineServer("https://47.240.36.86:12375/sNoll--1uJqvWLr3h9dy5Q");
+    private OutlineServerApi outlineServerApi = new OutlineServerApi("https://47.240.36.86:12375/sNoll--1uJqvWLr3h9dy5Q");
 
     @Resource
     private OutlineServerService outlineServerService;
@@ -39,13 +38,6 @@ public class OutlineServerController {
     public ApiResponse<List<OutlineAccessKeyEntity>> accessKeys(String serverId) {
         List<OutlineAccessKeyEntity> entities = outlineServerService.findAccessKeys(serverId);
         return ApiResponse.success(entities);
-    }
-
-    @ApiOperation(value = "同步Outline Server")
-    @RequestMapping(value = "/sync", method = RequestMethod.POST)
-    public ApiResponse<OutlineServerEntity> addOutlineServer(OutlineServerSyncParam param) {
-        OutlineServerEntity entity = outlineServerService.syncOutlineServer(param);
-        return ApiResponse.success(entity);
     }
 
     @ApiOperation(value = "Outline Server改名")
@@ -58,21 +50,21 @@ public class OutlineServerController {
     @ApiOperation(value = "创建Access Key")
     @RequestMapping(value = "/access-keys", method = RequestMethod.POST)
     public ApiResponse<AccessKey> createAccessKey(OutlineAccessKeyCreateParam param) {
-        AccessKey accessKey = outlineServer.createAccessKey();
+        AccessKey accessKey = outlineServerApi.createAccessKey();
         return ApiResponse.success(accessKey);
     }
 
     @ApiOperation(value = "delete access key")
     @RequestMapping(value = "/access-keys/delete", method = RequestMethod.POST)
     public ApiResponse<AccessKey> deleteAccessKey(@Validated AccessKeyDeleteParam param) {
-        outlineServer.deleteAccessKey(param.getId());
+        outlineServerApi.deleteAccessKey(param.getId());
         return ApiResponse.success();
     }
 
     @ApiOperation(value = "bytes transferred per access key")
     @RequestMapping(value = "/metrics/transfer", method = RequestMethod.POST)
     public ApiResponse<Map<String, Long>> getBytesTransferred() {
-        Map<String, Long> bytes = outlineServer.getBytesTransferred();
+        Map<String, Long> bytes = outlineServerApi.getBytesTransferred();
         return ApiResponse.success(bytes);
     }
 }

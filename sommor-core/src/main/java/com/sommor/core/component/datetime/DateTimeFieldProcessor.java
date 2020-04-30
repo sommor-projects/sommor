@@ -1,6 +1,6 @@
 package com.sommor.core.component.datetime;
 
-import com.sommor.core.utils.Converter;
+import com.sommor.core.utils.DateTimeUtil;
 import com.sommor.extensibility.config.Implement;
 import com.sommor.core.model.fill.FieldFillContext;
 import com.sommor.core.model.fill.FieldFillProcessor;
@@ -19,7 +19,7 @@ public class DateTimeFieldProcessor implements FieldFillProcessor<DateTimeFieldC
 
         if (type == String.class) {
             if (value instanceof Integer) {
-                return Converter.convertDateTime((Integer) value);
+                return DateTimeUtil.formatDateTime((Integer) value);
             }
         }
 

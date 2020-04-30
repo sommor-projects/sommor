@@ -6,7 +6,7 @@ import com.sommor.bundles.taxonomy.repository.TaxonomyRepository;
 import com.sommor.bundles.taxonomy.service.TaxonomyService;
 import com.sommor.bundles.taxonomy.utils.SlugParser;
 import com.sommor.core.utils.UrlUtil;
-import com.sommor.core.scaffold.spring.ApplicationContextHolder;
+import com.sommor.core.spring.ApplicationContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Request;

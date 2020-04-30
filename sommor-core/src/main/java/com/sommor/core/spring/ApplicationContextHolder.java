@@ -1,4 +1,4 @@
-package com.sommor.core.scaffold.spring;
+package com.sommor.core.spring;
 
 import com.sommor.extensibility.ExtensionExecutor;
 import com.sommor.core.launcher.AppLauncher;

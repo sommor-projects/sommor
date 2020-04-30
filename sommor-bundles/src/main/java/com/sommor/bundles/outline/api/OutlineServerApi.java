@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * @author yanguanwei@qq.com
  * @since 2020/4/16
  */
-public class OutlineServer {
+public class OutlineServerApi {
 
     private String apiUrl;
 
@@ -46,7 +46,7 @@ public class OutlineServer {
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    public OutlineServer(String apiUrl) {
+    public OutlineServerApi(String apiUrl) {
         if (! apiUrl.endsWith("/")) {
             apiUrl += "/";
         }

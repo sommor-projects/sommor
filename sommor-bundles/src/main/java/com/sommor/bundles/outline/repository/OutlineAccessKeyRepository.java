@@ -16,5 +16,5 @@ import java.util.List;
 public interface OutlineAccessKeyRepository extends CurdRepository<OutlineAccessKeyEntity, String> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
-    List<OutlineAccessKeyEntity> findByServerId(String serverId);
+    List<OutlineAccessKeyEntity> findByServerId(String outlineServerId);
 }

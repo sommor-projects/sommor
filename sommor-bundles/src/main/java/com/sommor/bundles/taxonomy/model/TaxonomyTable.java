@@ -6,7 +6,7 @@ import com.sommor.bundles.taxonomy.repository.TaxonomyRepository;
 import com.sommor.core.component.table.OnTableRowFill;
 import com.sommor.core.model.Model;
 import com.sommor.core.component.table.EntityTable;
-import com.sommor.core.scaffold.spring.ApplicationContextHolder;
+import com.sommor.core.spring.ApplicationContextHolder;
 import com.sommor.core.view.field.text.TextField;
 import lombok.Getter;
 import lombok.Setter;

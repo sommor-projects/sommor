@@ -9,8 +9,8 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface EntityModelEnrichers {
+public @interface EntityReferences {
 
-    EntityModelEnricher[] value();
+    EntityReference[] value();
 
 }

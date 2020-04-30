@@ -1,7 +1,7 @@
 package com.sommor.bundles.wine.worldwine;
 
 import com.sommor.bundles.wine.jiukacha.JiuKaChaService;
-import com.sommor.core.scaffold.spring.ApplicationContextHolder;
+import com.sommor.core.spring.ApplicationContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Task;

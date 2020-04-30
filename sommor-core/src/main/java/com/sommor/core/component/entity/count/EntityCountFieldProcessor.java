@@ -6,7 +6,6 @@ import com.sommor.core.model.fill.FieldFillContext;
 import com.sommor.core.model.fill.FieldFillProcessor;
 import com.sommor.mybatis.query.Query;
 import com.sommor.mybatis.repository.CurdRepository;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author yanguanwei@qq.com
@@ -17,13 +16,9 @@ public class EntityCountFieldProcessor implements FieldFillProcessor<EntityCount
 
     @Override
     public Object processOnFieldFill(EntityCountFieldConfig config, FieldFillContext ctx) {
-        String entityIdFieldName = config.getEntityIdFieldName();
-        if (StringUtils.isBlank(entityIdFieldName)) {
-            entityIdFieldName = config.getEntityName() + "Id";
-        }
-
-        Long id = ctx.getSourceModel().getFieldValue(entityIdFieldName);
-        CurdRepository repository = CurdManager.getCurdRepository(config.getEntityName());
+        String entityIdFieldName = config.getForeignIdName();
+        Object id = ctx.getSourceModel().getFieldValue(entityIdFieldName);
+        CurdRepository repository = CurdManager.getCurdRepository(config.getForeignEntity());
         Query query = new Query().where(entityIdFieldName, id);
         Integer count = repository.count(query);
         return count;

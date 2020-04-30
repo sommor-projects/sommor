@@ -3,7 +3,9 @@ package com.sommor.bundles.mall.order.model;
 import com.sommor.bundles.mall.order.entity.OrderEntity;
 import com.sommor.bundles.taxonomy.component.attribute.Attributes;
 import com.sommor.bundles.taxonomy.component.attribute.AttributesField;
+import com.sommor.bundles.user.entity.UserEntity;
 import com.sommor.core.model.Model;
+import com.sommor.core.model.enricher.EntityReference;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,8 +18,16 @@ import lombok.Setter;
 public class Order {
 
     private Long id;
-    private Long userId;
+    private Long buyerId;
+
+    @EntityReference(entityName = UserEntity.NAME, fieldBy = "buyerId")
+    private Buyer buyer;
+
     private Long sellerId;
+
+    @EntityReference(entityName = UserEntity.NAME, fieldBy = "sellerId")
+    private Seller seller;
+
     private Long shopId;
     private Long productId;
     private Long skuId;
@@ -25,7 +35,7 @@ public class Order {
     private String productTitle;
     private String productTaxonomy;
 
-    @AttributesField
+    @AttributesField(attributesFieldName = "productAttributes")
     private Attributes productAttributes;
 
     private Integer status;

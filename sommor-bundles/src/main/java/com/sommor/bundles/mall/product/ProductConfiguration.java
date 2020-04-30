@@ -17,7 +17,7 @@ public class ProductConfiguration {
 
     @Bean
     public SequenceSegmentAllocator productIdSequenceSegmentAllocator() {
-        // |prefix<-1->|dbIndex<-2->|sequence<-22->|random<-1->|
+        // |prefix<-1->|sequence<-22->|random<-1->|
         SequenceId sequenceId = new SequenceId("productId", 24, 0, 10);
         return new SequenceSegmentAllocator(sequenceId);
     }
@@ -26,21 +26,6 @@ public class ProductConfiguration {
     public IdGenerator productIdGenerator(SequenceSegmentAllocator productIdSequenceSegmentAllocator) {
         return new IdGenerator(Lists.newArrayList(
                 productIdSequenceSegmentAllocator,
-                new RandomSegmentAllocator(1)
-        ));
-    }
-
-    @Bean
-    public SequenceSegmentAllocator skuIdSequenceSegmentAllocator() {
-        // |prefix<-1->|dbIndex<-2->|sequence<-22->|random<-1->|
-        SequenceId sequenceId = new SequenceId("skuId", 27, 0, 10);
-        return new SequenceSegmentAllocator(sequenceId);
-    }
-
-    @Bean
-    public IdGenerator skuIdGenerator(SequenceSegmentAllocator skuIdSequenceSegmentAllocator) {
-        return new IdGenerator(Lists.newArrayList(
-                skuIdSequenceSegmentAllocator,
                 new RandomSegmentAllocator(1)
         ));
     }

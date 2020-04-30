@@ -1,4 +1,4 @@
-package com.sommor.core.scaffold.spring.interceptor;
+package com.sommor.core.spring.interceptor;
 
 
 /**

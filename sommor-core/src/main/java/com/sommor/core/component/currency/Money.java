@@ -156,7 +156,14 @@ public class Money implements Comparable<Money>, Serializable {
      * @see #getAmount()
      */
     public String getAmountString() {
-        return getAmount().toString();
+        String amountString = getAmount().toString();
+        if (amountString != null) {
+            if (amountString.endsWith(".00")) {
+                return amountString.substring(0, amountString.length()-3);
+            }
+        }
+
+        return amountString;
     }
 }
 

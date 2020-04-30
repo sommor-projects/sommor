@@ -149,7 +149,7 @@ public class SqlProvider {
 
         SQL sql = new SQL()
             .SELECT(count ? "COUNT(1)" : query.projection().toString())
-            .FROM(ed.getTableName() + " " + tableAlias);
+            .FROM("`" + ed.getTableName() + "` `" + tableAlias + "`");
 
         query.from(tableAlias);
 

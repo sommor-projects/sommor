@@ -17,7 +17,7 @@ public class AttributeSelectionConfig extends FieldsetConfig<FieldsetView> {
 
     @Getter
     @Setter
-    private Long entityId;
+    private String entityId;
 
     @Getter
     @Setter

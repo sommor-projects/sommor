@@ -1,4 +1,4 @@
-package com.sommor.core.scaffold.spring.interceptor;
+package com.sommor.core.spring.interceptor;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

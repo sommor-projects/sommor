@@ -49,10 +49,6 @@ public class TaxonomyItem implements Comparable<TaxonomyItem> {
         this.setPriority(entity.getPriority());
     }
 
-    public String getKey() {
-        return this.key;
-    }
-
     @Override
     public int compareTo(TaxonomyItem o) {
         return this.getPriority() - o.getPriority();

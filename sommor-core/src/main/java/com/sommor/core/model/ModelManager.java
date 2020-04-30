@@ -122,8 +122,12 @@ public class ModelManager {
     }
 
     private static void parseModelEnrichers(ModelDefinition modelDefinition, Class modelClass) {
-        List<TargetConfigDefinition> modelEnricherAnnotations = parseTargetConfigDefinitions(modelClass.getAnnotations());
-        modelDefinition.setModelEnricherConfigDefinitions(modelEnricherAnnotations);
+        while (null != modelClass && modelClass != Object.class) {
+            List<TargetConfigDefinition> modelEnricherAnnotations = parseTargetConfigDefinitions(modelClass.getAnnotations());
+            modelDefinition.setModelEnricherConfigDefinitions(modelEnricherAnnotations);
+
+            modelClass = modelClass.getSuperclass();
+        }
     }
 
     private static ModelDefinition parseSubModelDefinition(ModelDefinition modelDefinition, Field field) {
@@ -269,6 +273,7 @@ public class ModelManager {
         if (entityDefinition != null) {
             String entityName = entityDefinition.getSubjectName();
             if (StringUtils.isNoneBlank(entityName)) {
+                entityName = parseEntityName(entityName);
                 for (EntityFieldDefinition efd : entityDefinition.getFieldDefinitions()) {
                     String fieldName = efd.getFieldName();
                     String aliasName = entityName + (fieldName.substring(0,1).toUpperCase() + fieldName.substring(1));
@@ -278,6 +283,30 @@ public class ModelManager {
                 DefaultModelField.add(model, "entityName", entityName);
             }
         }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(parseEntityName("outline-server"));
+    }
+
+    private static String parseEntityName(String entityName) {
+        if (entityName.indexOf('-') > 0) {
+            String[] a = entityName.split("\\-");
+
+            StringBuilder sb = new StringBuilder();
+            for (String s : a) {
+                if (sb.length() > 0) {
+                    sb.append(s.substring(0,1).toUpperCase())
+                            .append(s.substring(1));
+                } else {
+                    sb.append(s);
+                }
+            }
+
+            return sb.toString();
+        }
+
+        return entityName;
     }
 
     private static void parseModelEnricherConfigs(Model model, ModelDefinition modelDefinition) {

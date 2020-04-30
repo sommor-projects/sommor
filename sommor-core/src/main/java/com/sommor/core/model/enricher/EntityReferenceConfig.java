@@ -8,17 +8,15 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2020/2/29
  */
-public class EntityModelEnrichConfig extends TargetConfig {
+@Getter
+@Setter
+public class EntityReferenceConfig extends TargetConfig {
 
-    @Getter
-    @Setter
     private String entityName;
 
-    @Getter
-    @Setter
-    private String entityIdFieldName;
+    private String fieldBy;
 
-    @Getter
-    @Setter
-    private String[] entityFieldNames;
+    private String[] fields;
+
+    private Class target;
 }

@@ -1,7 +1,7 @@
 package com.sommor.core.generator;
 
 import com.sommor.core.api.response.ApiResponse;
-import com.sommor.core.scaffold.spring.ApplicationContextHolder;
+import com.sommor.core.spring.ApplicationContextHolder;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +20,7 @@ import java.util.List;
 public class GeneratorController {
 
     private static final String[] ID_NAMES = {
-            "userId", "shopId", "productId", "skuId", "orderId"
+            "userId", "shopId", "productId", "orderId"
     };
 
     @ApiOperation(value = "ID生成器")

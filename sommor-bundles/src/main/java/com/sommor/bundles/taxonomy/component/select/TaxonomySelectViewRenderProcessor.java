@@ -51,12 +51,12 @@ public class TaxonomySelectViewRenderProcessor implements ViewRenderProcessor<Ta
         }
 
         if (isIncludeRoot) {
-            selectView.addOption(new TreeOption("最顶层分类", 0));
+            selectView.addOption(new TreeOption("最顶层分类", "_"));
         }
 
         if (isTree) {
             TaxonomyEntity typeEntity = null;
-            if (StringUtils.isNotBlank(type)) {
+            if (StringUtils.isNotBlank(type) && ! type.equals(TaxonomyEntity.ROOT)) {
                 typeEntity = taxonomyRepository.findByType(type);
                 if (null == typeEntity) {
                     throw new ErrorCodeException(ErrorCode.of("type is not exists", type));
@@ -64,7 +64,7 @@ public class TaxonomySelectViewRenderProcessor implements ViewRenderProcessor<Ta
             }
 
             // 如果要展示
-            if (null == typeEntity && StringUtils.isNotBlank(parent)) {
+            if (null == typeEntity && StringUtils.isNotBlank(parent) && ! parent.equals(TaxonomyEntity.ROOT)) {
                 TaxonomyEntity entity = taxonomyRepository.findByKey(parent);
                 if (null == entity) {
                     throw new ErrorCodeException(ErrorCode.of("taxonomy is not exists", parent));

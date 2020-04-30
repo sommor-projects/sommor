@@ -110,6 +110,10 @@ public class CurdService<Entity extends BaseEntity<ID>, ID> extends BaseCurdServ
     }
 
     private Entity save(Entity entity, Entity originalEntity, boolean insert) {
+        if (! insert && null == originalEntity) {
+            throw new ErrorCodeException(ErrorCode.of("entity.update.id.invalid", entity.getClass().getSimpleName(), entity.getId()));
+        }
+
         this.onValidate(entity, originalEntity);
 
         this.onSaving(entity, originalEntity);
@@ -136,13 +140,8 @@ public class CurdService<Entity extends BaseEntity<ID>, ID> extends BaseCurdServ
 
     public Entity onGetOriginalEntity(Entity entity) {
         ID id = entity.getId();
-        if (BaseEntity.isIdEmpty(id)) {
-            Entity originalEntity = (Entity) curdRepository().findById(id);
-            if (null == originalEntity) {
-                throw new ErrorCodeException(ErrorCode.of("entity.update.id.invalid", entity.getClass().getSimpleName(), id));
-            }
-
-            return originalEntity;
+        if (! BaseEntity.isIdEmpty(id)) {
+            return (Entity) curdRepository().findById(id);
         }
 
         return null;

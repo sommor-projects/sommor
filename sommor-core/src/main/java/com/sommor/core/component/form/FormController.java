@@ -1,5 +1,7 @@
 package com.sommor.core.component.form;
 
+import com.sommor.core.api.error.ErrorCode;
+import com.sommor.core.api.error.ErrorCodeException;
 import com.sommor.core.api.response.ApiResponse;
 import com.sommor.core.component.form.action.Add;
 import com.sommor.core.component.form.action.Edit;
@@ -18,21 +20,34 @@ public class FormController<Entity , Form, FormParam> {
 
     private FormService formService;
 
+    private Class formClass;
+
     public FormController() {
         Class[] classes = ClassAnnotatedTypeParser.parse(this.getClass());
         this.formService = new EntityFormService(classes[0], classes[1]);
+        this.formClass = classes[1];
     }
 
     public FormController(FormService formService) {
         this.formService = formService;
+        Class[] classes = ClassAnnotatedTypeParser.parse(this.getClass());
+        this.formClass = classes[1];
     }
 
     @ApiOperation(value = "表单")
     @RequestMapping(value = "/form", method = RequestMethod.GET)
     @SuppressWarnings("unchecked")
     public ApiResponse<FormView> renderForm(@Validated FormParam param) {
-        FormView formView = this.formService.renderForm(param);
+        FormView formView = this.formService.renderForm(param, this.newForm());
         return ApiResponse.success(formView);
+    }
+
+    private Form newForm() {
+        try {
+            return (Form) this.formClass.newInstance();
+        } catch (Throwable e) {
+            throw new ErrorCodeException(ErrorCode.of("form.render.new.exception", this.formClass.getSimpleName()));
+        }
     }
 
     @ApiOperation(value = "添加")

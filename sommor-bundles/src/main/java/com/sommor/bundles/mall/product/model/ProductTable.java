@@ -1,7 +1,7 @@
 package com.sommor.bundles.mall.product.model;
 
 import com.sommor.bundles.qrcode.component.qrcode.QrCodeField;
-import com.sommor.core.model.enricher.EntityModelEnricher;
+import com.sommor.core.model.enricher.EntityReference;
 import com.sommor.core.component.table.EntityTable;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2020/2/1
  */
-@EntityModelEnricher(entityName = "shop", entityIdFieldName = "shopId")
+@EntityReference(entityName = "shop", fieldBy = "shopId")
 public class ProductTable extends EntityTable {
 
     @Setter

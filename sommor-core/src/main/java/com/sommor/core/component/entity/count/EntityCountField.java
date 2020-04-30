@@ -14,7 +14,8 @@ import java.lang.annotation.*;
 @TargetAnnotation(EntityCountFieldConfig.class)
 public @interface EntityCountField {
 
-    String entityName();
+    String foreignEntity();
 
-    String entityIdFieldName() default "";
+    String foreignIdName();
+
 }

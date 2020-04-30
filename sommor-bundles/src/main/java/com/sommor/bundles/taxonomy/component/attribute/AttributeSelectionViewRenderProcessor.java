@@ -2,6 +2,7 @@ package com.sommor.bundles.taxonomy.component.attribute;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.sommor.bundles.taxonomy.model.TaxonomyKey;
 import com.sommor.core.api.error.ErrorCode;
 import com.sommor.core.api.error.ErrorCodeException;
 import com.sommor.bundles.taxonomy.component.select.TaxonomySelectFieldConfig;
@@ -57,7 +58,10 @@ public class AttributeSelectionViewRenderProcessor implements
         String taxonomy = vc.getTaxonomy();
         String entityName = vc.getEntityName();
 
-        List<TaxonomyAttributeSetting> taxonomyAttributeSettings = parseTaxonomyAttributeSettings(taxonomy, entityName);
+        Map<String, Object> attributes = StringUtils.isNotBlank(vc.getAttributes()) ? JSONObject.parseObject(vc.getAttributes(), LinkedHashMap.class) : Collections.emptyMap();
+
+        TaxonomyKey taxonomyKey = TaxonomyKey.of(taxonomy, entityName);
+        List<TaxonomyAttributeSetting> taxonomyAttributeSettings = parseTaxonomyAttributeSettings(taxonomyKey, entityName);
         if (CollectionUtils.isNotEmpty(taxonomyAttributeSettings)) {
 
             String fullNamePrefix = (StringUtils.isNotBlank(vc.getPathName()) ? (vc.getPathName() + ".") : "") + ctx.getView().getName() + ".";
@@ -73,6 +77,7 @@ public class AttributeSelectionViewRenderProcessor implements
                 taxonomySelectFieldConfig.setTitle(typeEntity.getTitle());
                 taxonomySelectFieldConfig.setType(taxonomyAttributeSetting.getType());
                 taxonomySelectFieldConfig.setTree(true);
+                taxonomySelectFieldConfig.setValue(attributes.get(fieldName));
                 if (Boolean.TRUE.equals(taxonomyAttributeSetting.getMultiple())) {
                     taxonomySelectFieldConfig.setMultiple(true);
                 }
@@ -86,10 +91,10 @@ public class AttributeSelectionViewRenderProcessor implements
         }
     }
 
-    private List<TaxonomyAttributeSetting> parseTaxonomyAttributeSettings(String taxonomy, String entityName) {
+    private List<TaxonomyAttributeSetting> parseTaxonomyAttributeSettings(TaxonomyKey key, String entityName) {
         List<TaxonomyAttributeSetting> list = new ArrayList<>();
 
-        List<TaxonomyEntity> paths = taxonomyRepository.findTaxonomyPaths(taxonomy, entityName);
+        List<TaxonomyEntity> paths = taxonomyRepository.findTaxonomyPaths(key);
         for (TaxonomyEntity entity : paths) {
             if (null != entity.getConfig()) {
                 List<TaxonomyAttributeSetting> attributeSettings = entity.getConfig().getList(TaxonomyAttributeSetting.class);
@@ -112,53 +117,23 @@ public class AttributeSelectionViewRenderProcessor implements
         String taxonomy = config.getTaxonomy();
 
         if (StringUtils.isNotBlank(taxonomy)) {
-            taxonomyEntity = taxonomyRepository.findByName(taxonomy, config.getEntityName());
+            TaxonomyKey key = TaxonomyKey.of(taxonomy, config.getEntityName());
+            taxonomyEntity = taxonomyRepository.findByKey(key);
         }
 
         if (null == taxonomyEntity) {
-            throw new ErrorCodeException(ErrorCode.of("entity.taxonomy.invalid"));
+            throw new ErrorCodeException(ErrorCode.of("entity.taxonomy.invalid", taxonomy));
         }
 
-
         AttributeSelection selection = new AttributeSelection();
-        selection.setTaxonomy(taxonomyEntity.getName());
+        selection.setTaxonomy(taxonomyEntity.getKey());
 
         if (StringUtils.isNotBlank(config.getAttributes())) {
-            Map<String, Object> attributes = JSONObject.parseObject(config.getAttributes());
+            LinkedHashMap<String, Object> attributes = JSONObject.parseObject(config.getAttributes(), LinkedHashMap.class);
             selection.setAttributes(attributes);
         }
 
-//        Map<Long, Map<Long, SubjectTaxonomyRelationEntity>> selections = parseSubjectTaxonomySelections(config.getEntityName(), config.getEntityId());
-//        if (MapUtils.isNotEmpty(selections)) {
-//            for (Map.Entry<Long, Map<Long, SubjectTaxonomyRelationEntity>> entry : selections.entrySet()) {
-//                if (! entry.getValue().containsKey(taxonomy)) {
-//                    TaxonomyEntity entity = taxonomyRepository.findById(entry.getKey());
-//                    selection.addAttribute(entity.getName(), entry.getValue().keySet());
-//                }
-//            }
-//        }
-
         return selection;
-    }
-
-    private Map<Long, Map<Long, SubjectTaxonomyRelationEntity>> parseSubjectTaxonomySelections(String entityName, Long entityId) {
-        if (null == entityId || entityId == 0) {
-            return Collections.emptyMap();
-        }
-
-        List<SubjectTaxonomyRelationEntity> relationEntities = taxonomySubjectRepository.findBySubject(entityName, entityId);
-        if (CollectionUtils.isNotEmpty(relationEntities)) {
-            Map<Long, Map<Long, SubjectTaxonomyRelationEntity>> selectionMap = new HashMap<>();
-            for (SubjectTaxonomyRelationEntity relationEntity : relationEntities) {
-                Long typeId = relationEntity.getTypeId() > 0 ? relationEntity.getTypeId() : relationEntity.getTaxonomyId();
-                Map<Long, SubjectTaxonomyRelationEntity> map = selectionMap.computeIfAbsent(typeId, p -> new HashMap<>());
-                map.put(relationEntity.getTaxonomyId(), relationEntity);
-            }
-
-            return selectionMap;
-        }
-
-        return Collections.emptyMap();
     }
 
     @Override
@@ -172,8 +147,9 @@ public class AttributeSelectionViewRenderProcessor implements
             throw new ErrorCodeException(ErrorCode.of("entity.taxonomy.required"));
         }
 
-        String subject = config.getEntityName();
-        List<TaxonomyAttributeSetting> taxonomyAttributeSettings = parseTaxonomyAttributeSettings(attributeSelection.getTaxonomy(), subject);
+        String entityName = config.getEntityName();
+        TaxonomyKey taxonomyKey = TaxonomyKey.of(attributeSelection.getTaxonomy(), entityName);
+        List<TaxonomyAttributeSetting> taxonomyAttributeSettings = parseTaxonomyAttributeSettings(taxonomyKey, entityName);
         Map<TaxonomyEntity, List<TaxonomyEntity>> selections = parseSubjectTaxonomySelections(attributeSelection);
 
         for (TaxonomyAttributeSetting setting : taxonomyAttributeSettings) {
@@ -230,72 +206,4 @@ public class AttributeSelectionViewRenderProcessor implements
         entity.setFieldValue(config.getTaxonomyFieldName(), attributeSelection.getTaxonomy());
         entity.setFieldValue(config.getAttributesFieldName(), JSON.toJSONString(attributeSelection.getAttributes()));
     }
-
-//    @Override
-//    public void processOnFormSaved(TaxonomyAttributeConfig config, FieldSaveContext ctx) {
-//        BaseEntity entity = ctx.getEntity();
-//
-//        String entityName = entity.definition().getSubjectName();
-//        Long entityId = entity.getId();
-//
-//        Map<Long, Map<Long, SubjectTaxonomyRelationEntity>> originalSelectionMap = parseSubjectTaxonomySelections(entityName, entityId);
-//
-//        Map<TaxonomyEntity, List<TaxonomyEntity>> selectedTaxonomiesByType = ctx.getExt("subject_taxonomy_selections");
-//
-//        if (entity.hasField(config.getTaxonomyFieldName())) {
-//            TaxonomyAttributeSelection taxonomyAttributeSelection = ctx.getExt(TaxonomyAttributeSelection.class);
-//            TaxonomyEntity taxonomyEntity = taxonomyRepository.findByName(taxonomyAttributeSelection.getTaxonomy(), entityName);
-//            TaxonomyEntity typeEntity = taxonomyEntity.isRoot() ? taxonomyEntity : taxonomyRepository.findByType(taxonomyEntity.getType());
-//            selectedTaxonomiesByType.put(typeEntity, Lists.newArrayList(taxonomyEntity));
-//        }
-//
-//        if (MapUtils.isNotEmpty(selectedTaxonomiesByType)) {
-//            for (Map.Entry<TaxonomyEntity, List<TaxonomyEntity>> entry : selectedTaxonomiesByType.entrySet()) {
-//                TaxonomyEntity typeEntity = entry.getKey();
-//                Map<Long, SubjectTaxonomyRelationEntity> originalSelections = originalSelectionMap.get(typeEntity.getId());
-//
-//                for (TaxonomyEntity selected : entry.getValue()) {
-//                    if (null == originalSelections || !originalSelections.containsKey(selected.getId())) {
-//                        SubjectTaxonomyRelationEntity relationEntity = new SubjectTaxonomyRelationEntity();
-//                        relationEntity.setSubject(entityName);
-//                        relationEntity.setSubjectId(entityId);
-//                        relationEntity.setTypeId(typeEntity.getId());
-//                        relationEntity.setTaxonomyId(selected.getId());
-//
-//                        List<TaxonomyEntity> paths = taxonomyRepository.findTaxonomyPaths(selected.getName(), selected.getType());
-//                        if (paths.size() > 1) {
-//                            relationEntity.setTaxonomyId1(paths.get(1).getId());
-//                        }
-//                        if (paths.size() > 2) {
-//                            relationEntity.setTaxonomyId2(paths.get(2).getId());
-//                        }
-//                        if (paths.size() > 3) {
-//                            relationEntity.setTaxonomyId3(paths.get(3).getId());
-//                        }
-//                        if (paths.size() > 4) {
-//                            relationEntity.setTaxonomyId4(paths.get(4).getId());
-//                        }
-//                        if (paths.size() > 5) {
-//                            relationEntity.setTaxonomyId5(paths.get(5).getId());
-//                        }
-//
-//                        taxonomySubjectRepository.add(relationEntity);
-//                    }
-//                }
-//
-//                if (null != originalSelections) {
-//                    Set<Long> selections = entry.getValue().stream().map(p -> p.getId()).collect(Collectors.toSet());
-//                    List<Long> deleteIds = originalSelections.entrySet().stream()
-//                            .filter(p -> !selections.contains(p.getKey()))
-//                            .map(p->p.getValue().getId())
-//                            .collect(Collectors.toList());
-//
-//                    if (CollectionUtils.isNotEmpty(deleteIds)) {
-//                        taxonomySubjectRepository.deleteByIds(deleteIds);
-//                    }
-//                }
-//
-//            }
-//        }
-//    }
 }

@@ -12,11 +12,9 @@ import lombok.Setter;
 @Setter
 public class ProductSkuFormParam {
 
-    private Long productId;
+    private Long id;
 
-    private Long skuId;
-
-    private String shopId;
+    private Long shopId;
 
     private String taxonomy;
 }

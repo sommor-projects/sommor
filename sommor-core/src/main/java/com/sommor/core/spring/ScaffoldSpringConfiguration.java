@@ -1,4 +1,4 @@
-package com.sommor.core.scaffold.spring;
+package com.sommor.core.spring;
 
 import com.google.common.collect.Lists;
 import org.springframework.context.annotation.Bean;

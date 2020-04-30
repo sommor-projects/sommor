@@ -11,5 +11,5 @@ public class EntityForm {
 
     @Getter
     @Setter
-    private String id;
+    private Long id;
 }

@@ -27,7 +27,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 public class ProductForm {
 
-    private Long productId;
+    private Long id;
 
     private Integer productType;
 

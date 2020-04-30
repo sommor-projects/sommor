@@ -14,6 +14,7 @@ import com.sommor.core.view.context.ViewRenderContext;
 import com.sommor.core.view.model.OnViewRender;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -25,9 +26,11 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class TaxonomyForm extends EntityForm implements OnViewRender {
+public class TaxonomyForm implements OnViewRender {
 
-    @TaxonomySelectField(tree = true, includeSelf = true, title = "父分类")
+    private Long id;
+
+    @TaxonomySelectField(tree = true, includeRoot = true, includeSelf = true, title = "父分类")
     @NotNull
     private String parent;
 
@@ -56,9 +59,13 @@ public class TaxonomyForm extends EntityForm implements OnViewRender {
     public void onViewRender(Model model, ViewRenderContext ctx) {
         TaxonomySelectFieldConfig config = model.getField("parent").getFieldConfig();
 
+        if (StringUtils.isBlank(parent)) {
+            this.parent = TaxonomyEntity.ROOT;
+            config.setIncludeRoot(true);
+        }
+
         Object target = ctx.getSourceMode().getTarget();
         if (target instanceof TaxonomyFormParam) {
-            String parent = ((TaxonomyFormParam) target).getParent();
             TaxonomyKey key = TaxonomyKey.of(parent);
             config.setType(key.getTaxonomyType());
         } else if (target instanceof TaxonomyEntity) {

@@ -141,7 +141,7 @@ public class Model extends Extensible {
         Map<String, ModelField> modelFieldMap;
         List<ModelField> modelFields;
 
-        if (fieldNames.length > 0) {
+        if (null != fieldNames && fieldNames.length > 0) {
             modelFieldMap = new HashMap<>();
             modelFields = new ArrayList<>();
             for (String fieldName : fieldNames) {
@@ -171,6 +171,10 @@ public class Model extends Extensible {
 
     public void reset() {
         ModelManager.resetModelFieldValues(this.getTarget());
+    }
+
+    public Model enrich() {
+        return this.enrich(this);
     }
 
     public Model enrich(Model sourceModel) {
@@ -210,7 +214,7 @@ public class Model extends Extensible {
             throw new RuntimeException(e);
         }
 
-        ModelManager.setModelFieldValues(target, this);
+        ModelManager.fillModelFieldValues(Model.of(target), this);
         return target;
     }
 

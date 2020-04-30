@@ -19,14 +19,6 @@ public class SkuFormService extends EntityFormService<
         SkuFormParam> {
 
     @Override
-    protected void onFormSaving(Model model, SkuEntity entity, SkuEntity originalEntity) {
-        super.onFormSaving(model, entity, originalEntity);
-
-        ProductEntity productEntity = model.getExt(ProductEntity.class);
-        entity.setProductType(productEntity.getProductType());
-    }
-
-    @Override
     protected void onEntityFormRender(SkuForm skuForm, SkuFormParam skuFormParam, SkuEntity entity) {
         super.onEntityFormRender(skuForm, skuFormParam, entity);
 

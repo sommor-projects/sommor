@@ -20,8 +20,6 @@ public @interface AttributeSelectionField {
 
     String entityIdFieldName() default "entityId";
 
-    String entityNameFieldName() default "entityName";
-
     String taxonomyFieldName() default "taxonomy";
 
     String attributesFieldName() default "attributes";

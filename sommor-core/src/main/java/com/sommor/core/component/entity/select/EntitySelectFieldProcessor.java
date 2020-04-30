@@ -9,6 +9,7 @@ import com.sommor.core.curd.query.FieldContext;
 import com.sommor.core.utils.Converter;
 import com.sommor.extensibility.ExtensionExecutor;
 import com.sommor.extensibility.config.Implement;
+import com.sommor.mybatis.entity.BaseEntity;
 import com.sommor.mybatis.entity.definition.EntityDefinition;
 import com.sommor.mybatis.entity.definition.EntityManager;
 import com.sommor.mybatis.repository.CurdRepository;
@@ -26,8 +27,8 @@ public class EntitySelectFieldProcessor implements
 
     @Override
     public void processOnFormValidate(EntitySelectFieldConfig config, FieldContext ctx) {
-        Long id = Converter.parseLong(ctx.getFieldValue());
-        if (null != id && id > 0) {
+        Object id = ctx.getFieldValue();
+        if (! BaseEntity.isIdEmpty(id)) {
             String entityName = config.getEntityName();
             CurdRepository repository = CurdManager.getCurdRepository(entityName);
             Object entity = repository.findById(id);
@@ -46,14 +47,16 @@ public class EntitySelectFieldProcessor implements
         String entityName = config.getEntityName();
         view.setEntityName(entityName);
 
-        Long id = Converter.parseLong(config.getValue());
-        if (null != id && id > 0) {
+        Object id = config.getValue();
+        if (! BaseEntity.isIdEmpty(id)) {
             EntityDefinition ed = EntityManager.getDefinitionBySubject(entityName);
 
             CurdRepository curdRepository = CurdManager.getCurdRepository(ed.getEntityClass());
             Object entity = curdRepository.findById(id);
-            Option option = entitySelectOptionParser.executeFirst(entity, ext -> ext.parseEntitySelectOption(entity));
-            view.addOption(option);
+            if (null != entity) {
+                Option option = entitySelectOptionParser.executeFirst(entity, ext -> ext.parseEntitySelectOption(entity));
+                view.addOption(option);
+            }
         }
     }
 }

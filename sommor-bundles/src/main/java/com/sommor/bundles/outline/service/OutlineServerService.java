@@ -1,25 +1,25 @@
 package com.sommor.bundles.outline.service;
 
 import com.sommor.bundles.mall.order.model.Order;
-import com.sommor.bundles.outline.api.OutlineServer;
+import com.sommor.bundles.outline.api.OutlineServerApi;
 import com.sommor.bundles.outline.api.request.ServerRenameParam;
 import com.sommor.bundles.outline.api.response.AccessKey;
 import com.sommor.bundles.outline.api.response.ServerInfo;
 import com.sommor.bundles.outline.entity.OutlineAccessKeyEntity;
 import com.sommor.bundles.outline.entity.OutlineServerEntity;
-import com.sommor.bundles.outline.model.OutlineAccessKeyCreateParam;
+import com.sommor.bundles.outline.model.OutlineServer;
 import com.sommor.bundles.outline.model.OutlineServerRenameParam;
-import com.sommor.bundles.outline.model.OutlineServerSyncParam;
-import com.sommor.bundles.outline.repository.OutlineAccessKeyRepository;
 import com.sommor.bundles.outline.repository.OutlineServerRepository;
 import com.sommor.core.api.error.ErrorCode;
 import com.sommor.core.api.error.ErrorCodeException;
 import com.sommor.core.curd.CurdService;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,33 +35,21 @@ public class OutlineServerService extends CurdService<OutlineServerEntity, Strin
     private OutlineServerRepository outlineServerRepository;
 
     @Resource
-    private OutlineAccessKeyRepository outlineAccessKeyRepository;
+    private OutlineAccessKeyService outlineAccessKeyService;
 
-    public OutlineServerEntity syncOutlineServer(OutlineServerSyncParam param) {
-        OutlineServer outlineServer = new OutlineServer(param.getApiUrl());
-        ServerInfo serverInfo = outlineServer.info();
+    public ServerInfo syncOutlineServer(String apiUrl) {
+        OutlineServerApi outlineServerApi = new OutlineServerApi(apiUrl);
+        ServerInfo serverInfo = outlineServerApi.info();
         String serverId = serverInfo.getServerId();
 
-        OutlineServerEntity entity = outlineServerRepository.findById(serverId);
-        if (null == entity) {
-            entity = new OutlineServerEntity();
-            entity.setId(serverInfo.getServerId());
-            entity.setName(serverInfo.getName());
-            entity.setPort(serverInfo.getPortForNewAccessKeys());
-            entity.setCreateTime((int) (serverInfo.getCreatedTimestampMs() / 1000));
-            entity.setApiUrl(param.getApiUrl());
-            entity.setAccessKeyCount(0);
+        List<AccessKey> accessKeys = processOutlineServerAccessKeys(serverId, outlineServerApi);
+        serverInfo.setAccessKeys(accessKeys);
 
-            outlineServerRepository.add(entity);
-        }
-
-        processOutlineServerAccessKeys(serverId, outlineServer);
-
-        return entity;
+        return serverInfo;
     }
 
     public List<OutlineAccessKeyEntity> findAccessKeys(String serverId) {
-        return outlineAccessKeyRepository.findByServerId(serverId);
+        return outlineAccessKeyService.findByServerId(serverId);
     }
 
     public OutlineServerEntity renameServer(OutlineServerRenameParam param) {
@@ -73,52 +61,71 @@ public class OutlineServerService extends CurdService<OutlineServerEntity, Strin
         return serverEntity;
     }
 
-    public OutlineAccessKeyEntity createOutlineAccessKey(String serverId) {
+    public OutlineAccessKeyEntity createOutlineAccessKey(String serverId, String name) {
         OutlineServerEntity serverEntity = outlineServerRepository.findById(serverId);
         if (null == serverEntity) {
             throw new ErrorCodeException(ErrorCode.of("outline.server.id.invalid", serverId));
         }
 
-        return createOutlineAccessKey(serverEntity);
+        return createOutlineAccessKey(serverEntity, name);
     }
 
-    public OutlineAccessKeyEntity createOutlineAccessKey(OutlineServerEntity serverEntity) {
-        OutlineServer outlineServer = new OutlineServer(serverEntity.getApiUrl());
-        AccessKey accessKey = outlineServer.createAccessKey();
+    public OutlineAccessKeyEntity createOutlineAccessKey(OutlineServerEntity serverEntity, String name) {
+        OutlineServerApi outlineServerApi = new OutlineServerApi(serverEntity.getApiUrl());
+        AccessKey accessKey = outlineServerApi.createAccessKey();
         OutlineAccessKeyEntity entity = convert(serverEntity.getId(), accessKey);
-        outlineAccessKeyRepository.add(entity);
+        if (StringUtils.isNotBlank(name)) {
+            entity.setName(name);
+        }
+
+        outlineAccessKeyService.save(entity);
 
         return entity;
     }
 
-    public OutlineServerEntity selectOutlineServer(Order order) {
+    public OutlineServer selectOutlineServer(Order order) {
         List<OutlineServerEntity> serverEntities = outlineServerRepository.findAll();
-        OutlineServerEntity selected = selectAgency(serverEntities, order);
+        List<OutlineServer> outlineServers = serverEntities.stream().map(OutlineServer::of).collect(Collectors.toList());
+        OutlineServer selected = selectAgency(outlineServers, order);
         if (null != selected) {
             return selected;
         }
 
-        return selectDefault(serverEntities, order);
+        return selectDefault(outlineServers, order);
     }
 
-    private OutlineServerEntity selectAgency(List<OutlineServerEntity> serverEntities, Order order) {
-        for (OutlineServerEntity entity : serverEntities) {
-            Long userId = entity.getConfig().getLong("agencyUserId");
-            if (null != userId && userId.equals(order.getUserId())) {
-                return entity;
+    private boolean matchOutlineServerType(OutlineServer outlineServer, Order order) {
+        String fromOrder = order.getProductAttributes().getString("outline-server-type");
+        String fromServer = outlineServer.getAttributes().getString("outline-server-type");
+        if (StringUtils.isNotBlank(fromOrder) && fromOrder.equals(fromServer)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private OutlineServer selectAgency(List<OutlineServer> outlineServers, Order order) {
+        for (OutlineServer server : outlineServers) {
+            if (matchOutlineServerType(server, order)) {
+                Long userId = server.getAgencyUserId();
+                if (null != userId && userId.equals(order.getBuyerId())) {
+                    return server;
+                }
             }
         }
         return null;
     }
 
-    private OutlineServerEntity selectDefault(List<OutlineServerEntity> serverEntities, Order order) {
-        OutlineServerEntity selected = null;
+    private OutlineServer selectDefault(List<OutlineServer> servers, Order order) {
+        OutlineServer selected = null;
         int minAccessKeyCount = Integer.MAX_VALUE;
-        for (OutlineServerEntity entity : serverEntities) {
-            Long userId = entity.getConfig().getLong("agencyUserId");
-            if (null != userId && (entity.getAccessKeyCount() < minAccessKeyCount)) {
-                minAccessKeyCount = entity.getAccessKeyCount();
-                selected = entity;
+        for (OutlineServer server : servers) {
+            if (matchOutlineServerType(server, order)) {
+                Long userId = server.getAgencyUserId();
+                if (null != userId && (server.getAccessKeyCount() < minAccessKeyCount)) {
+                    minAccessKeyCount = server.getAccessKeyCount();
+                    selected = server;
+                }
             }
         }
 
@@ -128,20 +135,35 @@ public class OutlineServerService extends CurdService<OutlineServerEntity, Strin
     @Override
     protected void onSaving(OutlineServerEntity entity, OutlineServerEntity originalEntity) {
         super.onSaving(entity, originalEntity);
-        if (null != originalEntity && null != entity.getName() && originalEntity.getName().equals(entity.getName())) {
-            OutlineServer outlineServer = new OutlineServer(entity.getApiUrl());
+
+        String originalName = null;
+        String name = entity.getName();
+
+        if (null == originalEntity) {
+            ServerInfo serverInfo = syncOutlineServer(entity.getApiUrl());
+            originalName = serverInfo.getName();
+
+            entity.setId(serverInfo.getServerId());
+            entity.setPort(serverInfo.getPortForNewAccessKeys());
+            entity.setCreateTime((int) (serverInfo.getCreatedTimestampMs() / 1000));
+            entity.setStatus(OutlineServerEntity.STATUS_RUNNING);
+        } else {
+            originalName = originalEntity.getName();
+        }
+
+        if (name.equals(originalName)) {
+            OutlineServerApi outlineServerApi = new OutlineServerApi(entity.getApiUrl());
             ServerRenameParam serverRenameParam = new ServerRenameParam();
             serverRenameParam.setName(entity.getName());
-            outlineServer.rename(serverRenameParam);
+            outlineServerApi.rename(serverRenameParam);
         }
     }
 
-    public void processOutlineServerAccessKeys(String serverId, OutlineServer outlineServer) {
-        List<OutlineAccessKeyEntity> accessKeyEntities = outlineAccessKeyRepository.findByServerId(serverId);
+    public List<AccessKey> processOutlineServerAccessKeys(String serverId, OutlineServerApi outlineServerApi) {
+        List<OutlineAccessKeyEntity> accessKeyEntities = outlineAccessKeyService.findByServerId(serverId);
         Map<String, OutlineAccessKeyEntity> entityMap = accessKeyEntities.stream().collect(Collectors.toMap(p->p.getAccessId(), p->p));
 
-
-        List<AccessKey> accessKeys = outlineServer.listAccessKeys();
+        List<AccessKey> accessKeys = outlineServerApi.listAccessKeys();
 
         List<OutlineAccessKeyEntity> insertEntities = new ArrayList<>();
         List<OutlineAccessKeyEntity> updateEntities = new ArrayList<>();
@@ -164,11 +186,13 @@ public class OutlineServerService extends CurdService<OutlineServerEntity, Strin
         }
 
         for (OutlineAccessKeyEntity entity : insertEntities) {
-            outlineAccessKeyRepository.add(entity);
+            outlineAccessKeyService.save(entity);
         }
         for (OutlineAccessKeyEntity entity : updateEntities) {
-            outlineAccessKeyRepository.update(entity);
+            outlineAccessKeyService.update(entity);
         }
+
+        return CollectionUtils.isNotEmpty(accessKeys) ? accessKeys : Collections.emptyList();
     }
 
     private OutlineAccessKeyEntity convert(String serverId, AccessKey accessKey) {
@@ -187,4 +211,5 @@ public class OutlineServerService extends CurdService<OutlineServerEntity, Strin
 
         return entity;
     }
+
 }

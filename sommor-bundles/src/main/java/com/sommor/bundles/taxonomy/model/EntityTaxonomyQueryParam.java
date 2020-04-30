@@ -9,7 +9,7 @@ import com.sommor.bundles.taxonomy.repository.TaxonomyRepository;
 import com.sommor.core.model.Model;
 import com.sommor.mybatis.query.Query;
 import com.sommor.core.scaffold.param.EntityQueryParam;
-import com.sommor.core.scaffold.spring.ApplicationContextHolder;
+import com.sommor.core.spring.ApplicationContextHolder;
 import com.sommor.core.view.context.ViewRenderContext;
 import com.sommor.core.view.model.OnViewRender;
 import lombok.Getter;
@@ -43,14 +43,14 @@ public class EntityTaxonomyQueryParam extends EntityQueryParam implements OnView
         String taxonomy = this.getTaxonomy();
 
         if (StringUtils.isNotBlank(taxonomy) && ! entityName.equals(taxonomy)) {
-            TaxonomyEntity taxonomyEntity = taxonomyRepository.findByName(taxonomy, entityName);
+            TaxonomyKey taxonomyKey = TaxonomyKey.of(taxonomy, entityName);
+            TaxonomyEntity taxonomyEntity = taxonomyRepository.findByKey(taxonomyKey);
             if (null == taxonomyEntity) {
                 throw new ErrorCodeException(ErrorCode.of("subject.query.taxonomy.invalid", taxonomy, entityName));
             }
 
-            TaxonomyKey taxonomyKey = TaxonomyKey.of(taxonomyEntity);
             query.where().condition()
-                    .and("taxonomy", taxonomyKey.getName());
+                    .and("taxonomy", taxonomyKey.getKey());
         }
     }
 

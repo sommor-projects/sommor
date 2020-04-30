@@ -75,7 +75,7 @@ public class ProductService extends CurdService<ProductEntity, Long> {
 
         SkuForm skuForm = new SkuForm();
         skuForm.setTitle(form.getTitle());
-        skuForm.setProductId(Converter.toString(productEntity.getId()));
+        skuForm.setProductId(productEntity.getId());
         skuForm.setCurrency(form.getCurrency());
         skuForm.setPrice(form.getAmount());
 

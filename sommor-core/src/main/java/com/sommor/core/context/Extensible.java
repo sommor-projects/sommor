@@ -1,5 +1,6 @@
 package com.sommor.core.context;
 
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,13 @@ public class Extensible implements IExtensible {
     }
 
     public <T> void addExt(T ext) {
-        this.addExt(ext.getClass().getName(), ext);
+        String className;
+        if (ext instanceof Proxy) {
+            className = ext.getClass().getInterfaces()[0].getName();
+        } else {
+            className = ext.getClass().getName();
+        }
+        this.addExt(className, ext);
     }
 
     public <T> void addExt(String key, T ext) {

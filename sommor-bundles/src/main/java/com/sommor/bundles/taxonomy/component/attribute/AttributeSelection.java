@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -23,11 +24,11 @@ public class AttributeSelection {
 
     @Getter
     @Setter
-    private Map<String, Object> attributes;
+    private LinkedHashMap<String, Object> attributes;
 
     public void addAttribute(String type, Object selections) {
         if (null == attributes) {
-            attributes = new HashMap<>();
+            attributes = new LinkedHashMap<>();
         }
         attributes.put(type, selections);
     }

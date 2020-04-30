@@ -12,11 +12,11 @@ public class ProductFormParam extends EntityTaxonomyFormParam {
 
     @Getter
     @Setter
-    private String shopId;
+    private Long shopId;
 
     @Getter
     @Setter
-    private String spuId;
+    private Long spuId;
 
     @Getter
     @Setter

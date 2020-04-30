@@ -2,8 +2,8 @@ package com.sommor.bundles.user.auth;
 
 import com.sommor.core.api.error.ErrorCode;
 import com.sommor.core.api.error.ErrorCodeException;
-import com.sommor.core.scaffold.spring.interceptor.ControllerInterceptor;
-import com.sommor.core.scaffold.spring.interceptor.Invocation;
+import com.sommor.core.spring.interceptor.ControllerInterceptor;
+import com.sommor.core.spring.interceptor.Invocation;
 import com.sommor.bundles.user.config.Authority;
 import com.sommor.bundles.user.model.AuthUser;
 import com.sommor.bundles.user.model.Authentication;

@@ -1,4 +1,4 @@
-package com.sommor.core.scaffold.spring;
+package com.sommor.core.spring;
 
 import com.sommor.core.api.error.*;
 import com.sommor.core.api.response.ApiResponse;
