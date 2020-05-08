@@ -2,6 +2,7 @@ package com.sommor.core.generator.segment.sequence;
 
 import com.sommor.core.generator.segment.Segment;
 import com.sommor.core.generator.segment.SegmentAllocator;
+import com.sommor.core.utils.BitUtil;
 
 import javax.annotation.Resource;
 
@@ -57,18 +58,9 @@ public class SequenceSegmentAllocator implements SegmentAllocator {
         }
 
         value = (prefixValue << bitLength) | value;
-        bitLength += calculateBitLength(prefixValue);
+        bitLength += BitUtil.calcBitLength(prefixValue);
 
         return new Segment(bitLength, value);
-    }
-
-    private int calculateBitLength(long value) {
-        int length = 0;
-        while (value > 0) {
-            value = value >>> 1;
-            length++;
-        }
-        return length;
     }
 
     private long calculateMaxSequence(int length) {

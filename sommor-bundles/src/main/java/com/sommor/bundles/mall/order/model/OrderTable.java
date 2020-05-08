@@ -56,7 +56,7 @@ public class OrderTable {
     @StatusField
     private StatusVO shippingStatus;
 
-    private Integer createTime;
-    private Integer payTime;
-    private Integer shipTime;
+    private Long createTime;
+    private Long payTime;
+    private Long shipTime;
 }

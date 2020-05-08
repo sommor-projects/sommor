@@ -12,7 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Table(value = "outline_access_keys", entityName = OutlineAccessKeyEntity.NAME, autoIncrement = false)
+@Table(value = "outline_access_keys", entity = OutlineAccessKeyEntity.NAME, autoIncrement = false, softDelete = true)
 public class OutlineAccessKeyEntity extends TimedEntity<String> {
 
     public static final String NAME = "outlineAccessKey";

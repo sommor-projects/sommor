@@ -48,8 +48,8 @@ public class Order {
     private String productTitle;
     private String productTaxonomy;
 
-    @AttributesField(attributesFieldName = "productAttributes")
-    private Attributes productAttributes;
+    @AttributesField
+    private Attributes attributes;
 
     @StatusField
     private StatusVO orderStatus;
@@ -60,10 +60,10 @@ public class Order {
     @StatusField
     private StatusVO shippingStatus;
 
-    private Integer createTime;
-    private Integer payTime;
-    private Integer shipTime;
-    private Integer updateTime;
+    private Long createTime;
+    private Long payTime;
+    private Long shipTime;
+    private Long updateTime;
 
     public static Order of(OrderEntity orderEntity) {
         Order order = new Order();

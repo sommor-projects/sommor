@@ -31,7 +31,7 @@ public class EntityDeleteController<Entity extends BaseEntity> {
     @SuppressWarnings("unchecked")
     public ApiResponse<Entity> delete(@RequestBody EntityDeleteParam param) {
         String id = param.getId();
-        Entity entity = (Entity) CurdManager.getCurdService(this.entityClass).delete(Converter.parseLong(id));
+        Entity entity = (Entity) CurdManager.getCurdService(this.entityClass).delete(id);
         return ApiResponse.success(entity);
     }
 

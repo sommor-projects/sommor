@@ -104,7 +104,7 @@ public class OutlineServerService extends CurdService<OutlineServerEntity, Strin
     }
 
     private boolean matchOutlineServerType(OutlineServer outlineServer, Order order) {
-        String fromOrder = order.getProductAttributes().getString("outline-server-type");
+        String fromOrder = order.getAttributes().getString("outline-server-type");
         String fromServer = outlineServer.getAttributes().getString("outline-server-type");
         if (StringUtils.isNotBlank(fromOrder) && fromOrder.equals(fromServer)) {
             return true;

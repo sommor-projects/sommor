@@ -11,7 +11,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2019/1/13
  */
-@Table(value = "users", entityName = UserEntity.NAME, autoIncrement = false)
+@Table(value = "users", entity = UserEntity.NAME, autoIncrement = false)
 public class UserEntity extends ConfigurableEntity<Long> {
     public static final String NAME = "user";
 

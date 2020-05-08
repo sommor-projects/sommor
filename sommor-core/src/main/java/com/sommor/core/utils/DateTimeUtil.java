@@ -20,30 +20,31 @@ public class DateTimeUtil {
         return System.currentTimeMillis();
     }
 
-    public static String formatDateTime(Integer time) {
+    public static String formatDateTime(Long time) {
         return format(time, DATE_TIME_FORMAT);
     }
 
-    public static String formatDate(Integer time) {
+    public static String formatDate(Long time) {
         return format(time, DATE_FORMAT);
     }
 
-    public static String format(Integer time, String format) {
+    public static String format(String format) {
+        long now = now();
+        return format(now, format);
+    }
+
+    public static String format(Long time, String format) {
         if (null == time) {
             return null;
         }
 
         DateTimeFormatter ftf = DateTimeFormatter.ofPattern(format);
-        LocalDateTime ldt = LocalDateTime.ofInstant(Instant.ofEpochSecond(time), ZoneId.systemDefault());
+        LocalDateTime ldt = LocalDateTime.ofInstant(Instant.ofEpochMilli(time), ZoneId.systemDefault());
         return ftf.format(ldt);
     }
 
-    public static Integer parseDate(String formattedDate) {
+    public static Long parseDate(String formattedDate) {
         LocalDate parse = LocalDate.parse(formattedDate);
-        return (int) (parse.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli() / 1000);
-    }
-
-    public static void main(String[] args) {
-        System.out.println(formatDate(1587657600));
+        return parse.atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 }

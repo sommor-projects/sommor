@@ -170,6 +170,10 @@ public class SqlProvider {
             }
         }
 
+        if (ed.isSoftDelete()) {
+            sql.WHERE("is_deleted = 0");
+        }
+
         if (! count) {
             OrderBy orderBy = query.orderBy();
             if (null != orderBy) {
@@ -218,7 +222,8 @@ public class SqlProvider {
         return doUpdate(
                 definition,
                 setFields,
-                conditionFields
+                conditionFields,
+                null
         );
     }
 
@@ -245,18 +250,27 @@ public class SqlProvider {
         List<EntityFieldDefinition> conditionFields = new ArrayList<>();
         conditionFields.add(definition.getFieldDefinition(parameterNames[0]));
 
-        return doUpdate(definition, setFields, conditionFields);
+        return doUpdate(definition, setFields, conditionFields, map);
     }
 
-    private String doUpdate(EntityDefinition definition, List<EntityFieldDefinition> setFields, List<EntityFieldDefinition> conditionFields) {
+    private String doUpdate(EntityDefinition definition, List<EntityFieldDefinition> setFields, List<EntityFieldDefinition> conditionFields, Map<String, Object> map) {
         SQL sql = new SQL().UPDATE(definition.getTableName());
 
         for (EntityFieldDefinition fieldDefinition : setFields) {
             sql.SET(fieldDefinition.getColumnName() + " = " + getEntityColumnValueRef(fieldDefinition));
         }
 
-        for (EntityFieldDefinition fieldDefinition : conditionFields) {
-            sql.WHERE(fieldDefinition.getColumnName() + " = " + getEntityColumnValueRef(fieldDefinition));
+        if (null != map) {
+            Where where = new Where();
+            Condition condition = where.condition();
+            for (EntityFieldDefinition fieldDefinition : conditionFields) {
+                condition.and(fieldDefinition.getFieldName(), map.get(fieldDefinition.getFieldName()));
+            }
+            sql.WHERE(where.toExpression());
+        } else {
+            for (EntityFieldDefinition fieldDefinition : conditionFields) {
+                sql.WHERE(fieldDefinition.getColumnName() + " = " + getEntityColumnValueRef(fieldDefinition));
+            }
         }
 
         return sql.toString();

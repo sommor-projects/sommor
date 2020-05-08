@@ -1,7 +1,6 @@
 package com.sommor.bundles.outline.entity;
 
 import com.sommor.core.component.configurable.ConfigurableEntity;
-import com.sommor.core.scaffold.entity.timed.TimedEntity;
 import com.sommor.mybatis.entity.config.Column;
 import com.sommor.mybatis.entity.config.Table;
 import lombok.Getter;
@@ -13,7 +12,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Table(value = "outline_servers", entityName = OutlineServerEntity.NAME)
+@Table(value = "outline_servers", entity = OutlineServerEntity.NAME, softDelete = true)
 public class OutlineServerEntity extends ConfigurableEntity<String> {
 
     public static final String NAME = "outline-server";
@@ -37,10 +36,10 @@ public class OutlineServerEntity extends ConfigurableEntity<String> {
     private String apiUrl;
 
     @Column
-    private Integer startTime;
+    private Long startTime;
 
     @Column
-    private Integer endTime;
+    private Long endTime;
 
     @Column
     private Integer status;
@@ -50,4 +49,7 @@ public class OutlineServerEntity extends ConfigurableEntity<String> {
 
     @Column
     private String attributes;
+
+    @Column
+    private Integer isDeleted;
 }

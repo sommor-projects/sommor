@@ -12,8 +12,10 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Table(value = "orders", entityName = "order", autoIncrement = false)
+@Table(value = "orders", entity = OrderEntity.NAME, autoIncrement = false)
 public class OrderEntity extends ConfigurableEntity<Long> {
+
+    public static final String NAME = "order";
 
     @Column
     private Long refId;

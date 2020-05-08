@@ -28,9 +28,9 @@ public class OutlineServer {
     @EntityCountField(foreignEntity = OutlineAccessKeyEntity.NAME, foreignIdName = "outlineServerId")
     private Integer accessKeyCount;
 
-    private Integer startTime;
+    private Long startTime;
 
-    private Integer endTime;
+    private Long endTime;
 
     private String taxonomy;
 

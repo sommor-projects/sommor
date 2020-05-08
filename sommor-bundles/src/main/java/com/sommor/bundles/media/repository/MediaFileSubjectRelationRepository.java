@@ -6,6 +6,7 @@ import com.sommor.mybatis.sql.SqlProvider;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.SelectProvider;
+import org.apache.ibatis.annotations.UpdateProvider;
 
 import java.util.List;
 
@@ -26,6 +27,6 @@ public interface MediaFileSubjectRelationRepository extends CurdRepository<Media
     @DeleteProvider(type = SqlProvider.class, method = "deleteBy")
     void deleteByMediaFileId(Long mediaFileId);
 
-    @DeleteProvider(type = SqlProvider.class, method = "updateBy")
+    @UpdateProvider(type = SqlProvider.class, method = "updateBy")
     void updatePriorityById(Long id, Integer priority);
 }

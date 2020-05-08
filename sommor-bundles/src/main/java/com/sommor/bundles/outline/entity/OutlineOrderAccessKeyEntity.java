@@ -12,14 +12,14 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Table(value = "outline_order_access_keys", autoIncrement = false)
+@Table(value = "outline_order_access_keys", autoIncrement = false, softDelete = true)
 public class OutlineOrderAccessKeyEntity extends TimedEntity<String> {
 
     @Column
     private Long orderId;
 
     @Column
-    private Long userId;
+    private Long buyerId;
 
     @Column
     private String outlineServerId;

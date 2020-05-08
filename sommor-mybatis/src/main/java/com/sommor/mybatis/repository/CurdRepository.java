@@ -102,12 +102,35 @@ public interface CurdRepository<Entity, ID> {
     @UpdateProvider(type = SqlProvider.class, method = "update")
     int update(Entity entity);
 
-    @DeleteProvider(type = SqlProvider.class, method = "deleteById")
-    int deleteById(ID id);
+    default int deleteById(ID id) {
+        EntityDefinition ed = SqlProvider.parseEntityDefinition(this.getClass());
+        if (ed.isSoftDelete()) {
+            return this.softDeleteById(id, 1);
+        } else {
+            return this.hardDeleteById(id);
+        }
+    }
 
+    @DeleteProvider(type = SqlProvider.class, method = "deleteById")
+    int hardDeleteById(ID id);
+
+    @UpdateProvider(type = SqlProvider.class, method = "updateBy")
+    int softDeleteById(ID id, Integer isDeleted);
+
+    default int deleteByIds(Array id) {
+        EntityDefinition ed = SqlProvider.parseEntityDefinition(this.getClass());
+        if (ed.isSoftDelete()) {
+            return this.softDeleteByIds(id, 1);
+        } else {
+            return this.hardDeleteByIds(id);
+        }
+    }
 
     @DeleteProvider(type = SqlProvider.class, method = "deleteBy")
-    int deleteByIds(Array id);
+    int hardDeleteByIds(Array id);
+
+    @UpdateProvider(type = SqlProvider.class, method = "updateBy")
+    int softDeleteByIds(Array id, Integer isDeleted);
 
     default int deleteByIds(Collection<ID> id) {
         return this.deleteByIds(new Array(id));

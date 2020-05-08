@@ -12,8 +12,11 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@Table(value = "outline_orders", entityName = "outlineOrder", autoIncrement = false)
+@Table(value = "outline_orders", entity = "outlineOrder", autoIncrement = false, softDelete = true)
 public class OutlineOrderEntity extends TimedEntity<Long> {
+
+    @Column
+    private Long renewOrderId;
 
     @Column
     private Long buyerId;

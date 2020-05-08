@@ -23,11 +23,11 @@ public enum AccessKeyStatus implements StatusEnum {
 
     @Override
     public Integer getCode() {
-        return null;
+        return this.code;
     }
 
     @Override
     public String getTitle() {
-        return null;
+        return title;
     }
 }

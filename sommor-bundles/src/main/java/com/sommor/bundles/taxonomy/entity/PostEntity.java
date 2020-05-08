@@ -10,7 +10,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2019/11/7
  */
-@Table(value = "posts", entityName = PostEntity.NAME)
+@Table(value = "posts", entity = PostEntity.NAME)
 @Getter @Setter
 public class PostEntity extends ConfigurableEntity<Long> {
 

@@ -6,6 +6,7 @@ import com.sommor.bundles.mall.order.model.PayStatusEnum;
 import com.sommor.bundles.mall.order.model.ShippingStatusEnum;
 import com.sommor.core.component.status.StatusManager;
 import com.sommor.core.generator.IdGenerator;
+import com.sommor.core.generator.segment.date.DateSegmentAllocator;
 import com.sommor.core.generator.segment.random.RandomSegmentAllocator;
 import com.sommor.core.generator.segment.sequence.SequenceId;
 import com.sommor.core.generator.segment.sequence.SequenceSegmentAllocator;
@@ -36,6 +37,7 @@ public class OrderConfiguration {
     @Bean
     public IdGenerator orderIdGenerator(SequenceSegmentAllocator orderIdSequenceSegmentAllocator) {
         return new IdGenerator(Lists.newArrayList(
+                new DateSegmentAllocator(),
                 orderIdSequenceSegmentAllocator,
                 new RandomSegmentAllocator(1)
         ));

@@ -12,12 +12,10 @@ import com.sommor.core.api.error.ErrorCode;
 import com.sommor.core.api.error.ErrorCodeException;
 import com.sommor.core.curd.CurdService;
 import com.sommor.core.utils.Converter;
-import com.sommor.core.utils.DateTimeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Arrays;
@@ -59,16 +57,17 @@ public class OutlineOrderService extends CurdService<OutlineOrderEntity, Long> {
 
         OutlineOrderEntity outlineOrderEntity = new OutlineOrderEntity();
         outlineOrderEntity.setId(order.getId());
+        outlineOrderEntity.setRenewOrderId(order.getId());
         outlineOrderEntity.setBuyerId(order.getBuyerId());
 
-        String days = order.getProductAttributes().getString("outline-days");
+        String days = order.getAttributes().getString("outline-days");
         long[] times = calculateOutlineOrderStartAndExpireTime(days);
         outlineOrderEntity.setStartTime(times[0]);
         outlineOrderEntity.setEndTime(times[1]);
 
         outlineOrderEntity.setAccessKeyCount(1);
 
-        Integer accessKeyTotal = order.getProductAttributes().getInteger("outline-access-keys");
+        Integer accessKeyTotal = order.getAttributes().getInteger("outline-access-keys");
         outlineOrderEntity.setAccessKeyTotal(accessKeyTotal == null ? 1 : accessKeyTotal);
 
         this.save(outlineOrderEntity);
@@ -76,7 +75,7 @@ public class OutlineOrderService extends CurdService<OutlineOrderEntity, Long> {
         OutlineOrderAccessKeyEntity outlineOrderAccessKeyEntity = new OutlineOrderAccessKeyEntity();
         outlineOrderAccessKeyEntity.setOutlineServerId(serverId);
         outlineOrderAccessKeyEntity.setOrderId(order.getId());
-        outlineOrderAccessKeyEntity.setUserId(order.getBuyerId());
+        outlineOrderAccessKeyEntity.setBuyerId(order.getBuyerId());
 
         String accessKeyName = order.getBuyer().getNickName();
         OutlineAccessKeyEntity outlineAccessKeyEntity = outlineServerService.createOutlineAccessKey(serverId, accessKeyName);

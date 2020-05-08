@@ -14,9 +14,9 @@ public class DateTimeRangeFieldConfig extends FormFieldConfig<DateTimeRangeView>
 
     private String format;
 
-    private Integer startTime;
+    private Long startTime;
 
-    private Integer endTime;
+    private Long endTime;
 
     private String startTimeFieldName;
 

@@ -1,5 +1,6 @@
 package com.sommor.core.generator.segment;
 
+import com.sommor.core.utils.BitUtil;
 import lombok.Getter;
 
 /**
@@ -17,5 +18,9 @@ public class Segment {
     public Segment(int length, long value) {
         this.length = length;
         this.value = value;
+    }
+
+    public Segment(long value) {
+        this(BitUtil.calcBitLength(value), value);
     }
 }

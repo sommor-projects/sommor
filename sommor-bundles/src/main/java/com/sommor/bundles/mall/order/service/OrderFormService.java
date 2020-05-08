@@ -84,7 +84,6 @@ public class OrderFormService extends EntityFormService<OrderEntity, OrderForm, 
         entity.setTaxonomy(product.getTaxonomy());
         attributes.addAttributes(product.getAttributes());
 
-
         Sku sku = model.getExt(Sku.class);
         if (null == sku) {
             throw new ErrorCodeException(ErrorCode.of("order.create.sku.is.null"));

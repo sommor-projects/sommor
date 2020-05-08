@@ -1,5 +1,6 @@
 package com.sommor.bundles.outline.model;
 
+import com.sommor.bundles.mall.order.entity.OrderEntity;
 import com.sommor.bundles.mall.order.model.Buyer;
 import com.sommor.bundles.user.entity.UserEntity;
 import com.sommor.core.component.datetime.DateTimeField;
@@ -13,9 +14,14 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@EntityReference(entity = OrderEntity.NAME, byField = "renewOrderId")
 public class OutlineOrderTable {
 
     private Long id;
+
+    private Long orderId;
+
+    private String productTitle;
 
     @EntityReference(entity = UserEntity.NAME, byField = "buyerId")
     private Buyer buyer;

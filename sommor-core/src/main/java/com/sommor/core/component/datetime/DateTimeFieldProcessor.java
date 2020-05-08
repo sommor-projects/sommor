@@ -18,8 +18,8 @@ public class DateTimeFieldProcessor implements FieldFillProcessor<DateTimeFieldC
         Object value = ctx.getSourceModelFieldValue();
 
         if (type == String.class) {
-            if (value instanceof Integer) {
-                return DateTimeUtil.format((Integer) value, config.getFormat());
+            if (value instanceof Long) {
+                return DateTimeUtil.format((Long) value, config.getFormat());
             }
         }
 

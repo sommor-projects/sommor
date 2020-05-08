@@ -35,6 +35,10 @@ public class EntityDefinition {
 
     @Getter
     @Setter
+    private boolean softDelete;
+
+    @Getter
+    @Setter
     private EntityFieldDefinition primaryField;
 
     @Getter

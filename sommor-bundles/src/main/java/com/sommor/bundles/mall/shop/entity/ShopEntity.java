@@ -11,7 +11,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2019/12/2
  */
-@Table(value = "shops", entityName = ShopEntity.NAME, autoIncrement = false)
+@Table(value = "shops", entity = ShopEntity.NAME, autoIncrement = false)
 @Setter
 @Getter
 public class ShopEntity extends ConfigurableEntity<Long> {

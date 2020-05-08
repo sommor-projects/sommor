@@ -18,9 +18,11 @@ public @interface Table {
      */
     String value() default "";
 
-    String entityName() default "";
+    String entity() default "";
 
     String primaryKey() default "id";
+
+    boolean softDelete() default false;
 
     boolean autoIncrement() default true;
 }
