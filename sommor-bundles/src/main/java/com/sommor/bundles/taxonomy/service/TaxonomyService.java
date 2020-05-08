@@ -117,9 +117,9 @@ public class TaxonomyService extends CurdService<TaxonomyEntity, Long> {
     protected void onSaving(TaxonomyEntity entity, TaxonomyEntity original) {
         super.onSaving(entity, original);
 
-        List<TaxonomyEntity> paths = taxonomyRepository.findTaxonomyPaths(entity);
+        List<TaxonomyEntity> paths = taxonomyRepository.findTaxonomyPaths(original);
 
-        if (paths.size() == 1) {
+        if (paths.size() <= 1) {
             entity.setType(TaxonomyEntity.ROOT);
         } else {
             entity.setType(paths.get(0).getName());

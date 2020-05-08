@@ -7,16 +7,20 @@ import com.sommor.bundles.outline.entity.OutlineOrderAccessKeyEntity;
 import com.sommor.bundles.outline.entity.OutlineOrderEntity;
 import com.sommor.bundles.outline.model.OutlineOrderCreateParam;
 import com.sommor.bundles.outline.model.OutlineServer;
-import com.sommor.bundles.outline.repository.OutlineOrderAccessKeyRepository;
 import com.sommor.bundles.outline.repository.OutlineOrderRepository;
 import com.sommor.core.api.error.ErrorCode;
 import com.sommor.core.api.error.ErrorCodeException;
 import com.sommor.core.curd.CurdService;
+import com.sommor.core.utils.Converter;
 import com.sommor.core.utils.DateTimeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Arrays;
 
 /**
  * @author yanguanwei@qq.com
@@ -55,13 +59,13 @@ public class OutlineOrderService extends CurdService<OutlineOrderEntity, Long> {
 
         OutlineOrderEntity outlineOrderEntity = new OutlineOrderEntity();
         outlineOrderEntity.setId(order.getId());
-        outlineOrderEntity.setUserId(order.getBuyerId());
+        outlineOrderEntity.setBuyerId(order.getBuyerId());
 
-        Integer days = order.getProductAttributes().getInteger("outline-days");
-        int now = DateTimeUtil.now();
+        String days = order.getProductAttributes().getString("outline-days");
+        long[] times = calculateOutlineOrderStartAndExpireTime(days);
+        outlineOrderEntity.setStartTime(times[0]);
+        outlineOrderEntity.setEndTime(times[1]);
 
-        outlineOrderEntity.setStartTime(now);
-        outlineOrderEntity.setEndTime(now + (days*86400));
         outlineOrderEntity.setAccessKeyCount(1);
 
         Integer accessKeyTotal = order.getProductAttributes().getInteger("outline-access-keys");
@@ -83,6 +87,33 @@ public class OutlineOrderService extends CurdService<OutlineOrderEntity, Long> {
         orderService.ship(order.getId());
     }
 
+    private long[] calculateOutlineOrderStartAndExpireTime(String days) {
+        LocalDateTime now = LocalDateTime.now();
+        long nowTime = now.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
+
+        LocalDateTime expire;
+        if (StringUtils.isNumeric(days)) {
+            expire = now.plusDays(Converter.parseInt(days));
+        } else {
+            if (days.endsWith("m")) {
+                int months = Converter.parseInt(days.substring(0, days.length()-1));
+                expire = now.plusMonths(months);
+            } else if (days.endsWith("y")) {
+                int years = Converter.parseInt(days.substring(0, days.length()-1));
+                expire = now.plusYears(years);
+            } else {
+                throw new ErrorCodeException(ErrorCode.of("outline.order.days.invalid", days));
+            }
+        }
+
+        expire = expire.toLocalDate().plusDays(1).atStartOfDay(ZoneOffset.ofHours(8)).toLocalDateTime();
+        long expireTime = expire.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
+
+        System.out.println(now + " " + expire);
+
+        return new long[] {nowTime, expireTime};
+    }
+
     public void createOutlineOrder(OutlineOrderCreateParam param) {
         Order order = orderService.findOrder(param.getOrderId());
         if (null == order) {
@@ -92,5 +123,13 @@ public class OutlineOrderService extends CurdService<OutlineOrderEntity, Long> {
         String serverId = param.getServerId();
 
         createOutlineOrder(order, serverId);
+    }
+
+    public static void main(String[] args) {
+        OutlineOrderService outlineOrderService = new OutlineOrderService();
+        System.out.println(Arrays.asList(outlineOrderService.calculateOutlineOrderStartAndExpireTime("1m")));
+        System.out.println(Arrays.asList(outlineOrderService.calculateOutlineOrderStartAndExpireTime("1y")));
+        System.out.println(Arrays.asList(outlineOrderService.calculateOutlineOrderStartAndExpireTime("30")));
+
     }
 }

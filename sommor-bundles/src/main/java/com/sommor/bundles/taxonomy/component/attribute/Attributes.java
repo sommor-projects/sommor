@@ -1,5 +1,6 @@
 package com.sommor.bundles.taxonomy.component.attribute;
 
+import com.alibaba.fastjson.JSON;
 import com.sommor.core.utils.Converter;
 import com.sommor.core.utils.ProxyMap;
 
@@ -29,5 +30,15 @@ public class Attributes extends ProxyMap {
 
     public Long getLong(String key) {
         return Converter.parseLong(this.get(key));
+    }
+
+    public void addAttributes(Attributes attributes) {
+        if (null != attributes) {
+            this.putAll(attributes.map);
+        }
+    }
+
+    public String toJSONString() {
+        return JSON.toJSONString(this.map);
     }
 }

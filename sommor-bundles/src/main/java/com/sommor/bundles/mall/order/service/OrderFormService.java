@@ -4,9 +4,15 @@ import com.sommor.bundles.mall.order.entity.OrderEntity;
 import com.sommor.bundles.mall.order.model.Buyer;
 import com.sommor.bundles.mall.order.model.OrderForm;
 import com.sommor.bundles.mall.order.model.OrderFormParam;
+import com.sommor.bundles.mall.order.model.OrderStatusEnum;
+import com.sommor.bundles.mall.order.model.PayStatusEnum;
 import com.sommor.bundles.mall.order.model.Seller;
+import com.sommor.bundles.mall.order.model.ShippingStatusEnum;
 import com.sommor.bundles.mall.product.entity.ProductEntity;
 import com.sommor.bundles.mall.product.entity.SkuEntity;
+import com.sommor.bundles.mall.product.model.Product;
+import com.sommor.bundles.mall.product.model.Sku;
+import com.sommor.bundles.taxonomy.component.attribute.Attributes;
 import com.sommor.core.api.error.ErrorCode;
 import com.sommor.core.api.error.ErrorCodeException;
 import com.sommor.core.component.form.EntityFormService;
@@ -36,17 +42,26 @@ public class OrderFormService extends EntityFormService<OrderEntity, OrderForm, 
         super.onFormSaving(model, entity, originalEntity);
 
         if (null == originalEntity) {
-            entity.setId(orderIdGenerator.generateId());
+            Long orderId = orderIdGenerator.generateId();
+            entity.setId(orderId);
+            if (null == entity.getRefId()) {
+                entity.setRefId(orderId);
+            }
 
-            entity.setPayStatus(OrderEntity.PAY_STATUS_UNPAID);
-            entity.setStatus(OrderEntity.STATUS_CREATE);
-            entity.setShippingStatus(OrderEntity.SHIPPING_STATUS_UNSHIPPED);
+            entity.setPayStatus(PayStatusEnum.UNPAID.getCode());
+            entity.setStatus(OrderStatusEnum.CREATED.getCode());
+            entity.setShippingStatus(ShippingStatusEnum.UNSHIPPED.getCode());
 
             this.beforeOrderCreate(model, entity);
         }
     }
 
     private void beforeOrderCreate(Model model, OrderEntity entity) {
+        OrderForm orderForm = model.getTarget();
+
+        Attributes attributes = new Attributes();
+        attributes.addAttributes(orderForm.getAttributes());
+
         Buyer buyer = model.getExt(Buyer.class);
         if (null == buyer) {
             throw new ErrorCodeException(ErrorCode.of("order.create.buyer.is.null"));
@@ -59,25 +74,27 @@ public class OrderFormService extends EntityFormService<OrderEntity, OrderForm, 
         }
         entity.setSellerId(seller.getUserId());
 
-        ProductEntity productEntity = model.getExt(ProductEntity.class);
-        if (null == productEntity) {
+        Product product = model.getExt(Product.class);
+        if (null == product) {
             throw new ErrorCodeException(ErrorCode.of("order.create.product.is.null"));
         }
-        entity.setProductId(productEntity.getId());
-        entity.setShopId(productEntity.getShopId());
-        entity.setProductTitle(productEntity.getTitle());
-        entity.setProductTaxonomy(productEntity.getTaxonomy());
-        entity.setProductAttributes(productEntity.getAttributes());
+        entity.setProductId(product.getId());
+        entity.setShopId(product.getShopId());
+        entity.setProductTitle(product.getTitle());
+        entity.setTaxonomy(product.getTaxonomy());
+        attributes.addAttributes(product.getAttributes());
 
-        SkuEntity skuEntity = model.getExt(SkuEntity.class);
-        if (null == skuEntity) {
+
+        Sku sku = model.getExt(Sku.class);
+        if (null == sku) {
             throw new ErrorCodeException(ErrorCode.of("order.create.sku.is.null"));
         }
-        entity.setSkuId(skuEntity.getId());
-        entity.setSkuAttributes(skuEntity.getAttributes());
-        Long amount = skuEntity.getPrice() * entity.getBuyQuantity();
+        entity.setSkuId(sku.getId());
+        Long amount = sku.getPrice() * entity.getBuyQuantity();
         entity.setAmount(amount);
-        entity.setCurrency(skuEntity.getCurrency());
+        entity.setCurrency(sku.getCurrency());
+        attributes.addAttributes(sku.getAttributes());
 
+        entity.setAttributes(attributes.toJSONString());
     }
 }

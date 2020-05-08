@@ -1,11 +1,11 @@
-package com.sommor.bundles.outline.api;
+package com.sommor.bundles.outline.client;
 
 import com.alibaba.fastjson.JSONObject;
-import com.sommor.bundles.outline.api.request.ServerRenameParam;
-import com.sommor.bundles.outline.api.response.AccessKey;
-import com.sommor.bundles.outline.api.response.BytesTransferredResponse;
-import com.sommor.bundles.outline.api.response.ListAccessKeysResponse;
-import com.sommor.bundles.outline.api.response.ServerInfo;
+import com.sommor.bundles.outline.client.request.ServerRenameParam;
+import com.sommor.bundles.outline.client.response.AccessKey;
+import com.sommor.bundles.outline.client.response.BytesTransferredResponse;
+import com.sommor.bundles.outline.client.response.ListAccessKeysResponse;
+import com.sommor.bundles.outline.client.response.ServerInfo;
 import com.sommor.core.api.error.ErrorCode;
 import com.sommor.core.api.error.ErrorCodeException;
 import okhttp3.MediaType;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * @author yanguanwei@qq.com
  * @since 2020/4/16
  */
-public class OutlineServerApi {
+public class OutlineServerClient {
 
     private String apiUrl;
 
@@ -46,7 +46,7 @@ public class OutlineServerApi {
 
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    public OutlineServerApi(String apiUrl) {
+    public OutlineServerClient(String apiUrl) {
         if (! apiUrl.endsWith("/")) {
             apiUrl += "/";
         }

@@ -1,12 +1,13 @@
 package com.sommor.bundles.outline.service;
 
 import com.sommor.bundles.mall.order.model.Order;
-import com.sommor.bundles.outline.api.OutlineServerApi;
-import com.sommor.bundles.outline.api.request.ServerRenameParam;
-import com.sommor.bundles.outline.api.response.AccessKey;
-import com.sommor.bundles.outline.api.response.ServerInfo;
+import com.sommor.bundles.outline.client.OutlineServerClient;
+import com.sommor.bundles.outline.client.request.ServerRenameParam;
+import com.sommor.bundles.outline.client.response.AccessKey;
+import com.sommor.bundles.outline.client.response.ServerInfo;
 import com.sommor.bundles.outline.entity.OutlineAccessKeyEntity;
 import com.sommor.bundles.outline.entity.OutlineServerEntity;
+import com.sommor.bundles.outline.model.AccessKeyStatus;
 import com.sommor.bundles.outline.model.OutlineServer;
 import com.sommor.bundles.outline.model.OutlineServerRenameParam;
 import com.sommor.bundles.outline.repository.OutlineServerRepository;
@@ -37,12 +38,20 @@ public class OutlineServerService extends CurdService<OutlineServerEntity, Strin
     @Resource
     private OutlineAccessKeyService outlineAccessKeyService;
 
+    public void syncServer(String serverId) {
+        syncServer(this.findById(serverId));
+    }
+
+    public void syncServer(OutlineServerEntity outlineServerEntity) {
+        syncOutlineServer(outlineServerEntity.getApiUrl());
+    }
+
     public ServerInfo syncOutlineServer(String apiUrl) {
-        OutlineServerApi outlineServerApi = new OutlineServerApi(apiUrl);
-        ServerInfo serverInfo = outlineServerApi.info();
+        OutlineServerClient outlineServerClient = new OutlineServerClient(apiUrl);
+        ServerInfo serverInfo = outlineServerClient.info();
         String serverId = serverInfo.getServerId();
 
-        List<AccessKey> accessKeys = processOutlineServerAccessKeys(serverId, outlineServerApi);
+        List<AccessKey> accessKeys = processOutlineServerAccessKeys(serverId, outlineServerClient);
         serverInfo.setAccessKeys(accessKeys);
 
         return serverInfo;
@@ -71,8 +80,8 @@ public class OutlineServerService extends CurdService<OutlineServerEntity, Strin
     }
 
     public OutlineAccessKeyEntity createOutlineAccessKey(OutlineServerEntity serverEntity, String name) {
-        OutlineServerApi outlineServerApi = new OutlineServerApi(serverEntity.getApiUrl());
-        AccessKey accessKey = outlineServerApi.createAccessKey();
+        OutlineServerClient outlineServerClient = new OutlineServerClient(serverEntity.getApiUrl());
+        AccessKey accessKey = outlineServerClient.createAccessKey();
         OutlineAccessKeyEntity entity = convert(serverEntity.getId(), accessKey);
         if (StringUtils.isNotBlank(name)) {
             entity.setName(name);
@@ -145,25 +154,27 @@ public class OutlineServerService extends CurdService<OutlineServerEntity, Strin
 
             entity.setId(serverInfo.getServerId());
             entity.setPort(serverInfo.getPortForNewAccessKeys());
-            entity.setCreateTime((int) (serverInfo.getCreatedTimestampMs() / 1000));
+            entity.setCreateTime(serverInfo.getCreatedTimestampMs());
             entity.setStatus(OutlineServerEntity.STATUS_RUNNING);
         } else {
             originalName = originalEntity.getName();
         }
 
         if (name.equals(originalName)) {
-            OutlineServerApi outlineServerApi = new OutlineServerApi(entity.getApiUrl());
+            OutlineServerClient outlineServerClient = new OutlineServerClient(entity.getApiUrl());
             ServerRenameParam serverRenameParam = new ServerRenameParam();
             serverRenameParam.setName(entity.getName());
-            outlineServerApi.rename(serverRenameParam);
+            outlineServerClient.rename(serverRenameParam);
         }
     }
 
-    public List<AccessKey> processOutlineServerAccessKeys(String serverId, OutlineServerApi outlineServerApi) {
+    public List<AccessKey> processOutlineServerAccessKeys(String serverId, OutlineServerClient outlineServerClient) {
         List<OutlineAccessKeyEntity> accessKeyEntities = outlineAccessKeyService.findByServerId(serverId);
         Map<String, OutlineAccessKeyEntity> entityMap = accessKeyEntities.stream().collect(Collectors.toMap(p->p.getAccessId(), p->p));
 
-        List<AccessKey> accessKeys = outlineServerApi.listAccessKeys();
+        List<AccessKey> accessKeys = outlineServerClient.listAccessKeys();
+
+        Map<String, Long> bytes = outlineServerClient.getBytesTransferred();
 
         List<OutlineAccessKeyEntity> insertEntities = new ArrayList<>();
         List<OutlineAccessKeyEntity> updateEntities = new ArrayList<>();
@@ -172,16 +183,20 @@ public class OutlineServerService extends CurdService<OutlineServerEntity, Strin
             for (AccessKey accessKey : accessKeys) {
                 OutlineAccessKeyEntity entity = entityMap.get(accessKey.getId());
                 if (null == entity) {
-                    insertEntities.add(convert(serverId, accessKey));
+                    OutlineAccessKeyEntity accessKeyEntity = convert(serverId, accessKey);
+                    accessKeyEntity.setUsageBytes(bytes.get(accessKey.getId()));
+                    insertEntities.add(accessKeyEntity);
                 }
             }
 
             Map<String, AccessKey> accessKeyMap = accessKeys.stream().collect(Collectors.toMap(p->p.getId(), p->p));
             for (OutlineAccessKeyEntity entity : accessKeyEntities) {
                 if (accessKeyMap.get(entity.getAccessId()) == null) {
-                    entity.setStatus(OutlineAccessKeyEntity.STATUS_DELETED);
-                    updateEntities.add(entity);
+                    entity.setStatus(AccessKeyStatus.DELETED.getCode());
+                } else {
+                    entity.setUsageBytes(bytes.get(entity.getAccessId()));
                 }
+                updateEntities.add(entity);
             }
         }
 
@@ -207,7 +222,7 @@ public class OutlineServerService extends CurdService<OutlineServerEntity, Strin
         entity.setMethod(accessKey.getMethod());
         entity.setAccessUrl(accessKey.getAccessUrl());
         entity.setUsageBytes(0L);
-        entity.setStatus(OutlineAccessKeyEntity.STATUS_UNUSED);
+        entity.setStatus(AccessKeyStatus.UNUSED.getCode());
 
         return entity;
     }

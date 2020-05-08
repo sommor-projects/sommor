@@ -1,5 +1,7 @@
 package com.sommor.bundles.outline.model;
 
+import com.sommor.core.component.bytes.BytesConvert;
+import com.sommor.core.component.status.StatusField;
 import com.sommor.mybatis.entity.config.Column;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,15 +18,15 @@ public class OutlineAccessKeyTable {
 
     private String outlineServerId;
 
-    private String accessId;
-
     private String name;
 
-    private String method;
+    private String accessId;
 
     private String accessUrl;
 
-    private Integer status;
+    @StatusField
+    private AccessKeyStatus status;
 
-    private Long usageBytes;
+    @BytesConvert(field = "usageBytes", autoUnit = true)
+    private String usage;
 }

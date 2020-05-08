@@ -23,8 +23,6 @@ public class UserRegisterService {
 
     public UserEntity register(UserRegisterParam userRegisterParam) {
         UserEntity userEntity = new UserEntity();
-
-        initUserEntity(userEntity);
         initUserEntityFromParam(userEntity, userRegisterParam);
         userService.save(userEntity);
 
@@ -45,12 +43,5 @@ public class UserRegisterService {
         entity.setMobilePhone(userRegisterParam.getMobilePhone());
         entity.setGender(userRegisterParam.getGender());
         entity.setAvatar(userRegisterParam.getAvatar());
-    }
-
-    private void initUserEntity(UserEntity userEntity) {
-        Integer now = (int) (System.currentTimeMillis() / 1000);
-        userEntity.setUpdateTime(now);
-        userEntity.setCreateTime(now);
-        userEntity.setStatus(UserStatus.NORMAL.getStatus());
     }
 }

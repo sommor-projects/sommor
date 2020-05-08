@@ -12,8 +12,8 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-@EntityReference(entityName = ShopEntity.NAME, fieldBy = "shopId")
-@EntityReference(entityName = SkuEntity.NAME, fieldBy = "productId")
+@EntityReference(entity = ShopEntity.NAME, byField = "shopId")
+@EntityReference(entity = SkuEntity.NAME, byField = "productId")
 public class ProductSkuTable {
 
     private Long productId;

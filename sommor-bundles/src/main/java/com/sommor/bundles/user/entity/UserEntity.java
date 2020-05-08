@@ -57,7 +57,7 @@ public class UserEntity extends ConfigurableEntity<Long> {
     @Column
     private Integer status;
 
-    public static String encryptPassword(String password, int createTime) {
+    public static String encryptPassword(String password, long createTime) {
         return Encryption.md5(password + createTime);
     }
 }

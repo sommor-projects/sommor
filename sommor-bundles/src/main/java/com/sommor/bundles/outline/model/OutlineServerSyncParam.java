@@ -14,6 +14,6 @@ import javax.validation.constraints.NotBlank;
 public class OutlineServerSyncParam {
 
     @NotBlank
-    private String apiUrl;
+    private String serverId;
 
 }

@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
  */
 @Getter
 @Setter
-@EntityReference(entityName = ProductEntity.NAME, fieldBy = "productId")
+@EntityReference(entity = ProductEntity.NAME, byField = "productId")
 public class SkuForm  {
 
     private Long id;

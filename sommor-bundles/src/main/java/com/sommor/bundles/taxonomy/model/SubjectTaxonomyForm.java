@@ -17,7 +17,7 @@ public class SubjectTaxonomyForm {
 
     @Getter
     @Setter
-    @TaxonomySelectField(tree = true)
+    @TaxonomySelectField(tree = true, isTaxonomyKey = true)
     @NotNull
     private String taxonomy;
 

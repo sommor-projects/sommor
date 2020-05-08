@@ -39,6 +39,7 @@ public class TaxonomySelectViewRenderProcessor implements ViewRenderProcessor<Ta
         boolean isMultiple = Boolean.TRUE.equals(vc.getMultiple());
         boolean isIncludeSelf = Boolean.TRUE.equals(vc.getIncludeSelf());
         boolean isIncludeRoot = Boolean.TRUE.equals(vc.getIncludeRoot());
+        boolean isTaxonomyKey = Boolean.TRUE.equals(vc.getIsTaxonomyKey());
 
         SelectView selectView = ctx.getView();
 
@@ -81,7 +82,7 @@ public class TaxonomySelectViewRenderProcessor implements ViewRenderProcessor<Ta
             if (null != typeEntity) {
                 List<TaxonomyTree> taxonomyTrees = taxonomyService.getTaxonomyTreesByType(typeEntity, group, isIncludeSelf);
                 for (TaxonomyTree taxonomyTree : taxonomyTrees) {
-                    selectView.addOption(taxonomyTree.toTreeOption());
+                    selectView.addOption(taxonomyTree.toTreeOption(isTaxonomyKey));
                 }
             }
         } else if (StringUtils.isNotBlank(type)) {
@@ -90,7 +91,7 @@ public class TaxonomySelectViewRenderProcessor implements ViewRenderProcessor<Ta
             }
             List<TaxonomyEntity> taxonomyEntities = taxonomyRepository.findByParent(parent, type);
             for (TaxonomyEntity taxonomyEntity : taxonomyEntities) {
-                selectView.addOption(taxonomyEntity.getTitle(), taxonomyEntity.getName());
+                selectView.addOption(taxonomyEntity.getTitle(), isTaxonomyKey ? taxonomyEntity.getKey() : taxonomyEntity.getName());
             }
         }
     }

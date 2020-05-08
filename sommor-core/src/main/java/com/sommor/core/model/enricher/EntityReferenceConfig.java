@@ -12,9 +12,11 @@ import lombok.Setter;
 @Setter
 public class EntityReferenceConfig extends TargetConfig {
 
-    private String entityName;
+    private String entity;
 
-    private String fieldBy;
+    private String byField;
+
+    private String refField;
 
     private String[] fields;
 

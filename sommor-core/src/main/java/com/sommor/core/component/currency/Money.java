@@ -64,7 +64,7 @@ public class Money implements Comparable<Money>, Serializable {
     }
 
     public String format() {
-        return currency.getSymbol() + getAmount();
+        return currency.getSymbol() + getAmountString();
     }
 
     @Override
@@ -96,7 +96,7 @@ public class Money implements Comparable<Money>, Serializable {
     @Override
     public String toString() {
         // Obscure the string so that clients won't try to rely on this implementation.
-        return "######## " + format();
+        return format();
     }
 
     @Override

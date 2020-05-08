@@ -19,15 +19,15 @@ public class AuthenticationEntity extends BaseEntity<Long> {
 
     @Getter @Setter
     @Column
-    private Integer authTime;
+    private Long authTime;
 
     @Getter @Setter
     @Column
-    private Integer expireTime;
+    private Long expireTime;
 
     @Getter @Setter
     @Column
-    private Integer logoutTime;
+    private Long logoutTime;
 
     @Getter @Setter
     @Column

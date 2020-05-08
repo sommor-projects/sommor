@@ -15,9 +15,11 @@ import java.lang.annotation.*;
 @Repeatable(EntityReferences.class)
 public @interface EntityReference {
 
-    String entityName();
+    String entity();
 
-    String fieldBy();
+    String byField();
+
+    String refField() default "id";
 
     Class target() default Void.class;
 }

@@ -89,7 +89,7 @@ public class SequenceRepository {
             conn = dataSource.getConnection();
             conn.setAutoCommit(false);
 
-            int now = DateTimeUtil.now();
+            long now = DateTimeUtil.now();
             int dbIndex = this.dbIndex;
 
             long initValue = startValue + stepValue;

@@ -16,8 +16,8 @@ public class DateTimeUtil {
     public static final String DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
 
-    public static int now() {
-        return (int) (System.currentTimeMillis() / 1000);
+    public static long now() {
+        return System.currentTimeMillis();
     }
 
     public static String formatDateTime(Integer time) {

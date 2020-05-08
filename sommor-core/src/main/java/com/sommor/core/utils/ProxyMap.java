@@ -11,7 +11,7 @@ import java.util.Set;
  */
 public class ProxyMap implements Map<String, Object> {
 
-    private Map<String, Object> map;
+    protected Map<String, Object> map;
 
     public ProxyMap(Map<String, Object> map) {
         this.map = map == null ? new HashMap<>() : map;

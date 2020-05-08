@@ -13,7 +13,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class TaxonomyQueryParam extends EntityQueryParam {
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private String parent;
 
     @Override
@@ -30,5 +31,9 @@ public class TaxonomyQueryParam extends EntityQueryParam {
                     .and("type", TaxonomyEntity.ROOT)
                     .and("parent", TaxonomyEntity.ROOT);
         }
+    }
+
+    public void setTaxonomy(String taxonomy) {
+        this.setParent(taxonomy);
     }
 }

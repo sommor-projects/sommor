@@ -24,7 +24,7 @@ public class TaxonomyTree extends TaxonomyItem {
         from(entity);
     }
 
-    public TreeOption toTreeOption() {
+    public TreeOption toTreeOption(Boolean isTaxonomyKey) {
         String label;
 
         if (StringUtils.isNotBlank(this.getTitle()) && StringUtils.isNotBlank(this.getSubTitle())) {
@@ -41,11 +41,11 @@ public class TaxonomyTree extends TaxonomyItem {
             label = this.getName();
         }
 
-        TreeOption tree = new TreeOption(label, this.getName());
+        TreeOption tree = new TreeOption(label, Boolean.TRUE.equals(isTaxonomyKey) ? this.getKey() : this.getName());
 
         if (null != children) {
             for (TaxonomyTree taxonomyTree : children) {
-                tree.addChild(taxonomyTree.toTreeOption());
+                tree.addChild(taxonomyTree.toTreeOption(isTaxonomyKey));
             }
         }
 

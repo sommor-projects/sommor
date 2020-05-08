@@ -16,14 +16,14 @@ import lombok.Setter;
 public class TimedEntity<ID> extends BaseEntity<ID> implements EntityLifecycle {
 
     @Column
-    private Integer updateTime;
+    private Long updateTime;
 
     @Column
-    private Integer createTime;
+    private Long createTime;
 
     @Override
     public void onSaving(Object original) {
-        int now = DateTimeUtil.now();
+        long now = DateTimeUtil.now();
         this.setUpdateTime(now);
         if (original == null) {
             if (null == this.getCreateTime()) {

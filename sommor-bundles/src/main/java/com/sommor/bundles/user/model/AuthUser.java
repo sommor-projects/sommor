@@ -17,7 +17,7 @@ public class AuthUser {
 
     private String token;
 
-    private Integer expireTime;
+    private Long expireTime;
 
     private Long userId;
 

@@ -2,6 +2,9 @@ package com.sommor.bundles.mall.order.service;
 
 import com.sommor.bundles.mall.order.entity.OrderEntity;
 import com.sommor.bundles.mall.order.model.Order;
+import com.sommor.bundles.mall.order.model.OrderStatusEnum;
+import com.sommor.bundles.mall.order.model.PayStatusEnum;
+import com.sommor.bundles.mall.order.model.ShippingStatusEnum;
 import com.sommor.bundles.mall.order.repository.OrderRepository;
 import com.sommor.bundles.mall.order.service.extension.OrderPaidProcessor;
 import com.sommor.bundles.mall.order.service.extension.OrderShippedProcessor;
@@ -50,7 +53,7 @@ public class OrderService extends CurdService<OrderEntity, Long> {
         if (null != orderEntity) {
             OrderEntity update = new OrderEntity();
             update.setId(orderId);
-            update.setPayStatus(OrderEntity.PAY_STATUS_PAID);
+            update.setPayStatus(PayStatusEnum.PAID.getCode());
             update.setPayTime(DateTimeUtil.now());
             this.save(update, orderEntity);
 
@@ -65,8 +68,8 @@ public class OrderService extends CurdService<OrderEntity, Long> {
         if (null != orderEntity) {
             OrderEntity update = new OrderEntity();
             update.setId(orderId);
-            update.setShippingStatus(OrderEntity.SHIPPING_STATUS_SHIPPED);
-            update.setStatus(OrderEntity.STATUS_SUCCESS);
+            update.setShippingStatus(ShippingStatusEnum.SHIPPED.getCode());
+            update.setStatus(OrderStatusEnum.SUCCESS.getCode());
             update.setShipTime(DateTimeUtil.now());
             this.save(update, orderEntity);
 

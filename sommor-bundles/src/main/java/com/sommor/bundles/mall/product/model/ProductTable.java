@@ -10,7 +10,7 @@ import lombok.Setter;
  * @author yanguanwei@qq.com
  * @since 2020/2/1
  */
-@EntityReference(entityName = "shop", fieldBy = "shopId")
+@EntityReference(entity = "shop", byField = "shopId")
 public class ProductTable extends EntityTable {
 
     @Setter

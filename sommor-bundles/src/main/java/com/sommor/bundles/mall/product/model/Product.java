@@ -17,7 +17,7 @@ import lombok.Setter;
 @Setter
 public class Product {
 
-    private Long productId;
+    private Long id;
 
     private Integer productType;
 

@@ -97,7 +97,7 @@ public class AuthenticateService {
         AuthenticationEntity entity = new AuthenticationEntity();
         entity.setUserId(userEntity.getId());
 
-        int nowTime = DateTimeUtil.now();
+        long nowTime = DateTimeUtil.now();
         entity.setAuthTime(nowTime);
         entity.setExpireTime(nowTime + UserSettings.userLoginExpireTime);
         entity.setSessionKey(sessionKey);
@@ -143,7 +143,7 @@ public class AuthenticateService {
     }
 
     private boolean verifyAuthentication(Authentication authentication) {
-        Integer expireTime = authentication.getExpireTime();
+        Long expireTime = authentication.getExpireTime();
         if (null == expireTime || expireTime < DateTimeUtil.now()) {
             return false;
         }
@@ -161,7 +161,7 @@ public class AuthenticateService {
     public void logout(Authentication authentication) {
         AuthenticationEntity entity = userAuthRepository.findById(authentication.getId());
         if (null != entity) {
-            int now = DateTimeUtil.now();
+            long now = DateTimeUtil.now();
             entity.setLogoutTime(now);
             entity.setExpireTime(now);
             userAuthRepository.update(entity);

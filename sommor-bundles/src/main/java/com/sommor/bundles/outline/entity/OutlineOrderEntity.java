@@ -16,13 +16,13 @@ import lombok.Setter;
 public class OutlineOrderEntity extends TimedEntity<Long> {
 
     @Column
-    private Long userId;
+    private Long buyerId;
 
     @Column
-    private Integer startTime;
+    private Long startTime;
 
     @Column
-    private Integer endTime;
+    private Long endTime;
 
     @Column
     private Integer accessKeyTotal;

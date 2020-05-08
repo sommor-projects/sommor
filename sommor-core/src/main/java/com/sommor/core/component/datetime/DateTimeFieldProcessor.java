@@ -19,7 +19,7 @@ public class DateTimeFieldProcessor implements FieldFillProcessor<DateTimeFieldC
 
         if (type == String.class) {
             if (value instanceof Integer) {
-                return DateTimeUtil.formatDateTime((Integer) value);
+                return DateTimeUtil.format((Integer) value, config.getFormat());
             }
         }
 

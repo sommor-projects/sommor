@@ -13,14 +13,17 @@ public class SlugParser {
 
         StringBuilder sb = new StringBuilder(name.length()+4);
 
+        boolean prevIsUpperChar = false;
+
         for (int i=0; i<name.length(); i++) {
             char c = name.charAt(i);
             if (Character.isLetterOrDigit(c)) {
                 if (isUpperChar(c)) {
-                    if (i > 0 && sb.charAt(sb.length()-1) != '-') {
+                    if (i > 0 && sb.charAt(sb.length()-1) != '-' && !prevIsUpperChar) {
                         sb.append("-");
                     }
                     sb.append((char)(c+32));
+                    prevIsUpperChar = true;
                 } else {
                     sb.append(c);
                 }
@@ -44,5 +47,9 @@ public class SlugParser {
 
     private static boolean isUpperChar(char c) {
         return 'A' <= c && c <= 'Z';
+    }
+
+    public static void main(String[] args) {
+        System.out.println(SlugParser.parse("USA & China"));
     }
 }

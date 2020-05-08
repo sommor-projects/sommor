@@ -36,7 +36,7 @@ public class MoneyAmountFieldProcessor implements FieldFillProcessor<MoneyAmount
             } else if (fieldType == Long.class) {
                 return money.getCent();
             } else if (fieldType == String.class) {
-                return money.getAmountString();
+                return money.toString();
             }
         }
 

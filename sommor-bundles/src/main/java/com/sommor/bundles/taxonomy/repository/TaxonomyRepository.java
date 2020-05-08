@@ -51,7 +51,7 @@ public interface TaxonomyRepository extends CurdRepository<TaxonomyEntity, Long>
 
     default List<TaxonomyEntity> findTaxonomyPaths(TaxonomyEntity entity) {
         LinkedList<TaxonomyEntity> paths = new LinkedList<>();
-        while (true) {
+        while (null != entity) {
             paths.addFirst(entity);
             if (entity.isRoot()) {
                 break;

@@ -15,17 +15,8 @@ import lombok.Setter;
 @Table(value = "orders", entityName = "order", autoIncrement = false)
 public class OrderEntity extends ConfigurableEntity<Long> {
 
-    public static final Integer PAY_STATUS_UNPAID = 0;
-    public static final Integer PAY_STATUS_PAID = 1;
-    public static final Integer PAY_STATUS_REFUND = 2;
-
-    public static final Integer SHIPPING_STATUS_UNSHIPPED = 0;
-    public static final Integer SHIPPING_STATUS_SHIPPED = 1;
-
-    public static final Integer STATUS_CREATE = 0;
-    public static final Integer STATUS_CANCEL = 1;
-    public static final Integer STATUS_SUCCESS = 2;
-    public static final Integer STATUS_CLOSED = 3;
+    @Column
+    private Long refId;
 
     @Column
     private Long buyerId;
@@ -58,13 +49,10 @@ public class OrderEntity extends ConfigurableEntity<Long> {
     private String productTitle;
 
     @Column
-    private String productTaxonomy;
+    private String taxonomy;
 
     @Column
-    private String productAttributes;
-
-    @Column
-    private String skuAttributes;
+    private String attributes;
 
     @Column
     private Integer status;
@@ -76,8 +64,8 @@ public class OrderEntity extends ConfigurableEntity<Long> {
     private Integer shippingStatus;
 
     @Column
-    private Integer payTime;
+    private Long payTime;
 
     @Column
-    private Integer shipTime;
+    private Long shipTime;
 }

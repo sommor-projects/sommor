@@ -24,6 +24,8 @@ public @interface TaxonomySelectField {
 
     boolean includeSelf() default false;
 
+    boolean isTaxonomyKey() default false;
+
     String type() default "";
 
     String group() default "";

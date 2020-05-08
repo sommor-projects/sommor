@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Sku {
-    private Long skuId;
+    private Long id;
 
     private Long shopId;
 

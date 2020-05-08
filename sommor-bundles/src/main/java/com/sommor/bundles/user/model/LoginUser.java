@@ -15,7 +15,7 @@ public class LoginUser {
 
     private String token;
 
-    private Integer expireTime;
+    private Long expireTime;
 
     private UserProfile userProfile;
 

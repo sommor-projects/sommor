@@ -1,4 +1,4 @@
-package com.sommor.bundles.outline.api.response;
+package com.sommor.bundles.outline.client.response;
 
 import lombok.Getter;
 import lombok.Setter;

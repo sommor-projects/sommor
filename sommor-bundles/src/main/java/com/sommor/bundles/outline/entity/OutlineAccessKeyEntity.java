@@ -15,13 +15,7 @@ import lombok.Setter;
 @Table(value = "outline_access_keys", entityName = OutlineAccessKeyEntity.NAME, autoIncrement = false)
 public class OutlineAccessKeyEntity extends TimedEntity<String> {
 
-    public static final String NAME = "outline-accesskey";
-
-    public static final Integer STATUS_UNUSED = 0;
-
-    public static final Integer STATUS_USING = 1;
-
-    public static final Integer STATUS_DELETED = 2;
+    public static final String NAME = "outlineAccessKey";
 
     @Column
     private String outlineServerId;

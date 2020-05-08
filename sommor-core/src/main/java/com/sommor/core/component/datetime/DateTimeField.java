@@ -1,6 +1,7 @@
 package com.sommor.core.component.datetime;
 
 import com.sommor.core.model.config.TargetAnnotation;
+import com.sommor.core.utils.DateTimeUtil;
 
 import java.lang.annotation.*;
 
@@ -13,4 +14,7 @@ import java.lang.annotation.*;
 @Documented
 @TargetAnnotation(DateTimeFieldConfig.class)
 public @interface DateTimeField {
+
+    String format() default DateTimeUtil.DATE_TIME_FORMAT;
+
 }

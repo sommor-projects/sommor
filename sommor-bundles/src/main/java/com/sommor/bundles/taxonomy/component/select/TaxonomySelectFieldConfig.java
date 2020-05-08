@@ -38,4 +38,8 @@ public class TaxonomySelectFieldConfig extends FormFieldConfig<SelectView> {
     @Getter
     @Setter
     private Boolean includeRoot;
+
+    @Getter
+    @Setter
+    private Boolean isTaxonomyKey;
 }

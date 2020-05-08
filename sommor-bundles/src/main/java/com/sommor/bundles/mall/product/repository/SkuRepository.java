@@ -1,7 +1,6 @@
 package com.sommor.bundles.mall.product.repository;
 
 import com.sommor.bundles.mall.product.entity.SkuEntity;
-import com.sommor.bundles.mall.product.entity.SpuEntity;
 import com.sommor.mybatis.repository.CurdRepository;
 import com.sommor.mybatis.sql.SqlProvider;
 import org.apache.ibatis.annotations.Mapper;
@@ -15,5 +14,5 @@ import org.apache.ibatis.annotations.SelectProvider;
 public interface SkuRepository extends CurdRepository<SkuEntity, Long> {
 
     @SelectProvider(type = SqlProvider.class, method = "findBy")
-    SpuEntity findBySubTitle(String subTitle);
+    SkuEntity findBySubTitle(String subTitle);
 }

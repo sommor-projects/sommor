@@ -7,6 +7,8 @@ import com.sommor.core.model.fill.FieldFillProcessor;
 import com.sommor.extensibility.config.Implement;
 import com.sommor.core.model.Model;
 import com.sommor.mybatis.entity.BaseEntity;
+import com.sommor.mybatis.query.Query;
+import com.sommor.mybatis.sql.field.type.Array;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.*;
@@ -23,7 +25,7 @@ public class EntityReferenceProcessor implements FieldFillProcessor<EntityRefere
     public void processOnModelEnrich(EntityReferenceConfig config, ModelEnrichContext ctx) {
        Map<Object, Model> referencedEntities = reference(config, ctx.getSourceModels(), config.getTarget());
 
-        String entityIdFieldName = config.getFieldBy();
+        String entityIdFieldName = config.getByField();
         String[] entityFieldNames = config.getFields();
 
         for (Model model : ctx.getSourceModels()) {
@@ -42,20 +44,23 @@ public class EntityReferenceProcessor implements FieldFillProcessor<EntityRefere
             return Collections.emptyMap();
         }
 
-        String entityName = config.getEntityName();
-        String entityIdFieldName = config.getFieldBy();
+        String entityName = config.getEntity();
+        String byField = config.getByField();
 
-        Set<Object> entityIds = sourceModels.stream()
-                .map(p->(p.getFieldValue(entityIdFieldName)))
+        Set<Object> refFieldValues = sourceModels.stream()
+                .map(p->(p.getFieldValue(byField)))
                 .filter(Objects::nonNull)
                 .filter(p -> ! BaseEntity.isIdEmpty(p))
                 .collect(Collectors.toSet());
 
-        if (CollectionUtils.isEmpty(entityIds)) {
+        if (CollectionUtils.isEmpty(refFieldValues)) {
             return Collections.emptyMap();
         }
 
-        List<BaseEntity<?>> entities = CurdManager.getCurdRepository(entityName).findByIds(entityIds);
+        Query query = new Query()
+                .where(config.getRefField(), new Array(refFieldValues));
+
+        List<BaseEntity<?>> entities = CurdManager.getCurdRepository(entityName).find(query);
         Map<Object, Model> referencedModels = new HashMap<>();
         if (CollectionUtils.isNotEmpty(entities)) {
             for (BaseEntity<?> entity : entities) {
@@ -82,7 +87,7 @@ public class EntityReferenceProcessor implements FieldFillProcessor<EntityRefere
 
         Map<Object, Model> referencedEntities = reference(config, Lists.newArrayList(sourceModel), targetClass);
 
-        String entityIdFieldName = config.getFieldBy();
+        String entityIdFieldName = config.getByField();
         Object entityId = sourceModel.getFieldValue(entityIdFieldName);
         if (! BaseEntity.isIdEmpty(entityId)) {
             Model referencedModel = referencedEntities.get(entityId);
