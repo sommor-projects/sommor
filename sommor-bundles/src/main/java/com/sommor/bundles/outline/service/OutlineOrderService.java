@@ -109,8 +109,6 @@ public class OutlineOrderService extends CurdService<OutlineOrderEntity, Long> {
         expire = expire.toLocalDate().plusDays(1).atStartOfDay(ZoneOffset.ofHours(8)).toLocalDateTime();
         long expireTime = expire.toInstant(ZoneOffset.ofHours(8)).toEpochMilli();
 
-        System.out.println(now + " " + expire);
-
         return new long[] {nowTime, expireTime};
     }
 
